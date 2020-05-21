@@ -6,7 +6,7 @@ namespace AeroCalcCore {
 
 
     /// <summary>
-    /// Classe définissant le processeur de commande AirCalcCommand
+    /// Classe définissant le processeur de commande AeroCalcCommand
     /// Le processeur travaille sur la base d'une commande pré-traitée par un préprocesseur
     /// et n'accepte donc pas de commande en ligne de commande au format texte.
     /// 
@@ -90,7 +90,7 @@ namespace AeroCalcCore {
         /// </summary>
         /// <param name="txtCommand">Ligne de commande fournie par l'utilisateur, ou tirée d'un fichier
         /// de script</param>
-        /// <returns>retourne une commande traitée, sous forme d'un objet AirCalcCommand</returns>
+        /// <returns>retourne une commande traitée, sous forme d'un objet AeroCalcCommand</returns>
         /// <remarks>
         /// Fonction assurant le routage des commandes, éviter tout traitement et privilégier un appel à une
         /// fonction privée respectant le nommage suivant:
@@ -99,7 +99,7 @@ namespace AeroCalcCore {
         /// 
         public AeroCalcCommand process(string txtCommand) {
 
-            // Construction d'un objet AirCalcCommand et exécution de la commande simple
+            // Construction d'un objet AeroCalcCommand et exécution de la commande simple
             // Une commande complexe (nécessitant l'exécution de plus d'une commande simple) doit
             // d'abord être décomposée
 
@@ -162,7 +162,7 @@ namespace AeroCalcCore {
         /// </summary>
         /// <param name="Cmd">Commande active</param>
         /// <returns></returns>
-        private bool cmd_PRINT(AirCalcCommand Cmd) {
+        private bool cmd_PRINT(AeroCalcCommand Cmd) {
             // COMMANDE NON SUPPORTEE
             return true;
         }
@@ -178,19 +178,19 @@ namespace AeroCalcCore {
         /// <returns>Code du traitement de l'opération</returns>
         /// <remarks>TO BE DEVELOPPED</remarks>
         /// 
-        private bool cmd_LOAD(AirCalcCommand Cmd) {
+        private bool cmd_LOAD(AeroCalcCommand Cmd) {
             int counter = 0;
             foreach(String filter in Cmd.subs) {
                 // subs[0] = "LOAD" est traité, mais un mot réservé ne doit pas être utilisé comme identificateur
                 counter += Container.loadDataModels(filter);
             }
             if (counter > 0) {
-                Cmd.postProcess(AirCalcCommand.EVENTCODE_LOAD_MODELS_SUCCESSFULL);
+                Cmd.postProcess(AeroCalcCommand.EVENTCODE_LOAD_MODELS_SUCCESSFULL);
                 // Ajout du nombre de modèles chargés
                 Cmd.setResultText(String.Format("{0} modèle(s) ont été chargés en mémoire.", counter));
             }
             else {
-                Cmd.postProcess(AirCalcCommand.EVENTCODE_NO_MODEL_LOADED);
+                Cmd.postProcess(AeroCalcCommand.EVENTCODE_NO_MODEL_LOADED);
             }
             return true;
         }
@@ -213,7 +213,7 @@ namespace AeroCalcCore {
                 //
 
                 //bool initSuccessfull = false;
-                string[] xmlNames = { ConnectorXMLFile.XML_APP, ConnectorXMLFile.XML_CONFIG, "" };
+                string[] xmlNames = { ConnectorXML.XML_APP, ConnectorXML.XML_CONFIG, "" };
                 string baseDir = AppDomain.CurrentDomain.BaseDirectory;
                 string configFilePath = baseDir + CONFIG_FILE_DIRECTORY + System.IO.Path.DirectorySeparatorChar + CONFIG_FILE_NAME;
                 // DEBUG 
@@ -222,12 +222,12 @@ namespace AeroCalcCore {
                 bool verboseSetting;
 
                 // Lecture et exploitation du fichier XML de configuration
-                ConnectorXMLFile configFile = new ConnectorXMLFile("", configFilePath);
+                ConnectorXML configFile = new ConnectorXML("", configFilePath);
 
                 // Répertoire des modèles de performance
-                xmlNames[2] = ConnectorXMLFile.XML_MODELSDIR;
+                xmlNames[2] = ConnectorXML.XML_MODELSDIR;
                 modelsDirectory = baseDir;
-                modelsDirectory += configFile.getAttribute(ConnectorXMLFile.XML_RELATIVE_PATH, xmlNames);
+                modelsDirectory += configFile.getAttribute(ConnectorXML.XML_RELATIVE_PATH, xmlNames);
 
                 // DEBUG
                 modelsDirectory = AppDomain.CurrentDomain.BaseDirectory + System.IO.Path.DirectorySeparatorChar + "data";
@@ -236,10 +236,10 @@ namespace AeroCalcCore {
                 Container.setDataModelsDirectory(modelsDirectory);
 
                 // Dictionnaire des unités employées
-                xmlNames[2] = ConnectorXMLFile.XML_UNITS_FILE;
+                xmlNames[2] = ConnectorXML.XML_UNITS_FILE;
                 unitsFilePath = baseDir;
-                unitsFilePath += configFile.getAttribute(ConnectorXMLFile.XML_RELATIVE_PATH, xmlNames) + System.IO.Path.DirectorySeparatorChar;
-                unitsFilePath += configFile.getAttribute(ConnectorXMLFile.XML_FILENAME, xmlNames);
+                unitsFilePath += configFile.getAttribute(ConnectorXML.XML_RELATIVE_PATH, xmlNames) + System.IO.Path.DirectorySeparatorChar;
+                unitsFilePath += configFile.getAttribute(ConnectorXML.XML_FILENAME, xmlNames);
 
 
                 // DEBUG
@@ -251,8 +251,8 @@ namespace AeroCalcCore {
 
 
                 // Mode Verbose
-                xmlNames[2] = ConnectorXMLFile.XML_VERBOSE;
-                if (!Boolean.TryParse(configFile.getAttribute(ConnectorXMLFile.XML_ALLOWED, xmlNames),
+                xmlNames[2] = ConnectorXML.XML_VERBOSE;
+                if (!Boolean.TryParse(configFile.getAttribute(ConnectorXML.XML_ALLOWED, xmlNames),
                                       out verboseSetting)) {
                     verboseAllowed = false;
                 }
@@ -279,7 +279,7 @@ namespace AeroCalcCore {
         /// <returns>True si le traitement n'a pas généré d'erreur</returns>
         /// <remarks>DEBUG: Objectif non atteint, on doit pouvoir lister les unités avec filtrage</remarks>
         /// 
-        private bool cmd_LIST_UNITS(AirCalcCommand Cmd) {
+        private bool cmd_LIST_UNITS(AeroCalcCommand Cmd) {
             // Liste des unités enregitrées
             Cmd.setResultText("");
             string msg = "";
@@ -287,7 +287,7 @@ namespace AeroCalcCore {
                 msg += item.ToString() + "\n";
                 Cmd.setResultText(msg);
             }
-            Cmd.postProcess(AirCalcCommand.EVENTCODE_PROCESS_SUCCESSFULL);
+            Cmd.postProcess(AeroCalcCommand.EVENTCODE_PROCESS_SUCCESSFULL);
             return true;
         }
         */
@@ -306,16 +306,16 @@ namespace AeroCalcCore {
         /// 
         ///</remarks>
         /// 
-        private bool cmd_CALCULATE(AirCalcCommand Cmd) {
+        private bool cmd_CALCULATE(AeroCalcCommand Cmd) {
             // Filtre des commandes inexploitables
             if (Cmd == null) {
                 // On ne devrait pas recevoir une référence nulle !
-                Cmd.postProcess(AirCalcCommand.EVENTCODE_PROCESSOR_ERROR);
+                Cmd.postProcess(AeroCalcCommand.EVENTCODE_PROCESSOR_ERROR);
                 return true;
             }
-            if (Cmd.action != AirCalcCommand.ACTION_CALCULATE) {
+            if (Cmd.action != AeroCalcCommand.ACTION_CALCULATE) {
                 // On ne devrait pas recevoir un autre type d'opération qu'un calcul !
-                Cmd.postProcess(AirCalcCommand.EVENTCODE_PROCESSOR_ERROR);
+                Cmd.postProcess(AeroCalcCommand.EVENTCODE_PROCESSOR_ERROR);
                 return true;
             }
             // Initialisation
@@ -327,24 +327,24 @@ namespace AeroCalcCore {
             }
             try {
                 numResult = Container.compute(Cmd.subs[0], factorList);
-            } catch (AirCalcException e) {
+            } catch (AeroCalcException e) {
                 // La commande a échouée pendant le calcul
-                Cmd.setEventCode(AirCalcCommand.EVENTCODE_PROCESSOR_ERROR);
+                Cmd.setEventCode(AeroCalcCommand.EVENTCODE_PROCESSOR_ERROR);
                 // DEBUG, revoir le formatage du message d'erreur, en utilisant aussi la nature de l'exception
                 Cmd.setCommentText("Erreur lors du calcul de " + e.modelName + " : " + e.factor);
             }
             if (!double.IsNaN(numResult)) {
                 // Réussite du calcul
-                Cmd.setEventCode(AirCalcCommand.EVENTCODE_CALCULATE_SUCCESSFULL);
-                Cmd.setCommentText(AirCalcCommand.RESULT_CALCULATE_SUCCESSFULL);
+                Cmd.setEventCode(AeroCalcCommand.EVENTCODE_CALCULATE_SUCCESSFULL);
+                Cmd.setCommentText(AeroCalcCommand.RESULT_CALCULATE_SUCCESSFULL);
                 Cmd.setNumericResult(numResult);
                 Cmd.setResultText(Cmd.rawTxtCommand + " = " + Cmd.numericResult);
             }
                 else {
                 // La commande a échouée
                 // DEBUG revoir les cas ou on peut avoir un résultat NaN sans exception générée
-                Cmd.eventCode = AirCalcCommand.EVENTCODE_UNKNOWN_COMMAND_WORD;
-                Cmd.txtComment = AirCalcCommand.RESULT_ERROR_UNKNOWN_COMMAND_WORD;
+                Cmd.eventCode = AeroCalcCommand.EVENTCODE_UNKNOWN_COMMAND_WORD;
+                Cmd.txtComment = AeroCalcCommand.RESULT_ERROR_UNKNOWN_COMMAND_WORD;
             }
             return true;
         }
@@ -397,8 +397,8 @@ namespace AeroCalcCore {
         public int cmd_STOP_VERBOSE() {
             // Arrêt du mode verbose
             verbose = false;
-            //Cmd.postProcess(AirCalcCommand.EVENTCODE_VERBOSE_INACTIVE);
-            return AirCalcCommand.EVENTCODE_VERBOSE_INACTIVE;
+            //Cmd.postProcess(AeroCalcCommand.EVENTCODE_VERBOSE_INACTIVE);
+            return AeroCalcCommand.EVENTCODE_VERBOSE_INACTIVE;
         }
         */
 
@@ -426,14 +426,14 @@ namespace AeroCalcCore {
                 // Facteur sans unité
                 if (double.TryParse(words[1], out val)) {
                     name = words[0];
-                    unitDictionaryIndex = AirCalc.UNIT_UNDETERMINED;
+                    unitDictionaryIndex = AeroCalc.UNIT_UNDETERMINED;
                 }
             }
             else if (words.Length == 3) {
                 // Facteur avec unité
                 if (double.TryParse(words[1], out val)) {
                     unitDictionaryIndex = Units.getIndexByAlias(words[2]);
-                    if (unitDictionaryIndex != AirCalc.UNIT_UNDETERMINED) {
+                    if (unitDictionaryIndex != AeroCalc.UNIT_UNDETERMINED) {
                         name = words[0];
                     }
                 }
@@ -449,9 +449,9 @@ namespace AeroCalcCore {
 
             string msg = "";
 
-            msg += "************  AirCalc  HELP  ************\n";
+            msg += "************  AeroCalc  HELP  ************\n";
             msg += "Commands:\n";
-            msg += "HELP         : Get some help about AirCalc commands\n";
+            msg += "HELP         : Get some help about AeroCalc commands\n";
             msg += "VERBOSE      : Interpreter issue extended information on command process\n";
             msg += "CONVERT      : Conversion between various units\n";
             msg += "LOAD PERF    : Load flight performance models from current data directory\n";
@@ -460,7 +460,7 @@ namespace AeroCalcCore {
             msg += "CATALOG      : Print all flight performances model names loadable from current\n";
             msg += "data directory\n";
             msg += "\n";
-            msg += "EXIT         : End AirCalc\n";
+            msg += "EXIT         : End AeroCalc\n";
             return msg;
         }
 
@@ -477,7 +477,7 @@ namespace AeroCalcCore {
 
             msg += "*****************************************\n";
             msg += "*                                       *\n";
-            msg += "*            AirCalc2017 CL             *\n";
+            msg += "*            AeroCalc2017 CL             *\n";
             msg += "*                                       *\n";
             msg += "* Flight Performance Computer           *\n";
             msg += "* Command Line version                  *\n";

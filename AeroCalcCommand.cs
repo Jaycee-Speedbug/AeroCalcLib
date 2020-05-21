@@ -11,7 +11,7 @@ namespace AeroCalcCore {
 
 
     /// <summary>
-    /// Classe définissant l'objet commande de travail du processeur AirCalc
+    /// Classe définissant l'objet commande de travail du processeur AeroCalc
     /// Structure utilisée publiquement pour accéder aux différents membres résultants
     /// du traitement de cette commande
     /// 
@@ -118,7 +118,7 @@ namespace AeroCalcCore {
         public const string RESULT_INIT_SUCCESSFULL = "Interprète de commande initialisé avec succès";
 
         public const int EVENTCODE_EXIT_REQUESTED = 10;
-        public const string RESULT_EXIT_REQUESTED = "Fermeture de AirCalc2017...";
+        public const string RESULT_EXIT_REQUESTED = "Fermeture de AeroCalc2017...";
 
         //
         public const int EVENTCODE_INIT_VALUE = 0; // Valeur d'initialisation
@@ -324,7 +324,7 @@ namespace AeroCalcCore {
         /// <param name="resultValue">Valeur numérique calculée, si un calcul a été réalisé.</param>
         /// <param name="resultText">Chaine de caractère contenant la réponse en mode texte.</param>
         /// 
-        public AirCalcCommand(string commandTxt, string commentTxt, int processCodeValue,
+        public AeroCalcCommand(string commandTxt, string commentTxt, int processCodeValue,
                               double resultValue, string resultText) {
             // Simple copie des champs
             rawTxtCommand = commandTxt;
@@ -353,7 +353,7 @@ namespace AeroCalcCore {
         public bool factor(string factorName, out double value) {
             // DEBUG, Définir
             if (factorName.Length == 0) {
-                value = AirCalc.MODEL_DIMENSION_DEFAULT_VALUE;
+                value = AeroCalc.MODEL_DIMENSION_DEFAULT_VALUE;
                 return true;
             }
             int index = this.Factors.FindIndex(x => x.name == factorName);
@@ -477,14 +477,14 @@ namespace AeroCalcCore {
             // Evénements positivement identifiés comme succès
             //
             if (eventCode == EVENTCODE_PROCESS_SUCCESSFULL) {
-                this.eventCode = AirCalcCommand.EVENTCODE_PROCESS_SUCCESSFULL;
+                this.eventCode = AeroCalcCommand.EVENTCODE_PROCESS_SUCCESSFULL;
                 // No change to txtResult, may contain output
-                txtComment = AirCalcCommand.RESULT_PROCESS_SUCCESSFULL;
+                txtComment = AeroCalcCommand.RESULT_PROCESS_SUCCESSFULL;
                 // No change to numericResult, may contain output
             }
             if (eventCode == EVENTCODE_CALCULATE_SUCCESSFULL) {
-                this.eventCode = AirCalcCommand.EVENTCODE_CALCULATE_SUCCESSFULL;
-                this.txtComment = AirCalcCommand.RESULT_CALCULATE_SUCCESSFULL;
+                this.eventCode = AeroCalcCommand.EVENTCODE_CALCULATE_SUCCESSFULL;
+                this.txtComment = AeroCalcCommand.RESULT_CALCULATE_SUCCESSFULL;
             }
             if (eventCode == EVENTCODE_LOAD_MODELS_SUCCESSFULL) {
                 this.eventCode = EVENTCODE_LOAD_MODELS_SUCCESSFULL;
@@ -499,7 +499,7 @@ namespace AeroCalcCore {
                 numericResult = Double.NaN;
             }
             if (eventCode == EVENTCODE_VERBOSE_ACTIVE) {
-                this.eventCode = AirCalcCommand.EVENTCODE_PROCESS_SUCCESSFULL;
+                this.eventCode = AeroCalcCommand.EVENTCODE_PROCESS_SUCCESSFULL;
                 txtResult = RESULT_VERBOSE_ACTIVE;
                 txtComment = "";
                 numericResult = Double.NaN;
@@ -673,7 +673,7 @@ namespace AeroCalcCore {
             try {
                 numResult = Container.compute(subs[0], factorList);
             }
-            catch (AirCalcException e) {
+            catch (AeroCalcException e) {
                 // La commande a échouée pendant le calcul
                 setEventCode(AeroCalcCommand.EVENTCODE_PROCESSOR_ERROR);
                 // DEBUG, revoir le formatage du message d'erreur, en utilisant aussi la nature de l'exception
@@ -691,8 +691,8 @@ namespace AeroCalcCore {
              * else {
                 // La commande a échouée
                 // DEBUG revoir les cas ou on peut avoir un résultat NaN sans exception générée
-                Cmd.eventCode = AirCalcCommand.EVENTCODE_UNKNOWN_COMMAND_WORD;
-                Cmd.txtComment = AirCalcCommand.RESULT_ERROR_UNKNOWN_COMMAND_WORD;
+                Cmd.eventCode = AeroCalcCommand.EVENTCODE_UNKNOWN_COMMAND_WORD;
+                Cmd.txtComment = AeroCalcCommand.RESULT_ERROR_UNKNOWN_COMMAND_WORD;
             }
             */
             return true;
@@ -802,7 +802,7 @@ namespace AeroCalcCore {
                 msg += item.ToString() + "\n";
                 setResultText(msg);
             }
-            //postProcess(AirCalcCommand.EVENTCODE_PROCESS_SUCCESSFULL);
+            //postProcess(AeroCalcCommand.EVENTCODE_PROCESS_SUCCESSFULL);
             eventCode = EVENTCODE_PROCESS_SUCCESSFULL;
             // No change to txtResult, may contain output
             txtComment = RESULT_PROCESS_SUCCESSFULL;
@@ -935,14 +935,14 @@ namespace AeroCalcCore {
                 // Facteur sans unité
                 if (double.TryParse(words[1], out val)) {
                     name = words[0];
-                    unitDictionaryIndex = AirCalc.UNIT_UNDETERMINED;
+                    unitDictionaryIndex = AeroCalc.UNIT_UNDETERMINED;
                 }
             }
             else if (words.Length == 3) {
                 // Facteur avec unité
                 if (double.TryParse(words[1], out val)) {
                     unitDictionaryIndex = Container.dataUnits.getIndexByAlias(words[2]);
-                    if (unitDictionaryIndex != AirCalc.UNIT_UNDETERMINED) {
+                    if (unitDictionaryIndex != AeroCalc.UNIT_UNDETERMINED) {
                         name = words[0];
                     }
                 }

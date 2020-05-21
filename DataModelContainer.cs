@@ -32,7 +32,7 @@ namespace AeroCalcCore {
 
         List<PerfPile> dataModels;
         //ConnectorUnitCSVFile unitsConnector;
-        ConnectorXMLFile xmlConnector;
+        ConnectorXML xmlConnector;
         ConnectorModelCSVFile csvConnector;
 
         private char[] commandSeparator = { ' ' };
@@ -50,7 +50,7 @@ namespace AeroCalcCore {
         public DataModelContainer() {
 
             dataModels = new List<PerfPile>();
-            xmlConnector = new ConnectorXMLFile();
+            xmlConnector = new ConnectorXML();
             csvConnector = new ConnectorModelCSVFile();
 
         }
@@ -179,7 +179,7 @@ namespace AeroCalcCore {
 
                 try {
                     result = Pile.predict(pointFactorValue, serieFactorValue, layerFactorValue);
-                } catch (AirCalcException e) {
+                } catch (AeroCalcException e) {
                     // On récupère d'une exception ou un paramètre est hors du range ou il peut être utilisé
                     // DEBUG les infos de l'exception sont générées directement dans predict()
                     throw;
@@ -362,7 +362,7 @@ namespace AeroCalcCore {
             bool match;
             List<int> perfFunctionIndexes = new List<int>();
 
-            char[] splitters = { AirCalcCommand.CMD_OPERATOR_SPLITTER };
+            char[] splitters = { AeroCalcCommand.CMD_OPERATOR_SPLITTER };
             // Découpe du nom du filtre
             originalFilterSubs = fileNameFilter.Split(splitters, StringSplitOptions.None);
 
@@ -380,7 +380,7 @@ namespace AeroCalcCore {
                 }
 
                 if (originalFilterSubs.Length < functionNameSubs.Length) {
-                    if (fileNameFilter.Contains(AirCalcCommand.CMD_WORD_WHITE_CARD)) {
+                    if (fileNameFilter.Contains(AeroCalcCommand.CMD_WORD_WHITE_CARD)) {
                         // Le filtre comporte moins de mots que le nom de la fonction, mais au moins une WHITE_CARD
                         // Modification des mots du filtre grâce à la WHITE_CARD
                         filterSubs = expendFilter(originalFilterSubs, functionNameSubs.Length);
@@ -393,7 +393,7 @@ namespace AeroCalcCore {
                 // filterSubs comporte maintenant le même nombre de mots que le nom de la fonction
                 match = false;
                 for (int index = 0; index < functionNameSubs.Length; index++) {
-                    if (filterSubs[index].Contains(AirCalcCommand.CMD_WORD_WHITE_CARD) ||
+                    if (filterSubs[index].Contains(AeroCalcCommand.CMD_WORD_WHITE_CARD) ||
                         filterSubs[index].Equals(functionNameSubs[index], StringComparison.InvariantCultureIgnoreCase)) {
                         // Ca match !
                         match = true;
@@ -622,7 +622,7 @@ namespace AeroCalcCore {
 
             // Recherche de la position de la WHITE_CARDS
             for (int count = 0; count < filterSubs.Length; count++) {
-                if (filterSubs[count].Contains(AirCalcCommand.CMD_WORD_WHITE_CARD) && index == -1) {
+                if (filterSubs[count].Contains(AeroCalcCommand.CMD_WORD_WHITE_CARD) && index == -1) {
                     // Première occurence de la WHITE_CARD
                     index = count;
                     break;
@@ -635,10 +635,10 @@ namespace AeroCalcCore {
                 int count = 0;
                 while (count < wordCount) {
                     // Recopie en commençant par le début, et complément des mots manquants par une/des WHITE_CARD
-                    if (filterSubs[filterSubsCount].Contains(AirCalcCommand.CMD_WORD_WHITE_CARD)) {
+                    if (filterSubs[filterSubsCount].Contains(AeroCalcCommand.CMD_WORD_WHITE_CARD)) {
                         // Insertion(s) de WHITE_CARD
                         for (int lcount = 0; lcount <= wordCount - filterSubs.Count(); lcount++) {
-                            expendedFilterSubs[count] = string.Concat(AirCalcCommand.CMD_WORD_WHITE_CARD);
+                            expendedFilterSubs[count] = string.Concat(AeroCalcCommand.CMD_WORD_WHITE_CARD);
                             count++;
                             // L'expension a été réalisée, elle n'est autorisée qu'une seule fois
                             // à la première occurence de white card
