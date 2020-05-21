@@ -414,7 +414,7 @@ namespace AeroCalcCore {
                     }
                     // Test du domaine de calcul
                     if (!isInRange(serieFactorValue)) {
-                        throw new AeroCalcException(AeroCalc.E_SERIE_VALUE_OUT_OF_RANGE, 
+                        throw new ModelException(AeroCalc.E_SERIE_VALUE_OUT_OF_RANGE, 
                                                    this.outputName, "", serieFactorValue);
                     }
                     // Sélection des séries
@@ -430,7 +430,7 @@ namespace AeroCalcCore {
                         output = ps.predict(serieFactorValue);
                     }
                 }
-            } catch (AeroCalcException e) {
+            } catch (ModelException e) {
                 throw e;
             }
             return output;

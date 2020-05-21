@@ -23,13 +23,46 @@ namespace AeroCalcCore {
 
         // Constantes liées aux opérations sur les fichiers
         public const int FILEOP_SUCCESSFUL = 1;
+
+
+        //   T:System.NotSupportedException:
+        //     path is in an invalid format.
         public const int FILEOP_UNKNOWN_ERROR = -1;
+
+
         public const int FILEOP_UNABLE_TO_CREATE_OUTPUT_FILE = -2;
-        public const int FILEOP_UNABLE_TO_READ_INPUT_FILE = -3;
-        public const int FILEOP_UNABLE_TO_ACCESS_INPUT_FILE = -4;
-        public const int FILEOP_INPUT_PATH_DOES_NOT_EXIST = -5;
-        public const int FILEOP_INPUT_FILE_IS_LOCKED = -6;
-        public const int FILEOP_INPUT_FILE_DOES_NOT_EXIST = -7;
+
+
+        //   T:System.IO.IOException:
+        //     An I/O error occurred while opening the file.
+        public const int FILEOP_IO_ERROR = -4;
+
+
+        //   T:System.ArgumentException:
+        //     path is a zero-length string, contains only white space, or contains one or more
+        //     invalid characters as defined by System.IO.Path.InvalidPathChars.
+        //   T:System.ArgumentNullException:
+        //     path is null.
+        //   T:System.IO.PathTooLongException:
+        //     The specified path, file name, or both exceed the system-defined maximum length.
+        //   T:System.IO.DirectoryNotFoundException:
+        //     The specified path is invalid (for example, it is on an unmapped drive).
+        public const int FILEOP_INVALID_PATH = -6;
+
+
+        //   T:System.UnauthorizedAccessException:
+        //     path specified a file that is read-only. -or- This operation is not supported
+        //     on the current platform. -or- path specified a directory. -or- The caller does
+        //     not have the required permission.
+        //   T:System.Security.SecurityException:
+        //     The caller does not have the required permission.
+        public const int FILEOP_INPUT_FILE_IS_LOCKED = -7;
+
+
+        //   T:System.IO.FileNotFoundException:
+        //     The file specified in path was not found.
+        public const int FILEOP_FILE_DOES_NOT_EXIST = -8;
+
 
         // Constantes des types de fichiers gérés
         public const int FILE_TYPE_UNKNOWN = 0;
@@ -131,9 +164,9 @@ namespace AeroCalcCore {
         /// <param name="inputFileAbsolutePath">Chemin absolu du fichier d'entrée</param>
         /// <param name="outputFileAbsolutePath">Chemin absolu du fichier de sortie</param>
         /// 
-        public FileConnector(string workDirectoryPath, 
-                                     string inputFileAbsolutePath, 
-                                     string outputFileAbsolutePath) {
+        public FileConnector(string workDirectoryPath,
+                             string inputFileAbsolutePath, 
+                             string outputFileAbsolutePath) {
             setWorkDirectory(workDirectoryPath);
             setInputFileAbsolutePath(inputFileAbsolutePath);
             setOutputFileAbsolutePath(outputFileAbsolutePath);
@@ -176,9 +209,7 @@ namespace AeroCalcCore {
                 folderAbsolutePath = directoryAbsolutePath;
             }
             if (Directory.Exists(folderAbsolutePath)) {
-                return Directory.EnumerateFiles(folderAbsolutePath, 
-                                                fileNameFilter, 
-                                                SearchOption.AllDirectories);
+                return Directory.EnumerateFiles(folderAbsolutePath, fileNameFilter, SearchOption.AllDirectories);
             }
             else {
                 return new List<string>();
@@ -332,29 +363,32 @@ namespace AeroCalcCore {
         /// 
         protected int readTextFile(string absoluteFilePath, bool commentFiltering) {
 
+            /* TODO à suppr
             // Vérification de la présence du fichier
             if (!File.Exists(absoluteFilePath)) {
-                return FILEOP_INPUT_FILE_DOES_NOT_EXIST;
+                return FILEOP_FILE_DOES_NOT_EXIST;
             }
+            */
             try {
                 // Lecture de toutes les lignes du fichier
                 rawFileLines = File.ReadAllLines(absoluteFilePath, Encoding.UTF8);
-            } catch (ArgumentException e) {
-                return FILEOP_UNKNOWN_ERROR;
-            } catch (PathTooLongException e) {
-                return FILEOP_INPUT_PATH_DOES_NOT_EXIST;
-            } catch (DirectoryNotFoundException e) {
-                return FILEOP_INPUT_PATH_DOES_NOT_EXIST;
-            } catch (IOException e) {
-                return FILEOP_UNABLE_TO_READ_INPUT_FILE;
-            } catch (UnauthorizedAccessException e) {
-                return FILEOP_INPUT_FILE_IS_LOCKED;
-            } catch (NotSupportedException e) {
-                return FILEOP_UNKNOWN_ERROR;
-            } catch (System.Security.SecurityException e) {
-                return FILEOP_INPUT_FILE_IS_LOCKED;
             }
+            catch (Exception e) {
 
+                if (e is ArgumentException) { return FILEOP_INVALID_PATH; }
+                if (e is ArgumentNullException) { return FILEOP_INVALID_PATH; }
+                if (e is PathTooLongException) { return FILEOP_INVALID_PATH; }
+                if (e is DirectoryNotFoundException) { return FILEOP_INVALID_PATH; }
+
+                if (e is IOException) { return FILEOP_IO_ERROR; }
+
+                if (e is UnauthorizedAccessException) { return FILEOP_INPUT_FILE_IS_LOCKED; }
+                if (e is System.Security.SecurityException) { return FILEOP_INPUT_FILE_IS_LOCKED; }
+
+                if (e is System.IO.FileNotFoundException) { return FILEOP_FILE_DOES_NOT_EXIST; }
+
+                if (e is NotSupportedException) { return FILEOP_UNKNOWN_ERROR; }
+            }
             // Filtrage éventuel des commentaires du fichier source
             if (commentFiltering) {
                 if (!filterComments(rawFileLines, fileLines)) {

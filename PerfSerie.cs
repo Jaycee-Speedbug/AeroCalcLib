@@ -266,14 +266,14 @@ namespace AeroCalcCore {
 
             // Test du domaine de calcul
             if (!isInRange(inputValue)) {
-                throw new AeroCalcException(AeroCalc.E_POINT_VALUE_OUT_OF_RANGE, "", "", double.NaN);
+                throw new ModelException(AeroCalc.E_POINT_VALUE_OUT_OF_RANGE, "", "", double.NaN);
             }
 
             // Sélection des points d'intérêt
             selectPoints(inputValue, 3);
             try {
                 return poli.interpolate(inputValue);
-            } catch (AeroCalcException e) {
+            } catch (ModelException e) {
                 throw e;
             }
         }

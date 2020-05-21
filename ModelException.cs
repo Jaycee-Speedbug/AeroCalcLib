@@ -9,7 +9,7 @@ namespace AeroCalcCore {
     /// <summary>
     /// Classe Exception du calculateur AeroCalc
     /// </summary>
-    public class AeroCalcException : Exception {
+    public class ModelException : Exception {
 
         /*
          * CONSTANTES
@@ -60,7 +60,7 @@ namespace AeroCalcCore {
         /// <remarks>
         /// DEBUG, non implémenté pour l'instant
         /// </remarks>
-        public AeroCalcException(String message)
+        public ModelException(String message)
             : base(message) {
             // Rien d'autre
         }
@@ -74,7 +74,7 @@ namespace AeroCalcCore {
         /// <param name="factorName">Nom du facteur en cause, et sa valeur</param>
         /// <remarks>
         /// </remarks>
-        public AeroCalcException(int nature, string modelName, string factorName, double factorValue) {
+        public ModelException(int nature, string modelName, string factorName, double factorValue) {
             this.nature = nature;
             this.modelName = modelName;
             this.factorName = factorName;

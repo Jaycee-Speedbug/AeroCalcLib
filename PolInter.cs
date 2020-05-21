@@ -56,7 +56,7 @@ namespace AeroCalcCore {
 
             // Cas ou aucun point n'est sélectionné
             if (selectedPoints == null) {
-                throw new AeroCalcException(AeroCalc.E_VOID_SYSTEM, "", "", x);
+                throw new ModelException(AeroCalc.E_VOID_SYSTEM, "", "", x);
             }
             // Cas ou un seul point est sélectionné dans la série
             if (selectedPoints.Length == 1) {

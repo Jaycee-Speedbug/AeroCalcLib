@@ -673,7 +673,7 @@ namespace AeroCalcCore {
             try {
                 numResult = Container.compute(subs[0], factorList);
             }
-            catch (AeroCalcException e) {
+            catch (ModelException e) {
                 // La commande a échouée pendant le calcul
                 setEventCode(AeroCalcCommand.EVENTCODE_PROCESSOR_ERROR);
                 // DEBUG, revoir le formatage du message d'erreur, en utilisant aussi la nature de l'exception

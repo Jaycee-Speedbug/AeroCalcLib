@@ -459,7 +459,7 @@ namespace AeroCalcCore {
                     if (!ranged) { setRange(); }
                     // Test du domaine de calcul
                     if (!isInRange(layerFactorValue)) {
-                        throw new AeroCalcException(AeroCalc.E_LAYER_VALUE_OUT_OF_RANGE,
+                        throw new ModelException(AeroCalc.E_LAYER_VALUE_OUT_OF_RANGE,
                                                    this.outputName, this.layerFactorName, layerFactorValue);
                     }
                     // Sélection des layers
@@ -481,17 +481,17 @@ namespace AeroCalcCore {
                         //
                         try {
                             output = ps.predict(layerFactorValue);
-                        } catch (AeroCalcException ee) {
+                        } catch (ModelException ee) {
                             ee.setFactor(layerFactorName, layerFactorValue);
                         }
                     }
                     else {
-                        throw new AeroCalcException(AeroCalc.E_VOID_SYSTEM,
+                        throw new ModelException(AeroCalc.E_VOID_SYSTEM,
                                                    this.outputName, this.layerFactorName, layerFactorValue);
                     }
                 }
             } 
-            catch (AeroCalcException e) {
+            catch (ModelException e) {
                 output = double.NaN;
                 if (e.modelName.Equals("")) {
                     e.setModelName(this.outputName);

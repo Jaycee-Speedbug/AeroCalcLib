@@ -179,7 +179,7 @@ namespace AeroCalcCore {
 
                 try {
                     result = Pile.predict(pointFactorValue, serieFactorValue, layerFactorValue);
-                } catch (AeroCalcException e) {
+                } catch (ModelException e) {
                     // On récupère d'une exception ou un paramètre est hors du range ou il peut être utilisé
                     // DEBUG les infos de l'exception sont générées directement dans predict()
                     throw;
