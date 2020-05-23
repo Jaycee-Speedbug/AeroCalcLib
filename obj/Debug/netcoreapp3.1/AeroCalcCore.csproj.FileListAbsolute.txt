@@ -1,0 +1,9 @@
+/home/jean-christophe/Dev/AeroCalcCore/bin/Debug/netcoreapp3.1/AeroCalcCore.deps.json
+/home/jean-christophe/Dev/AeroCalcCore/bin/Debug/netcoreapp3.1/AeroCalcCore.dll
+/home/jean-christophe/Dev/AeroCalcCore/bin/Debug/netcoreapp3.1/AeroCalcCore.pdb
+/home/jean-christophe/Dev/AeroCalcCore/obj/Debug/netcoreapp3.1/AeroCalcCore.csprojAssemblyReference.cache
+/home/jean-christophe/Dev/AeroCalcCore/obj/Debug/netcoreapp3.1/AeroCalcCore.AssemblyInfoInputs.cache
+/home/jean-christophe/Dev/AeroCalcCore/obj/Debug/netcoreapp3.1/AeroCalcCore.AssemblyInfo.cs
+/home/jean-christophe/Dev/AeroCalcCore/obj/Debug/netcoreapp3.1/AeroCalcCore.csproj.CoreCompileInputs.cache
+/home/jean-christophe/Dev/AeroCalcCore/obj/Debug/netcoreapp3.1/AeroCalcCore.dll
+/home/jean-christophe/Dev/AeroCalcCore/obj/Debug/netcoreapp3.1/AeroCalcCore.pdb

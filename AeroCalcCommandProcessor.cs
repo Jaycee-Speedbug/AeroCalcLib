@@ -22,8 +22,6 @@ namespace AeroCalcCore {
         //private const bool verboseAllowed = true; // Selon la version du code, renseigner la valeur à true pour autoriser le mode Verbose
         private const int SUCCESS = 1;
         private const int NO_SUCCESS = 0;
-        private const string CONFIG_FILE_NAME = "config.xml";   // Seul nom de fichier codé en dur
-        private const string CONFIG_FILE_DIRECTORY = "config";  // Seul nom de dossier codé en dur
 
 
 
@@ -209,48 +207,67 @@ namespace AeroCalcCore {
 
             if (!initialized) {
                 //
-                // Ici, coder l'initialisation
+                // TODO: Ici, coder l'initialisation
                 //
 
                 //bool initSuccessfull = false;
-                string[] xmlNames = { ConnectorXML.XML_APP, ConnectorXML.XML_CONFIG, "" };
+
+                // TODO: Remplacer le code de chargement de la config par l'utilisation d'un objet 
+                bool verboseSetting;
+                string[] xmlNames = { ConnectorXML.XML_NODE_APP, ConnectorXML.XML_NODE_CONFIG, "" };
                 string baseDir = AppDomain.CurrentDomain.BaseDirectory;
-                string configFilePath = baseDir + CONFIG_FILE_DIRECTORY + System.IO.Path.DirectorySeparatorChar + CONFIG_FILE_NAME;
+                string configFilePath = baseDir + AeroCalc.CONFIG_FILE_DIRECTORY + 
+                                                  System.IO.Path.DirectorySeparatorChar + 
+                                                  AeroCalc.CONFIG_FILE_NAME;
+                
                 // DEBUG 
                 System.Console.WriteLine("Configuration file: " + configFilePath);
                 // END DEBUG
-                bool verboseSetting;
 
                 // Lecture et exploitation du fichier XML de configuration
                 ConnectorXML configFile = new ConnectorXML("", configFilePath);
 
                 // Répertoire des modèles de performance
-                xmlNames[2] = ConnectorXML.XML_MODELSDIR;
+                /*
+                xmlNames[2] = ConnectorXML.XML_DIRECTORY;
                 modelsDirectory = baseDir;
                 modelsDirectory += configFile.getAttribute(ConnectorXML.XML_RELATIVE_PATH, xmlNames);
+                */
+                modelsDirectory = baseDir;
+                modelsDirectory += configFile.getValue(ConnectorXML.XML_NODE_DIR, ConnectorXML.XML_ATTR_NAME, ConnectorXML.XML_MODELS);
 
+                // DEBUG 
+                System.Console.WriteLine("Models directory: " + modelsDirectory);
+                // END DEBUG
                 // DEBUG
-                modelsDirectory = AppDomain.CurrentDomain.BaseDirectory + System.IO.Path.DirectorySeparatorChar + "data";
+                // modelsDirectory = AppDomain.CurrentDomain.BaseDirectory + System.IO.Path.DirectorySeparatorChar + "data";
                 // END DEBUG
 
                 Container.setDataModelsDirectory(modelsDirectory);
 
                 // Dictionnaire des unités employées
-                xmlNames[2] = ConnectorXML.XML_UNITS_FILE;
+                /*
+                xmlNames[2] = ConnectorXML.XML_UNITS;
                 unitsFilePath = baseDir;
                 unitsFilePath += configFile.getAttribute(ConnectorXML.XML_RELATIVE_PATH, xmlNames) + System.IO.Path.DirectorySeparatorChar;
-                unitsFilePath += configFile.getAttribute(ConnectorXML.XML_FILENAME, xmlNames);
-
+                unitsFilePath += configFile.getAttribute(ConnectorXML.XML_NODE_FILE, xmlNames);
+                */
 
                 // DEBUG
-                unitsFilePath = modelsDirectory + System.IO.Path.DirectorySeparatorChar + "UnitsDictionary.csv";
+                // unitsFilePath = modelsDirectory + System.IO.Path.DirectorySeparatorChar + "UnitsDictionary.csv";
+                // END DEBUG
+                unitsFilePath = modelsDirectory + 
+                                System.IO.Path.DirectorySeparatorChar + 
+                                configFile.getValue(ConnectorXML.XML_NODE_FILE, ConnectorXML.XML_ATTR_NAME, ConnectorXML.XML_UNITS);
+                // DEBUG 
+                System.Console.WriteLine("Units file: " + unitsFilePath);
                 // END DEBUG
 
                 Container.dataUnits = new ConnectorUnitCSVFile().readFile(unitsFilePath);
                 //Units = new ConnectorUnitCSVFile().readFile(unitsFilePath);
 
-
                 // Mode Verbose
+                /*
                 xmlNames[2] = ConnectorXML.XML_VERBOSE;
                 if (!Boolean.TryParse(configFile.getAttribute(ConnectorXML.XML_ALLOWED, xmlNames),
                                       out verboseSetting)) {
@@ -259,6 +276,20 @@ namespace AeroCalcCore {
                 else {
                     verboseAllowed = verboseSetting ? true : false;
                 }
+                */
+
+                if (!Boolean.TryParse(configFile.getValue(ConnectorXML.XML_NODE_SETTING, 
+                                                          ConnectorXML.XML_ATTR_NAME, 
+                                                          ConnectorXML.XML_VERBOSE_ALLOWED),
+                                      out verboseSetting)) {
+                    verboseAllowed = false;
+                }
+                else {
+                    verboseAllowed = verboseSetting ? true : false;
+                }
+
+
+
                 // Fin du processus d'initialisation
                 //initSuccessfull = true;
                 initialized = true;

@@ -17,20 +17,29 @@ namespace AeroCalcCore
          */
 
         // Constantes des balises XML du fichier de configuration
-        public const string XML_APP = "Application";
-        public const string XML_NAME = "Name";
-        public const string XML_VERSION = "Version";
+        public const string XML_NODE_APP = "Application";
+        public const string XML_NODE_CONFIG = "Configuration";
+        public const string XML_NODE_DIR = "Directory";
+        public const string XML_NODE_FILE = "File";
+        public const string XML_NODE_SETTING = "Setting";
+
+        public const string XML_ATTR_NAME = "name";
+        public const string XML_ATTR_VERSION = "version";
+
+        public const string XML_MODELS = "Models";
+        public const string XML_UNITS = "Units";
         public const string XML_ABSOLUTE_PATH = "AbsolutePath";
         public const string XML_RELATIVE_PATH = "RelativePath";
-        public const string XML_CONFIG = "Configuration";
         public const string XML_DATE = "Date";
-        public const string XML_MODELSDIR = "ModelsDirectory";
-        public const string XML_UNITS_FILE = "UnitsFile";
-        public const string XML_FILENAME = "FileName";
-        public const string XML_UNITS = "Units";
         public const string XML_ENABLE = "Enabled";
         public const string XML_ALLOWED = "Allowed";
         public const string XML_VERBOSE = "Verbose";
+        public const string XML_VERBOSE_ALLOWED = "VerboseAllowed";
+        public const string XML_TRUE = "True";
+        public const string XML_FALSE = "False";
+        
+
+        // Units dictionnary XML formating
         public const string XML_UNIT_DICTIONARY = "Dictionary";
         public const string XML_UNIT_ITEM = "Unit";
         public const string XML_UNIT_NAME = "Name";
@@ -126,12 +135,11 @@ namespace AeroCalcCore
 
 
         /// <summary>
-        /// Renvoie la chaine de caratère correspondant à un attribut situé dans une ligée de noeuds
+        /// Renvoie le contenu d'un attribut d'un noeud situé dans une lignée hyérarchique de noeuds
         /// </summary>
         /// <param name="attributeName">Nom XML de l'attribut à chercher</param>
         /// <param name="nodeNames">
-        /// Tableau de chaines de caractères contenant les noms XML des noeuds
-        /// à examiner.
+        /// Tableau string contenant les noms XML des noeuds à examiner, en ordre hyérarchique.
         /// </param>
         /// <returns>
         /// Chaine contenant l'attribut, ou une chaine vide si l'attribut n'a pas été trouvé
@@ -146,6 +154,66 @@ namespace AeroCalcCore
                 return xe.Attribute(attributeName).Value;
             }
             else return "";
+        }
+
+
+
+        /// <summary>
+        /// Renvoie le contenu d'un noeud situé dans une lignée hyérarchique de noeuds fournie en argument
+        /// </summary>
+        /// <param name="nodeNames">
+        /// Tableau string contenant les noms XML des noeuds à examiner, en ordre hyérarchique.
+        /// </param>
+        /// <returns>
+        /// Chaine contenant l'attribut, ou une chaine vide si l'attribut n'a pas été trouvé
+        /// </returns>
+        /// 
+        public string getValue(string[] nodeNames) {
+            if (xDoc != null && nodeNames != null) {
+                XElement xe = xDoc.Element(nodeNames[0]);
+                for (int index = 1; index < nodeNames.Length; index++) {
+                    xe = xe.Element(nodeNames[index]);
+                }
+                return xe.Value;
+            }
+            else return "";
+        }
+
+
+
+        /// <summary>
+        /// Renvoie le contenu d'un noeud, identifié par le nom du noeud et un attribut de ce noeud  
+        /// </summary>
+        /// <param name="nodeName">
+        /// Nom du noeud
+        /// </param>
+        /// <param name="attributeName">
+        /// Nom de l'attribut
+        /// </param>
+        /// <param name="attributeValue">
+        /// Contenu de l'attribut
+        /// </param>
+        /// <returns>
+        /// Chaine contenant l'attribut, ou une chaine vide si l'attribut n'a pas été trouvé
+        /// </returns>
+        /// 
+        public string getValue(string nodeName, string attributeName, string attributeValue) {
+            if (nodeName != null && attributeName != null && attributeValue != null) {
+                foreach (XElement elemt in xDoc.Descendants())
+                {
+                    if (elemt.Name.LocalName.Equals(nodeName)) {
+                        // Noeud trouvé !
+                        foreach (XAttribute attrib in elemt.Attributes())
+                        {
+                            if (attrib.Name.LocalName.Equals(attributeName) && attrib.Value.Equals(attributeValue)) {
+                                // Attribut trouvé
+                                return elemt.Value;
+                            }
+                        }
+                    }
+                }
+            }
+            return "";
         }
 
 
