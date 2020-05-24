@@ -111,10 +111,10 @@ namespace AeroCalcCore {
         public const int EVENTCODE_CALCULATE_SUCCESSFULL = 200;
         public const string RESULT_CALCULATE_SUCCESSFULL = "Calcul traité avec succès";
 
-        public const int EVENTCODE_PROCESS_SUCCESSFULL = 110;
+        public const int EVENTCODE_PROCESS_SUCCESSFULL = 100;
         public const string RESULT_PROCESS_SUCCESSFULL = "Commande traitée avec succès";
 
-        public const int EVENTCODE_INIT_SUCCESSFULL = 100;
+        public const int EVENTCODE_INIT_SUCCESSFULL = 110;
         public const string RESULT_INIT_SUCCESSFULL = "Interprète de commande initialisé avec succès";
 
         public const int EVENTCODE_EXIT_REQUESTED = 10;
@@ -148,17 +148,17 @@ namespace AeroCalcCore {
         public const int EVENTCODE_UNABLE_VERBOSE_MODIFICATION = -50;
         public const string RESULT_UNABLE_VERBOSE_MODIFICATION = "La modification du mode VERBOSE n'est pas autorisée";
 
-        public const int EVENTCODE_PROCESSOR_ERROR = -101;
+        public const int EVENTCODE_PROCESSOR_ERROR = -100;
         public const string RESULT_ERROR_PROCESSOR_ERROR = "Le traitement de la commande a échoué";
         public const string COMMENT_ERROR_PROCESSOR_ERROR = "Une erreur majeure s'est produite dans le processeur";
 
-        public const int EVENTCODE_MISSING_FACTOR = -102;
+        public const int EVENTCODE_MISSING_FACTOR = -101;
         public const string RESULT_ERROR_MISSING_FACTOR = "Un facteur est manquant pour réaliser le calcul";
 
-        public const int EVENTCODE_MISSING_DATA = -103;
+        public const int EVENTCODE_MISSING_DATA = -102;
         public const string RESULT_ERROR_MISSING_DATA = "Donnée(s) numérique(s) manquante(s) pour réaliser le calcul";
 
-        public const int EVENTCODE_NO_MODEL_LOADED = -501;
+        public const int EVENTCODE_NO_MODEL_LOADED = -500;
         public const string RESULT_ERROR_NO_MODEL_LOADED = "Aucun modèle chargé en mémoire";
         public const string COMMENT_ERROR_NO_MODEL_LOADED = "Le(s) modèle(s) demandé(s) n'ont pas été trouvé dans le répertoire des modèles";
 

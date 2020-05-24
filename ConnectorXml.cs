@@ -17,39 +17,42 @@ namespace AeroCalcCore
          */
 
         // Constantes des balises XML du fichier de configuration
-        public const string XML_NODE_APP = "Application";
-        public const string XML_NODE_CONFIG = "Configuration";
-        public const string XML_NODE_DIR = "Directory";
-        public const string XML_NODE_FILE = "File";
-        public const string XML_NODE_SETTING = "Setting";
+        public const string NODE_APP = "Application";
+        public const string NODE_CONFIG = "Configuration";
+        public const string NODE_DIR = "Directory";
+        public const string NODE_FILE = "File";
+        public const string NODE_SETTING = "Setting";
 
-        public const string XML_ATTR_NAME = "name";
-        public const string XML_ATTR_VERSION = "version";
+        public const string ATTRIB_NAME = "name";
+        public const string ATTRIB_VERSION = "version";
+        public const string ATTRIB_ID = "id";
 
+        public const string MODELS = "Models";
+        public const string UNITS = "Units";
 
-        public const string XML_MODELS = "Models";
-        public const string XML_UNITS = "Units";
-        public const string XML_ABSOLUTE_PATH = "AbsolutePath";
-        public const string XML_RELATIVE_PATH = "RelativePath";
-        public const string XML_DATE = "Date";
-        public const string XML_ENABLE = "Enabled";
-        public const string XML_ALLOWED = "Allowed";
-        public const string XML_VERBOSE = "Verbose";
-        public const string XML_VERBOSE_ALLOWED = "VerboseAllowed";
-        public const string XML_UNITS_ENABLED = "UnitsEnabled";
-        public const string XML_TRUE = "True";
-        public const string XML_FALSE = "False";
+        public const string SCRIPTS = "Scripts";
+        public const string ABSOLUTE_PATH = "AbsolutePath";
+        public const string RELATIVE_PATH = "RelativePath";
+        public const string DATE = "Date";
+        public const string ENABLE = "Enabled";
+        public const string ALLOWED = "Allowed";
+        public const string VERBOSE = "Verbose";
+        public const string VERBOSE_ALLOWED = "VerboseAllowed";
+        public const string UNITS_ENABLED = "UnitsEnabled";
+        public const string LOGGER = "Logger";
+        public const string TRUE = "True";
+        public const string FALSE = "False";
         
 
-        // Units dictionnary XML formating
-        public const string XML_UNIT_DICTIONARY = "Dictionary";
-        public const string XML_UNIT_ITEM = "Unit";
-        public const string XML_UNIT_NAME = "Name";
-        public const string XML_UNIT_DIMENSION = "Dimension";
-        public const string XML_UNIT_ALIAS = "Alias";
-        public const string XML_UNIT_ISREF = "IsRef";
-        public const string XML_UNIT_FACTOR = "Factor";
-        public const string XML_UNIT_CONSTANT = "Constant";
+        // Units dictionnary XML mapping
+        public const string DICTIONARY = "Dictionary";
+        public const string UNIT_ITEM = "Unit";
+        public const string UNIT_NAME = "Name";
+        public const string DIMENSION = "Dimension";
+        public const string ALIAS = "Alias";
+        public const string ISREF = "IsRef";
+        public const string FACTOR = "Factor";
+        public const string CONSTANT = "Constant";
 
 
         /*
@@ -282,12 +285,12 @@ namespace AeroCalcCore
             else {
                 isref = "0";
             }
-            return new XElement(XML_UNIT_ITEM, new XAttribute(XML_UNIT_DIMENSION, u.dimension),
-                                               new XAttribute(XML_UNIT_NAME, u.name),
-                                               new XAttribute(XML_UNIT_ISREF,isref),
-                                               new XAttribute(XML_UNIT_ALIAS,u.alias),
-                                               new XAttribute(XML_UNIT_FACTOR,u.factor),
-                                               new XAttribute(XML_UNIT_CONSTANT,u.constant));
+            return new XElement(UNIT_ITEM, new XAttribute(DIMENSION, u.dimension),
+                                               new XAttribute(UNIT_NAME, u.name),
+                                               new XAttribute(ISREF,isref),
+                                               new XAttribute(ALIAS,u.alias),
+                                               new XAttribute(FACTOR,u.factor),
+                                               new XAttribute(CONSTANT,u.constant));
         }
 
 
@@ -300,7 +303,7 @@ namespace AeroCalcCore
         /// 
         private XElement xmlUnitDictionary(UnitDictionary dico) {
 
-            XElement x = new XElement(XML_UNIT_DICTIONARY);
+            XElement x = new XElement(DICTIONARY);
 
             foreach (UnitItem u in dico.units) {
                 x.Add(xmlUnit(u));

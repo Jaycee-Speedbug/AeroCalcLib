@@ -9,8 +9,8 @@ namespace AeroCalcCore {
 public static class AeroCalc {
 
 
-        public const string CONFIG_FILE_NAME = "config.xml";   // Seul nom de fichier codé en dur
-        public const string CONFIG_FILE_DIRECTORY = "config";  // Seul nom de dossier codé en dur
+        //public const string CONFIG_FILE_NAME = "config.xml";   // Seul nom de fichier codé en dur
+        //public const string CONFIG_FILE_DIRECTORY = "config";  // Seul nom de dossier codé en dur
 
 
         public const int E_DISCRET_VALUE_OUT_OF_RANGE = 1;

@@ -25,6 +25,7 @@ namespace AeroCalcCore {
          */
 
 
+
         /*
          * PROPRIETES
          */
@@ -47,6 +48,7 @@ namespace AeroCalcCore {
 
         public bool verbose {get; private set;}
         public bool verboseAllowed {get; private set;}
+        public bool logger {get; private set;}
 
         public int activeLanguageRef {get; private set;}
 
@@ -56,16 +58,14 @@ namespace AeroCalcCore {
          * CONSTRUCTEUR
          */
 
-        public EnvironmentContext(string configurationFilePath) {
+        public EnvironmentContext(string configurationFileRelativePath) {
             
             appDirectory = AppDomain.CurrentDomain.BaseDirectory;
-            configFilePath = appDirectory + configurationFilePath;
-            configurationDirectory = Path.GetFullPath(configurationFilePath);
-
-            loadConfiguration();
+            configFilePath = appDirectory + configurationFileRelativePath;
+            configurationDirectory = Path.GetFullPath(configFilePath).Substring(0,configFilePath.LastIndexOf(Path.DirectorySeparatorChar));
 
             // Lecture et exploitation du fichier XML de configuration
-            // ConnectorXML configFile = new ConnectorXML("", configurationFilePath);
+            loadConfiguration();
 
         }
 
@@ -90,15 +90,16 @@ namespace AeroCalcCore {
             string msg;
 
             msg = "EnvironmentContext";
-            msg += "\n appDirectory: " + appDirectory;
+            msg += "\n appDirectory          : " + appDirectory;
             msg += "\n configurationDirectory: " + configurationDirectory;
-            msg += "\n configurationFileName: " + configFilePath;
-            msg += "\n unitsFileName: " + unitsFileName;
-            msg += "\n modelsDirectory: " + modelsDirectory;
-            msg += "\n scriptsDirectory: " + scriptsDirectory;
-            msg += "\n verboseAllowed: " + verboseAllowed;
-            msg += "\n verbose: " + verbose;
-            msg += "\n unitsEnabled: " + unitsEnabled;
+            msg += "\n configurationFileName : " + configFilePath;
+            msg += "\n unitsFileName         : " + unitsFileName;
+            msg += "\n modelsDirectory       : " + modelsDirectory;
+            msg += "\n scriptsDirectory      : " + scriptsDirectory;
+            msg += "\n verboseAllowed        : " + verboseAllowed;
+            msg += "\n verbose               : " + verbose;
+            msg += "\n unitsEnabled          : " + unitsEnabled;
+            msg += "\n logger                : " + logger;
 
             return msg;
         }
@@ -111,45 +112,46 @@ namespace AeroCalcCore {
 
         bool loadConfiguration() {
             
-            bool b;
-
             // Lecture et exploitation du fichier XML de configuration
             ConnectorXML configFile = new ConnectorXML("", configFilePath);
             // Fichier des unités de calcul
             unitsFileName = configurationDirectory + 
                             System.IO.Path.DirectorySeparatorChar + 
-                            configFile.getValue(ConnectorXML.XML_NODE_FILE, ConnectorXML.XML_ATTR_NAME, ConnectorXML.XML_UNITS);
+                            configFile.getValue(ConnectorXML.NODE_FILE, ConnectorXML.ATTRIB_NAME, ConnectorXML.UNITS);
             // Dossier des modèles de calcul
             modelsDirectory = appDirectory +
-                              System.IO.Path.DirectorySeparatorChar + 
-                              configFile.getValue(ConnectorXML.XML_NODE_DIR, ConnectorXML.XML_ATTR_NAME, ConnectorXML.XML_MODELS);
+                              configFile.getValue(ConnectorXML.NODE_DIR, ConnectorXML.ATTRIB_NAME, ConnectorXML.MODELS);
+            // Dossier des scripts
+            scriptsDirectory = appDirectory +
+                               configFile.getValue(ConnectorXML.NODE_DIR, ConnectorXML.ATTRIB_NAME, ConnectorXML.SCRIPTS);
+            
+            // Mode VERBOSE ALLOWED
+            verboseAllowed = getBoolValue(configFile, ConnectorXML.NODE_SETTING, ConnectorXML.ATTRIB_NAME, ConnectorXML.VERBOSE_ALLOWED, true);
             // Mode VERBOSE
-            if (!Boolean.TryParse(configFile.getValue(ConnectorXML.XML_NODE_SETTING, 
-                                                      ConnectorXML.XML_ATTR_NAME, 
-                                                      ConnectorXML.XML_VERBOSE_ALLOWED), out b)) {
-                verboseAllowed = false;
-            }
-            else {
-                verboseAllowed = b ? true : false;
-            }
-            if (!Boolean.TryParse(configFile.getValue(ConnectorXML.XML_NODE_SETTING, 
-                                                      ConnectorXML.XML_ATTR_NAME, 
-                                                      ConnectorXML.XML_VERBOSE), out b)) {
-                verbose = false;
-            }
-            else {
-                setVerbose(b);
-            }
+            setVerbose(getBoolValue(configFile, ConnectorXML.NODE_SETTING, ConnectorXML.ATTRIB_NAME, ConnectorXML.VERBOSE, false));
             // Mode UnitsEnabled
-            if (!Boolean.TryParse(configFile.getValue(ConnectorXML.XML_NODE_SETTING, 
-                                                      ConnectorXML.XML_ATTR_NAME, 
-                                                      ConnectorXML.XML_UNITS_ENABLED), out b)) {
-                unitsEnabled = false;
+            unitsEnabled = getBoolValue(configFile, ConnectorXML.NODE_SETTING, ConnectorXML.ATTRIB_NAME, ConnectorXML.UNITS_ENABLED, true);
+            // Mode Logger
+            logger = getBoolValue(configFile, ConnectorXML.NODE_SETTING, ConnectorXML.ATTRIB_NAME, ConnectorXML.LOGGER, true);
+            return true;
+        }
+
+
+
+        /// <summary>
+        /// Return the boolean value of the designated XML field (a node name with an attribute), otherwise the default value
+        /// </summary>
+        bool getBoolValue(ConnectorXML configFile, string nodeName, string attributeName, string attributeValue, bool defaultVal) {
+
+            bool b;
+
+            if (!Boolean.TryParse(configFile.getValue(nodeName, attributeName, attributeValue), out b)) {
+                return defaultVal;
             }
             else {
-                unitsEnabled = b ? true : false;
+                return b;
             }
-            return true;
+
         }
 
     }
