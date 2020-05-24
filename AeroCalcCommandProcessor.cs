@@ -29,21 +29,23 @@ namespace AeroCalcCore {
          * PROPRIETES
          */
 
-        public bool verbose { get; private set; }
+        // public bool verbose { get; private set; }
 
-        public bool verboseAllowed { get; private set; }
+        // public bool verboseAllowed { get; private set; }
 
         public bool initialized { get; private set; }
 
-        public string modelsDirectory { get; private set; }
+        // public string modelsDirectory { get; private set; }
 
-        public bool unitsEnabled { get; private set; }
+        // public bool unitsEnabled { get; private set; }
 
-        public string publicAppVersion { get; private set; }
+        // public string publicAppVersion { get; private set; }
 
-        public string publicAppName { get; private set; }
+        // public string publicAppName { get; private set; }
 
-        public string unitsFilePath { get; private set; }
+        // public string unitsFilePath { get; private set; }
+
+        public EnvironmentContext EnvContext {get; private set;}
 
         public ConnectorScriptFile ScriptConnect { get; private set; }
 
@@ -75,9 +77,21 @@ namespace AeroCalcCore {
             ScriptConnect = new ConnectorScriptFile();
             // Reglage initial du mode verbose
             // DEBUG
-            verbose = true;
+            // verbose = true;
             // Reglage intial du flag initialized
             initialized = false;
+        }
+
+
+
+        public AeroCalcCommandProcessor(string configFileRelativePath) {
+            
+            // Création du container de données de performances
+            Container = new DataModelContainer();
+            // Création de l'objet de connexion aux fichiers de Script
+            ScriptConnect = new ConnectorScriptFile();
+            // Création de l'objet d'environnement
+            EnvContext = new EnvironmentContext(configFileRelativePath);
         }
 
 
@@ -103,7 +117,7 @@ namespace AeroCalcCore {
 
 
 
-            AeroCalcCommand Cmd = new AeroCalcCommand(txtCommand, Container, verbose);
+            AeroCalcCommand Cmd = new AeroCalcCommand(txtCommand, Container, EnvContext.verbose);
 
             
             // Certaines commandes rendent la main pour être traitées ici, dans le processeur
@@ -213,6 +227,11 @@ namespace AeroCalcCore {
                 //bool initSuccessfull = false;
 
                 // TODO: Remplacer le code de chargement de la config par l'utilisation d'un objet 
+                
+                // DEBUG
+                Console.WriteLine(EnvContext.ToString());
+                
+                /*
                 bool verboseSetting;
                 string[] xmlNames = { ConnectorXML.XML_NODE_APP, ConnectorXML.XML_NODE_CONFIG, "" };
                 string baseDir = AppDomain.CurrentDomain.BaseDirectory;
@@ -228,11 +247,9 @@ namespace AeroCalcCore {
                 ConnectorXML configFile = new ConnectorXML("", configFilePath);
 
                 // Répertoire des modèles de performance
-                /*
                 xmlNames[2] = ConnectorXML.XML_DIRECTORY;
                 modelsDirectory = baseDir;
                 modelsDirectory += configFile.getAttribute(ConnectorXML.XML_RELATIVE_PATH, xmlNames);
-                */
                 modelsDirectory = baseDir;
                 modelsDirectory += configFile.getValue(ConnectorXML.XML_NODE_DIR, ConnectorXML.XML_ATTR_NAME, ConnectorXML.XML_MODELS);
 
@@ -256,14 +273,16 @@ namespace AeroCalcCore {
                 // DEBUG
                 // unitsFilePath = modelsDirectory + System.IO.Path.DirectorySeparatorChar + "UnitsDictionary.csv";
                 // END DEBUG
+                /*
                 unitsFilePath = modelsDirectory + 
                                 System.IO.Path.DirectorySeparatorChar + 
                                 configFile.getValue(ConnectorXML.XML_NODE_FILE, ConnectorXML.XML_ATTR_NAME, ConnectorXML.XML_UNITS);
+                */
                 // DEBUG 
-                System.Console.WriteLine("Units file: " + unitsFilePath);
+                // System.Console.WriteLine("Units file: " + unitsFilePath);
                 // END DEBUG
 
-                Container.dataUnits = new ConnectorUnitCSVFile().readFile(unitsFilePath);
+                // Container.dataUnits = new ConnectorUnitCSVFile().readFile(unitsFilePath);
                 //Units = new ConnectorUnitCSVFile().readFile(unitsFilePath);
 
                 // Mode Verbose
@@ -278,6 +297,7 @@ namespace AeroCalcCore {
                 }
                 */
 
+                /*
                 if (!Boolean.TryParse(configFile.getValue(ConnectorXML.XML_NODE_SETTING, 
                                                           ConnectorXML.XML_ATTR_NAME, 
                                                           ConnectorXML.XML_VERBOSE_ALLOWED),
@@ -287,7 +307,7 @@ namespace AeroCalcCore {
                 else {
                     verboseAllowed = verboseSetting ? true : false;
                 }
-
+                */
 
 
                 // Fin du processus d'initialisation
@@ -396,20 +416,20 @@ namespace AeroCalcCore {
 
             Cmd.setNumericResult(double.NaN);
 
-            if (!verboseAllowed) {
+            if (!EnvContext.verboseAllowed) {
                 Cmd.setEventCode(AeroCalcCommand.EVENTCODE_UNABLE_VERBOSE_MODIFICATION);
                 Cmd.setResultText(AeroCalcCommand.RESULT_UNABLE_VERBOSE_MODIFICATION);
             }
             else {
                 if (verboseModeRequested) {
                     // Commande VERBOSE
-                    verbose = true;
+                    EnvContext.setVerbose(true);
                     Cmd.setEventCode(AeroCalcCommand.EVENTCODE_VERBOSE_ACTIVE);
                     Cmd.setResultText(AeroCalcCommand.RESULT_VERBOSE_ACTIVE);
                 }
                 else {
                     // Commande STOP VERBOSE
-                    verbose = false;
+                    EnvContext.setVerbose(false);
                     Cmd.setEventCode(AeroCalcCommand.EVENTCODE_VERBOSE_INACTIVE);
                     Cmd.setResultText(AeroCalcCommand.RESULT_VERBOSE_INACTIVE);
                 }

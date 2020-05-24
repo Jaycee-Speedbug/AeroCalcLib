@@ -26,6 +26,7 @@ namespace AeroCalcCore
         public const string XML_ATTR_NAME = "name";
         public const string XML_ATTR_VERSION = "version";
 
+
         public const string XML_MODELS = "Models";
         public const string XML_UNITS = "Units";
         public const string XML_ABSOLUTE_PATH = "AbsolutePath";
@@ -35,6 +36,7 @@ namespace AeroCalcCore
         public const string XML_ALLOWED = "Allowed";
         public const string XML_VERBOSE = "Verbose";
         public const string XML_VERBOSE_ALLOWED = "VerboseAllowed";
+        public const string XML_UNITS_ENABLED = "UnitsEnabled";
         public const string XML_TRUE = "True";
         public const string XML_FALSE = "False";
         
