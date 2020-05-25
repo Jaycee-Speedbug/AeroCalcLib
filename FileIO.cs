@@ -164,9 +164,7 @@ namespace AeroCalcCore {
         /// <param name="inputFileAbsolutePath">Chemin absolu du fichier d'entrée</param>
         /// <param name="outputFileAbsolutePath">Chemin absolu du fichier de sortie</param>
         /// 
-        public FileIO(string workDirectoryPath,
-                             string inputFileAbsolutePath, 
-                             string outputFileAbsolutePath) {
+        public FileIO(string workDirectoryPath, string inputFileAbsolutePath, string outputFileAbsolutePath) {
             setWorkDirectory(workDirectoryPath);
             setInputFileAbsolutePath(inputFileAbsolutePath);
             setOutputFileAbsolutePath(outputFileAbsolutePath);
@@ -255,6 +253,7 @@ namespace AeroCalcCore {
                     return true;
                 }
             }
+            // TODO: Pb à résoudre ici, un chemin incorect vers un fichier ne conduit pas à une chaine vide !!!!
             inputFileAbsolutePath = "";
             return false;
         }
@@ -301,7 +300,8 @@ namespace AeroCalcCore {
         /// 
         protected int fileType(string fileName) {
 
-            string fileExt = fileName.Substring(fileName.LastIndexOf(".") + 1, fileName.Length);
+            string fileExt = Path.GetExtension(fileName);
+
             if (fileExt.Equals(FILENAME_EXTENSION_XML, StringComparison.InvariantCultureIgnoreCase)) {
                 return FILE_TYPE_XML;
             }
@@ -363,12 +363,6 @@ namespace AeroCalcCore {
         /// 
         protected int readTextFile(string absoluteFilePath, bool commentFiltering) {
 
-            /* TODO à suppr
-            // Vérification de la présence du fichier
-            if (!File.Exists(absoluteFilePath)) {
-                return FILEOP_FILE_DOES_NOT_EXIST;
-            }
-            */
             try {
                 // Lecture de toutes les lignes du fichier
                 rawFileLines = File.ReadAllLines(absoluteFilePath, Encoding.UTF8);
@@ -398,6 +392,31 @@ namespace AeroCalcCore {
             return FILEOP_SUCCESSFUL;
         }
 
+
+
+        protected int checkFile(string absoluteFilePath) {
+
+            try {
+                File.GetAttributes(absoluteFilePath);
+                return FILEOP_SUCCESSFUL;
+            }
+            catch (Exception e) {
+                if (e is ArgumentException) { return FILEOP_INVALID_PATH; }
+                if (e is ArgumentNullException) { return FILEOP_INVALID_PATH; }
+                if (e is PathTooLongException) { return FILEOP_INVALID_PATH; }
+                if (e is DirectoryNotFoundException) { return FILEOP_INVALID_PATH; }
+
+                if (e is IOException) { return FILEOP_IO_ERROR; }
+
+                if (e is UnauthorizedAccessException) { return FILEOP_INPUT_FILE_IS_LOCKED; }
+                if (e is System.Security.SecurityException) { return FILEOP_INPUT_FILE_IS_LOCKED; }
+
+                if (e is System.IO.FileNotFoundException) { return FILEOP_FILE_DOES_NOT_EXIST; }
+
+                if (e is NotSupportedException) { return FILEOP_UNKNOWN_ERROR; }
+                return FILEOP_UNKNOWN_ERROR;
+            }
+        }
 
 
         /// <summary>

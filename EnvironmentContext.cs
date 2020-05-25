@@ -90,7 +90,6 @@ namespace AeroCalcCore {
             if (setConfigFileDir(configurationFileRelativePath))
             {
                 loadConfiguration();
-                
             }
             return status;
         }
@@ -144,33 +143,40 @@ namespace AeroCalcCore {
         }
 
 
-
+        /// Lecture du fichier de configuration
+        /// TODO: Doit assurer le traitement de toutes les exceptions pour retourner un status exploitable
         bool loadConfiguration() {
             
             // Lecture et exploitation du fichier XML de configuration
             XMLFile configFile = new XMLFile("", configFilePath);
-            // Fichier des unités de calcul
-            unitsFileName = configurationDirectory + 
-                            System.IO.Path.DirectorySeparatorChar + 
-                            configFile.getValue(XMLFile.NODE_FILE, XMLFile.ATTRIB_NAME, XMLFile.UNITS);
-            // Dossier des modèles de calcul
-            modelsDirectory = appDirectory +
-                              configFile.getValue(XMLFile.NODE_DIR, XMLFile.ATTRIB_NAME, XMLFile.MODELS);
-            // Dossier des scripts
-            scriptsDirectory = appDirectory +
-                               configFile.getValue(XMLFile.NODE_DIR, XMLFile.ATTRIB_NAME, XMLFile.SCRIPTS);
-            
-            // Mode VERBOSE ALLOWED
-            verboseAllowed = getBoolValue(configFile, XMLFile.NODE_SETTING, XMLFile.ATTRIB_NAME, XMLFile.VERBOSE_ALLOWED, true);
-            // Mode VERBOSE
-            setVerbose(getBoolValue(configFile, XMLFile.NODE_SETTING, XMLFile.ATTRIB_NAME, XMLFile.VERBOSE, false));
-            // Mode UnitsEnabled
-            unitsEnabled = getBoolValue(configFile, XMLFile.NODE_SETTING, XMLFile.ATTRIB_NAME, XMLFile.UNITS_ENABLED, true);
-            // Mode Logger
-            logger = getBoolValue(configFile, XMLFile.NODE_SETTING, XMLFile.ATTRIB_NAME, XMLFile.LOGGER, true);
+            if (configFile.IOStatus == FileIO.FILEOP_SUCCESSFUL) {
+                // Fichier des unités de calcul
+                unitsFileName = configurationDirectory +
+                                System.IO.Path.DirectorySeparatorChar +
+                                configFile.getValue(XMLFile.NODE_FILE, XMLFile.ATTRIB_NAME, XMLFile.UNITS);
+                // Dossier des modèles de calcul
+                modelsDirectory = appDirectory +
+                                  configFile.getValue(XMLFile.NODE_DIR, XMLFile.ATTRIB_NAME, XMLFile.MODELS);
+                // Dossier des scripts
+                scriptsDirectory = appDirectory +
+                                   configFile.getValue(XMLFile.NODE_DIR, XMLFile.ATTRIB_NAME, XMLFile.SCRIPTS);
+
+                // Mode VERBOSE ALLOWED
+                verboseAllowed = getBoolValue(configFile, XMLFile.NODE_SETTING, XMLFile.ATTRIB_NAME, XMLFile.VERBOSE_ALLOWED, true);
+                // Mode VERBOSE
+                setVerbose(getBoolValue(configFile, XMLFile.NODE_SETTING, XMLFile.ATTRIB_NAME, XMLFile.VERBOSE, false));
+                // Mode UnitsEnabled
+                unitsEnabled = getBoolValue(configFile, XMLFile.NODE_SETTING, XMLFile.ATTRIB_NAME, XMLFile.UNITS_ENABLED, true);
+                // Mode Logger
+                logger = getBoolValue(configFile, XMLFile.NODE_SETTING, XMLFile.ATTRIB_NAME, XMLFile.LOGGER, true);
+                status = FileIO.FILEOP_SUCCESSFUL;
+            }
+            else {
+                status = configFile.IOStatus;
+                return false;
+            }
             
             // NO ERROR
-            status = FileIO.FILEOP_SUCCESSFUL;
             return true;
         }
 

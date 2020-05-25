@@ -55,6 +55,7 @@ namespace AeroCalcCore
         public const string CONSTANT = "Constant";
 
 
+
         /*
          * PROPRIETES
          */
@@ -62,7 +63,7 @@ namespace AeroCalcCore
         /// <summary>
         /// Recoit le code de traitement du fichier XML
         /// </summary>
-        public int lastOperationResultCode { get; private set; }
+        public int IOStatus { get; private set; }
 
 
 
@@ -89,16 +90,13 @@ namespace AeroCalcCore
             xDoc = new XDocument();
         }
 
-        public XMLFile(string workDirectoryPath, 
-                                string fileAbsolutePath) : base(workDirectoryPath, fileAbsolutePath) {
+        public XMLFile(string workDirectoryPath, string fileAbsolutePath) : base(workDirectoryPath, fileAbsolutePath) {
             readXmlFile();
         }
 
-        public XMLFile(string workDirectoryPath,
-                                string inputFileAbsolutePath,
-                                string outputFileAbsolutePath) : base(workDirectoryPath, 
-                                                                      inputFileAbsolutePath, 
-                                                                      outputFileAbsolutePath) {
+        public XMLFile(string workDirectoryPath, 
+                       string inputFileAbsolutePath, 
+                       string outputFileAbsolutePath) : base(workDirectoryPath,  inputFileAbsolutePath, outputFileAbsolutePath) {
             readXmlFile();
         }
 
@@ -114,29 +112,43 @@ namespace AeroCalcCore
         /// <param name="absolutePath">Chemin absolu vers le fichier XML</param>
         /// <returns>True en cas de succès, false sinon</returns>
         /// 
+        /*
         public bool readXmlFile(string absolutePath) {
+            
             if (setInputFileAbsolutePath(absolutePath)) {
                 xDoc = XDocument.Load(inputFileAbsolutePath);
                 if (xDoc != null) return true;
             }
             return false;
-        }
+        } */
 
 
-        
+
         /// <summary>
         /// Lit le fichier XML dont le chemin absolu est passé en argument
         /// </summary>
         /// <param name="absolutePath">Chemin absolu vers le fichier XML</param>
         /// <returns>True en cas de succès, false sinon</returns>
         /// 
-        public bool readXmlFile() {
-            if (inputFileExists()) {
+        public int readXmlFile() {
+
+            IOStatus = checkFile(inputFileAbsolutePath);
+
+            if (IOStatus == FILEOP_SUCCESSFUL) {
                 xDoc = XDocument.Load(inputFileAbsolutePath);
-                if (xDoc != null) return true;
+                if (xDoc != null) {
+                    return FILEOP_SUCCESSFUL;
+                }
+                else {
+                    // TODO: Valeur de retour à améliorer
+                    return FILEOP_UNKNOWN_ERROR;
+                }
             }
-            return false;
+            else {
+                return IOStatus;
+            }
         }
+
 
 
         /// <summary>
