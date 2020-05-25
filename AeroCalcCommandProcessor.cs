@@ -29,7 +29,7 @@ namespace AeroCalcCore {
 
         public EnvironmentContext EnvContext {get; private set;}
 
-        public ConnectorScriptFile ScriptConnect { get; private set; }
+        public ScriptFile ScriptConnect { get; private set; }
 
         public DataModelContainer Container { get; private set; }
 
@@ -55,7 +55,9 @@ namespace AeroCalcCore {
             // Création du container de données de performances
             Container = new DataModelContainer();
             // Création de l'objet de connexion aux fichiers de Script
-            ScriptConnect = new ConnectorScriptFile();
+            ScriptConnect = new ScriptFile();
+            // Création de l'objet d'environnement
+            EnvContext = new EnvironmentContext();
             // Reglage intial du flag initialized
             initialized = false;
         }
@@ -66,9 +68,11 @@ namespace AeroCalcCore {
             // Création du container de données de performances
             Container = new DataModelContainer();
             // Création de l'objet de connexion aux fichiers de Script
-            ScriptConnect = new ConnectorScriptFile();
+            ScriptConnect = new ScriptFile();
             // Création de l'objet d'environnement
             EnvContext = new EnvironmentContext(configFileRelativePath);
+            // Reglage intial du flag initialized
+            initialized = false;
         }
 
 
@@ -92,14 +96,14 @@ namespace AeroCalcCore {
             // Une commande complexe (nécessitant l'exécution de plus d'une commande simple) doit
             // d'abord être décomposée
 
-            AeroCalcCommand Cmd = new AeroCalcCommand(txtCommand, Container, EnvContext.verbose);
+            AeroCalcCommand Cmd = new AeroCalcCommand(txtCommand, Container, EnvContext);
 
             // Certaines commandes rendent la main pour être traitées ici, dans le processeur
             switch (Cmd.action) {
 
                 case AeroCalcCommand.ACTION_INIT_INTERPRETER:
                 // Initialisation
-                if (initProcessor()) {
+                if (initProcessor(Cmd)) {
                     Cmd.setEventCode(AeroCalcCommand.EVENTCODE_INIT_SUCCESSFULL);
                     Cmd.setResultText(initMsg());
                 }
@@ -146,13 +150,44 @@ namespace AeroCalcCore {
         /// <param name="Cmd">Commande active</param>
         /// <returns>Etat de réussite de la commande</returns>
         /// 
-        private bool initProcessor() {
+        private bool initProcessor(AeroCalcCommand Cmd) {
+            
+            int loadStatus;
 
             if (!initialized) {
                 //
                 // TODO: Ici, coder l'initialisation
                 //
-                
+                loadStatus = EnvContext.loadConfigFile(Cmd.subs[1]);
+
+                switch (loadStatus)
+                {
+                    case FileIO.FILEOP_SUCCESSFUL:
+                        Cmd.setResultText(AeroCalcCommand.RESULT_INIT_SUCCESSFULL);
+                        Cmd.setCommentText("");
+                        break;
+
+                    case FileIO.FILEOP_INVALID_PATH:
+                        Cmd.setResultText(AeroCalcCommand.RESULT_ERROR_INIT_ERROR_CONFIGFILE_PATH);
+                        Cmd.setCommentText(AeroCalcCommand.COMMENT_ERROR_INIT_CONFIGFILE_PATH);
+                        break;
+
+                    case FileIO.FILEOP_IO_ERROR:
+                        Cmd.setResultText(AeroCalcCommand.RESULT_ERROR_INIT_IO_ERROR);
+                        Cmd.setCommentText(AeroCalcCommand.COMMENT_ERROR_INIT_IO_ERROR);
+                        break;
+
+                    case FileIO.FILEOP_UNKNOWN_ERROR:
+                        Cmd.setResultText(AeroCalcCommand.RESULT_ERROR_INIT_UKN_FILE_ERROR);
+                        Cmd.setCommentText(AeroCalcCommand.COMMENT_ERROR_INIT_UKN_FILE_ERROR);
+                        break;
+
+                    default:
+                        Cmd.setResultText(AeroCalcCommand.RESULT_ERROR_INIT_UKN_FILE_ERROR);
+                        Cmd.setCommentText(AeroCalcCommand.COMMENT_ERROR_INIT_UKN_FILE_ERROR);
+                        break;
+                }
+
                 // DEBUG
                 Console.WriteLine(EnvContext.ToString());
                 

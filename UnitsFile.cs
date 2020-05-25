@@ -17,7 +17,7 @@ namespace AeroCalcCore
     /// Renvoie les données des unités de mesures trouvées dans ces fichiers
     /// </summary>
     /// 
-    class ConnectorUnitCSVFile : ConnectorCSVFile {
+    class UnitsFile : CSVFile {
 
 
         /*
@@ -41,7 +41,7 @@ namespace AeroCalcCore
         /// Constructeur de la classe, simple appel au constructeur de la classe mère
         /// </summary>
         /// 
-        public ConnectorUnitCSVFile() : base() {
+        public UnitsFile() : base() {
 
         }
 

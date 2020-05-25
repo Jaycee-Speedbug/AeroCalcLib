@@ -6,7 +6,7 @@ namespace AeroCalcCore
 
 
 
-    public class ConnectorScriptFile : FileConnector {
+    public class ScriptFile : FileIO {
 
         /*
          * CONSTANTES

@@ -12,7 +12,7 @@ namespace AeroCalcCore {
     /// textes contenues dans un fichier au format CSV.
     /// </summary>
     /// 
-    abstract public class ConnectorCSVFile : FileConnector {
+    abstract public class CSVFile : FileIO {
 
 
         /*
@@ -67,7 +67,7 @@ namespace AeroCalcCore {
         /// 
         /// </summary>
         /// 
-        public ConnectorCSVFile() {
+        public CSVFile() {
             // Défini le tableau de char contenant les séparateurs acceptés
             cellSeparator = new char[] { CELL_SEPARATOR_SEMICOLON, CELL_SEPARATOR_TAB };
             // Défini un tableau de String destiné à contenir les lignes du fichier CSV

@@ -15,7 +15,7 @@ namespace AeroCalcCore {
     /// spécialisés dans la connexion aux fichiers de données textes/XML/JSON...
     /// </summary>
     /// 
-    public abstract class FileConnector {
+    public abstract class FileIO {
 
         /*
          * CONSTANTES
@@ -127,7 +127,7 @@ namespace AeroCalcCore {
          * CONSTRUCTEURS
          */
 
-        public FileConnector() {
+        public FileIO() {
             directoryAbsolutePath = "";
             inputFileAbsolutePath = "";
             outputFileAbsolutePath = "";
@@ -138,7 +138,7 @@ namespace AeroCalcCore {
         /// </summary>
         /// <param name="workDirectoryPath">Chemin absolu du répertoire de travail</param>
         /// 
-        public FileConnector(string workDirectoryPath) {
+        public FileIO(string workDirectoryPath) {
             setWorkDirectory(workDirectoryPath);
             inputFileAbsolutePath = "";
             outputFileAbsolutePath = "";
@@ -150,7 +150,7 @@ namespace AeroCalcCore {
         /// <param name="workDirectoryPath">Chemin absolu du répertoire de travail</param>
         /// <param name="inputFileAbsolutePath">Chemin absolu du fichier d'entrée</param>
         /// 
-        public FileConnector(string workDirectoryPath, string inputFileAbsolutePath) {
+        public FileIO(string workDirectoryPath, string inputFileAbsolutePath) {
             setWorkDirectory(workDirectoryPath);
             setInputFileAbsolutePath(inputFileAbsolutePath);
             outputFileAbsolutePath = "";
@@ -164,7 +164,7 @@ namespace AeroCalcCore {
         /// <param name="inputFileAbsolutePath">Chemin absolu du fichier d'entrée</param>
         /// <param name="outputFileAbsolutePath">Chemin absolu du fichier de sortie</param>
         /// 
-        public FileConnector(string workDirectoryPath,
+        public FileIO(string workDirectoryPath,
                              string inputFileAbsolutePath, 
                              string outputFileAbsolutePath) {
             setWorkDirectory(workDirectoryPath);
@@ -346,7 +346,7 @@ namespace AeroCalcCore {
         /// <summary>
         /// Vérifie l'existance du fichier utilisé en entrée
         /// </summary>
-        /// <returns>Tue si le fichier existe</returns>
+        /// <returns>True si le fichier existe</returns>
         /// 
         protected bool outputFileExists() {
             return File.Exists(outputFileAbsolutePath);

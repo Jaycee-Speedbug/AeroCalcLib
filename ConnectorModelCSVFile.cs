@@ -15,7 +15,7 @@ namespace AeroCalcCore {
     /// Renvoie un modèle de performance de vol sur requète d'un nom de fichier de cette liste
     /// </summary>
     /// 
-    public class ConnectorModelCSVFile : ConnectorCSVFile {
+    public class ModelFile : CSVFile {
 
 
         /*
@@ -56,7 +56,7 @@ namespace AeroCalcCore {
         /// Constructeur de la classe, simple appel au constructeur de la classe mère
         /// </summary>
         /// 
-        public ConnectorModelCSVFile():base() {
+        public ModelFile():base() {
 
         }
 

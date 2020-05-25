@@ -49,23 +49,34 @@ namespace AeroCalcCore {
         public bool verbose {get; private set;}
         public bool verboseAllowed {get; private set;}
         public bool logger {get; private set;}
-
         public int activeLanguageRef {get; private set;}
 
+
+        public int status {get; private set;}
         
 
         /*
          * CONSTRUCTEUR
          */
 
+
+        public EnvironmentContext() {
+            status = 0;
+            appDirectory = AppDomain.CurrentDomain.BaseDirectory;
+        }
+
         public EnvironmentContext(string configurationFileRelativePath) {
             
+            status = 0;
             appDirectory = AppDomain.CurrentDomain.BaseDirectory;
-            configFilePath = appDirectory + configurationFileRelativePath;
-            configurationDirectory = Path.GetFullPath(configFilePath).Substring(0,configFilePath.LastIndexOf(Path.DirectorySeparatorChar));
+
+            if (setConfigFileDir(configurationFileRelativePath)) {
+                loadConfiguration();
+            }
+            //configFilePath = appDirectory + configurationFileRelativePath;
+            //configurationDirectory = Path.GetFullPath(configFilePath).Substring(0,configFilePath.LastIndexOf(Path.DirectorySeparatorChar));
 
             // Lecture et exploitation du fichier XML de configuration
-            loadConfiguration();
 
         }
 
@@ -75,6 +86,18 @@ namespace AeroCalcCore {
          * SERVICES
          */
 
+        public int loadConfigFile(string configurationFileRelativePath) {
+            if (setConfigFileDir(configurationFileRelativePath))
+            {
+                loadConfiguration();
+                
+            }
+            return status;
+        }
+
+
+
+        /// Set VERBOSE according to VerboseAllowed
         public void setVerbose(bool v) {
             if (verboseAllowed) {
                 verbose = v;
@@ -110,29 +133,44 @@ namespace AeroCalcCore {
          * METHODES
          */
 
+        bool setConfigFileDir(string configurationFileRelativePath) {
+            configFilePath = appDirectory + configurationFileRelativePath;
+            try {
+                configurationDirectory = Path.GetFullPath(configFilePath).Substring(0, configFilePath.LastIndexOf(Path.DirectorySeparatorChar));
+            } catch (ArgumentException) {
+                return false;
+            }
+            return true;
+        }
+
+
+
         bool loadConfiguration() {
             
             // Lecture et exploitation du fichier XML de configuration
-            ConnectorXML configFile = new ConnectorXML("", configFilePath);
+            XMLFile configFile = new XMLFile("", configFilePath);
             // Fichier des unités de calcul
             unitsFileName = configurationDirectory + 
                             System.IO.Path.DirectorySeparatorChar + 
-                            configFile.getValue(ConnectorXML.NODE_FILE, ConnectorXML.ATTRIB_NAME, ConnectorXML.UNITS);
+                            configFile.getValue(XMLFile.NODE_FILE, XMLFile.ATTRIB_NAME, XMLFile.UNITS);
             // Dossier des modèles de calcul
             modelsDirectory = appDirectory +
-                              configFile.getValue(ConnectorXML.NODE_DIR, ConnectorXML.ATTRIB_NAME, ConnectorXML.MODELS);
+                              configFile.getValue(XMLFile.NODE_DIR, XMLFile.ATTRIB_NAME, XMLFile.MODELS);
             // Dossier des scripts
             scriptsDirectory = appDirectory +
-                               configFile.getValue(ConnectorXML.NODE_DIR, ConnectorXML.ATTRIB_NAME, ConnectorXML.SCRIPTS);
+                               configFile.getValue(XMLFile.NODE_DIR, XMLFile.ATTRIB_NAME, XMLFile.SCRIPTS);
             
             // Mode VERBOSE ALLOWED
-            verboseAllowed = getBoolValue(configFile, ConnectorXML.NODE_SETTING, ConnectorXML.ATTRIB_NAME, ConnectorXML.VERBOSE_ALLOWED, true);
+            verboseAllowed = getBoolValue(configFile, XMLFile.NODE_SETTING, XMLFile.ATTRIB_NAME, XMLFile.VERBOSE_ALLOWED, true);
             // Mode VERBOSE
-            setVerbose(getBoolValue(configFile, ConnectorXML.NODE_SETTING, ConnectorXML.ATTRIB_NAME, ConnectorXML.VERBOSE, false));
+            setVerbose(getBoolValue(configFile, XMLFile.NODE_SETTING, XMLFile.ATTRIB_NAME, XMLFile.VERBOSE, false));
             // Mode UnitsEnabled
-            unitsEnabled = getBoolValue(configFile, ConnectorXML.NODE_SETTING, ConnectorXML.ATTRIB_NAME, ConnectorXML.UNITS_ENABLED, true);
+            unitsEnabled = getBoolValue(configFile, XMLFile.NODE_SETTING, XMLFile.ATTRIB_NAME, XMLFile.UNITS_ENABLED, true);
             // Mode Logger
-            logger = getBoolValue(configFile, ConnectorXML.NODE_SETTING, ConnectorXML.ATTRIB_NAME, ConnectorXML.LOGGER, true);
+            logger = getBoolValue(configFile, XMLFile.NODE_SETTING, XMLFile.ATTRIB_NAME, XMLFile.LOGGER, true);
+            
+            // NO ERROR
+            status = FileIO.FILEOP_SUCCESSFUL;
             return true;
         }
 
@@ -141,7 +179,7 @@ namespace AeroCalcCore {
         /// <summary>
         /// Return the boolean value of the designated XML field (a node name with an attribute), otherwise the default value
         /// </summary>
-        bool getBoolValue(ConnectorXML configFile, string nodeName, string attributeName, string attributeValue, bool defaultVal) {
+        bool getBoolValue(XMLFile configFile, string nodeName, string attributeName, string attributeValue, bool defaultVal) {
 
             bool b;
 

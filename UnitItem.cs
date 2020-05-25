@@ -87,11 +87,6 @@ namespace AeroCalcCore {
          * INTERFACE
          */
         
-        /*
-        public int Compare(UnitItem a, UnitItem b) {
-        }
-        */
-
 
         
         /*

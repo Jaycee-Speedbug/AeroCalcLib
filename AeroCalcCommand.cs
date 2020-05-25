@@ -12,8 +12,11 @@ namespace AeroCalcCore {
 
     /// <summary>
     /// Classe définissant l'objet commande de travail du processeur AeroCalc
-    /// Structure utilisée publiquement pour accéder aux différents membres résultants
-    /// du traitement de cette commande
+    /// Structure utilisée publiquement pour accéder aux différents membres intervenants
+    /// dans le traitement de cette commande
+    ///
+    /// Il ne doit pas y avoir de manipulation de messages utilisateurs ici, ces
+    /// post traitements sont à réaliser par le processeur
     /// 
     /// </summary>
     public class AeroCalcCommand {
@@ -117,6 +120,8 @@ namespace AeroCalcCore {
         public const int EVENTCODE_INIT_SUCCESSFULL = 110;
         public const string RESULT_INIT_SUCCESSFULL = "Interprète de commande initialisé avec succès";
 
+        public const int EVENTCODE_CMD_HANDOVER = 20;
+
         public const int EVENTCODE_EXIT_REQUESTED = 10;
         public const string RESULT_EXIT_REQUESTED = "Fermeture de AeroCalc2017...";
 
@@ -131,8 +136,21 @@ namespace AeroCalcCore {
         public const int EVENTCODE_REINIT_NOT_ALLOWED = -2;
         public const string RESULT_ERROR_REINIT_NOT_ALLOWED = "Impossible d'initialiser l'interprète une seconde fois";
         public const string COMMENT_ERROR_REINIT_NOT_ALLOWED = "Pour ré-initialiser l'interprète, il est nécessaire de quitter et de relancer le programme";
+        public const int EVENTCODE_ERROR_INIT_CONFIGFILE_PATH = -3;
+        public const string RESULT_ERROR_INIT_ERROR_CONFIGFILE_PATH = "Echec de l'initialisation";
+        public const string COMMENT_ERROR_INIT_CONFIGFILE_PATH = "Le chemin du fichier de configuration n'est pas valide";
+        public const int EVENTCODE_ERROR_INIT_IO_ERROR = -4;
+        public const string RESULT_ERROR_INIT_IO_ERROR = "Echec de l'initialisation";
+        public const string COMMENT_ERROR_INIT_IO_ERROR = "Erreur lors de la lecture du fichier de configuration du processeur";
 
-        public const int EVENTCODE_COMMAND_UNPROCESSED = -3;
+        public const int EVENTCODE_ERROR_INIT_UKN_FILE_ERROR = -5;
+        public const string RESULT_ERROR_INIT_UKN_FILE_ERROR = "Echec de l'initialisation";
+        public const string COMMENT_ERROR_INIT_UKN_FILE_ERROR = "Erreur non reconnue lors de la lecture du fichier de configuration du processeur";
+
+
+
+
+        public const int EVENTCODE_COMMAND_UNPROCESSED = -10;
         public const string RESULT_ERROR_COMMAND_UNPROCESSED = "La commande n'a pas pu être traitée";
 
         public const int EVENTCODE_COMMAND_VOID = -21;
@@ -251,6 +269,7 @@ namespace AeroCalcCore {
         /// </summary>
         private DataModelContainer Container;
 
+        private EnvironmentContext EnvContext;
 
 
         /*
@@ -264,11 +283,10 @@ namespace AeroCalcCore {
         /// <param name="txtCommand">string contenant la commande en mode texte, sans traitement préalable.
         /// </param>
         /// 
-        public AeroCalcCommand(string txtCommand, DataModelContainer DMContainer, bool verbose) {
+        public AeroCalcCommand(string txtCommand, DataModelContainer DMContainer, EnvironmentContext EC) {
             //
             // Initialisation des propriétés
             //
-            //Processor = Proc;
             startOfProcess = new DateTime(DateTime.Now.Ticks, DateTimeKind.Utc);
             action = ACTION_INIT_VALUE;
             txtComment = RESULT_ERROR_COMMAND_UNPROCESSED;
@@ -281,6 +299,7 @@ namespace AeroCalcCore {
             txtResult = RESULT_ERROR_COMMAND_UNPROCESSED;
             Container = DMContainer;
             Factors = new List<CommandFactor>();
+            EnvContext = EC;
 
             if (string.IsNullOrEmpty(txtCommand)) {
                 // Cas particulier de la chaine nulle
@@ -302,7 +321,7 @@ namespace AeroCalcCore {
                 }
                 else {
                     // Commande traitée
-                    if (verbose) {
+                    if (EC.verbose) {
                         verboseMe();
                     }
                 }
@@ -414,114 +433,6 @@ namespace AeroCalcCore {
 
 
 
-        /*
-        /// <summary>
-        /// Remplissage post-traitement des champs de la commande, sur la base d'un EVENTCODE passé en argument
-        /// 
-        /// </summary>
-        /// <param name="eventCode"></param>
-        /// <returns>Etat de l'action</returns>
-        /// <remarks>
-        /// Par principe, un eventCode négatif signifie que l'action n'a pas pu être réalisée
-        /// conformément aux principes de fonctionnement du soft.
-        /// Le message abrégé à renvoyer vers l'utilisateur est contenu dans la propriété txtResult
-        /// Un message étendu peut être enregistré dans la propriété comment
-        /// 
-        /// Un eventCode positif signifie un traitement conforme.
-        /// Le message (texte) à destination de l'utilisateur est contenu dans txtResult
-        /// La propriété comment peut toutefois être utilisée pour apporter des précisions
-        /// </remarks>
-        /// 
-        public bool _postProcess(int eventCode) {
-            //
-            // Evénements de type erreur
-            //
-            if (eventCode == EVENTCODE_PROCESSOR_ERROR) {
-                this.eventCode = eventCode;
-                txtResult = RESULT_ERROR_PROCESSOR_ERROR;
-                txtComment = "";
-                numericResult = Double.NaN;
-            }
-            if (eventCode == EVENTCODE_UNSUPPORTED_COMMAND) {
-                this.eventCode = eventCode;
-                txtResult = COMMENT_ERROR_UNSUPPORTED_COMMAND;
-                txtComment = "";
-                numericResult = Double.NaN;
-            }
-            if (eventCode == EVENTCODE_UNKNOWN_COMMAND_WORD) {
-                //action = ACTION_UNDETERMINED;
-                this.eventCode = EVENTCODE_UNKNOWN_COMMAND_WORD;
-                txtResult = RESULT_ERROR_UNKNOWN_COMMAND_WORD;
-                txtComment = "";
-                numericResult = Double.NaN;
-            }
-            if (eventCode == EVENTCODE_INIT_UNSUCCESSFULL) {
-                this.eventCode = EVENTCODE_INIT_UNSUCCESSFULL;
-                txtResult = RESULT_ERROR_INIT_UNSUCCESSFULL;
-                txtComment = "";
-                numericResult = Double.NaN;
-            }
-            if (eventCode == EVENTCODE_REINIT_NOT_ALLOWED) {
-                this.eventCode = EVENTCODE_REINIT_NOT_ALLOWED;
-                txtResult = RESULT_ERROR_REINIT_NOT_ALLOWED;
-                txtComment = COMMENT_ERROR_REINIT_NOT_ALLOWED;
-                numericResult = Double.NaN;
-            }
-            if (eventCode == EVENTCODE_NO_MODEL_LOADED) {
-                this.eventCode = EVENTCODE_NO_MODEL_LOADED;
-                txtResult = RESULT_ERROR_NO_MODEL_LOADED;
-                txtComment = COMMENT_ERROR_NO_MODEL_LOADED;
-                numericResult = Double.NaN;
-            }
-            //
-            // Evénements positivement identifiés comme succès
-            //
-            if (eventCode == EVENTCODE_PROCESS_SUCCESSFULL) {
-                this.eventCode = AeroCalcCommand.EVENTCODE_PROCESS_SUCCESSFULL;
-                // No change to txtResult, may contain output
-                txtComment = AeroCalcCommand.RESULT_PROCESS_SUCCESSFULL;
-                // No change to numericResult, may contain output
-            }
-            if (eventCode == EVENTCODE_CALCULATE_SUCCESSFULL) {
-                this.eventCode = AeroCalcCommand.EVENTCODE_CALCULATE_SUCCESSFULL;
-                this.txtComment = AeroCalcCommand.RESULT_CALCULATE_SUCCESSFULL;
-            }
-            if (eventCode == EVENTCODE_LOAD_MODELS_SUCCESSFULL) {
-                this.eventCode = EVENTCODE_LOAD_MODELS_SUCCESSFULL;
-                txtResult = RESULT_LOAD_MODELS_SUCCESSFULL;
-                txtComment = "";
-                numericResult = Double.NaN;
-            }
-            if (eventCode == EVENTCODE_HELP_REQUESTED) {
-                this.eventCode = EVENTCODE_PROCESS_SUCCESSFULL;
-                txtResult = help();
-                txtComment = "";
-                numericResult = Double.NaN;
-            }
-            if (eventCode == EVENTCODE_VERBOSE_ACTIVE) {
-                this.eventCode = AeroCalcCommand.EVENTCODE_PROCESS_SUCCESSFULL;
-                txtResult = RESULT_VERBOSE_ACTIVE;
-                txtComment = "";
-                numericResult = Double.NaN;
-            }
-            if (eventCode == EVENTCODE_VERBOSE_INACTIVE) {
-                this.eventCode = EVENTCODE_PROCESS_SUCCESSFULL;
-                txtResult = RESULT_VERBOSE_INACTIVE;
-                txtComment = "";
-                numericResult = Double.NaN;
-            }
-            if (eventCode == EVENTCODE_INIT_SUCCESSFULL) {
-                this.eventCode = EVENTCODE_INIT_SUCCESSFULL;
-                txtResult = initMsg();
-                txtComment = RESULT_INIT_SUCCESSFULL;
-                numericResult = Double.NaN;
-            }
-            return true;
-        }
-        */
-
-
-
         /// <summary>
         /// Analyse la requête texte pour définir l'action à réaliser, puis lance l'action
         /// </summary>
@@ -552,7 +463,8 @@ namespace AeroCalcCore {
 
                 if (subs[0].Equals(CMD_WORD_VERBOSE, StrCompOpt)) {
                     action = ACTION_VERBOSE;
-                    cmd_VERBOSE(true);
+                    eventCode = EVENTCODE_CMD_HANDOVER;
+                    //cmd_VERBOSE(true);
                 }
 
                 if (subs[0].Equals(CMD_WORD_CATALOG, StrCompOpt)) {
@@ -582,16 +494,17 @@ namespace AeroCalcCore {
                     cmd_HELP();
                 }
 
-                if (subs[0].Equals(CMD_WORD_INIT_INTERPRETER, StrCompOpt)) {
-                    // Action laissée au processeur
-                    action = ACTION_INIT_INTERPRETER;
-                    cmd_INIT();
-                }
-
             }
 
             // Commandes à mots multiples
             if (subs.Length >= 2) {
+
+                if (subs[0].Equals(CMD_WORD_INIT_INTERPRETER, StrCompOpt))
+                {
+                    // Action laissée au processeur
+                    action = ACTION_INIT_INTERPRETER;
+                    cmd_INIT();
+                }
 
                 if (subs[0].Equals(CMD_WORD_LOAD, StrCompOpt)) {
                     if (subs[1].Equals(CMD_WORD_MODEL, StrCompOpt)) {
@@ -625,7 +538,7 @@ namespace AeroCalcCore {
                     subs[1].Equals(CMD_WORD_VERBOSE, StrCompOpt)) {
                     // Action laissée au processeur
                     action = ACTION_STOP_VERBOSE;
-                    cmd_VERBOSE(false);
+                    //cmd_VERBOSE(false);
                 }
 
                 if (subs[0].Equals(CMD_WORD_SCRIPTFILE, StrCompOpt)) {
@@ -712,10 +625,10 @@ namespace AeroCalcCore {
 
 
         private bool cmd_EXIT() {
-            numericResult = double.NaN;
+            // Commande traitée par le processeur
             txtResult = RESULT_EXIT_REQUESTED;
             txtComment = "";
-            eventCode = EVENTCODE_PROCESS_SUCCESSFULL;
+            eventCode = EVENTCODE_CMD_HANDOVER;
             return true;
         }
 
@@ -725,7 +638,7 @@ namespace AeroCalcCore {
             // Commande traitée par le processeur
             numericResult = double.NaN;
             txtComment = "";
-            eventCode = EVENTCODE_PROCESS_SUCCESSFULL;
+            eventCode = EVENTCODE_CMD_HANDOVER;
             return true;
         }
 
@@ -733,28 +646,11 @@ namespace AeroCalcCore {
 
         private bool cmd_INIT() {
             // Commande traitée par le processeur
-            /*
-            if (!Processor.initialized) {
-                if (Processor.initProcessor()) {
-                    eventCode = EVENTCODE_INIT_SUCCESSFULL;
-                    txtResult = RESULT_INIT_SUCCESSFULL;
-                    txtComment = "";
-                    numericResult = Double.NaN;
-                }
-                else {
-                    // Echec de l'initialisation
-                    eventCode = EVENTCODE_INIT_UNSUCCESSFULL;
-                    txtResult = RESULT_ERROR_INIT_UNSUCCESSFULL;
-                    txtComment = "";
-                }
-            }
-            else {
-                eventCode = EVENTCODE_REINIT_NOT_ALLOWED;
-                txtResult = RESULT_ERROR_REINIT_NOT_ALLOWED;
-                txtComment = COMMENT_ERROR_REINIT_NOT_ALLOWED;
-                numericResult = Double.NaN;
-            }
-            */
+            numericResult = double.NaN;
+            txtResult="";
+            txtComment = "";
+            eventCode = EVENTCODE_CMD_HANDOVER;
+
             return true;
         }
 
@@ -876,10 +772,10 @@ namespace AeroCalcCore {
 
 
 
-        
+        /*
         private bool cmd_VERBOSE(bool verboseMode) {
             // Commande traitée par le processeur
-            /*
+            
             numericResult = double.NaN;
             if (!Processor.verboseAllowed) {
                 eventCode = EVENTCODE_UNABLE_VERBOSE_MODIFICATION;
@@ -907,10 +803,10 @@ namespace AeroCalcCore {
                     }
                 }
             }
-            */
+            
             return true;
         }
-
+        */
 
 
         /// <summary>

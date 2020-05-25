@@ -188,23 +188,6 @@ namespace AeroCalcCore {
 
 
         /*
-        /// <summary>
-        /// Réalise le chargement du fichier des unités
-        /// </summary>
-        /// <param name="absoluteFilePath">Chemin absolu vers le fichier d'unités</param>
-        /// <returns>True, en cas de succès du chargement</returns>
-        /// 
-        public bool loadUnits(string absoluteFilePath)
-        {
-            UnitCSVFileConnector connector = new UnitCSVFileConnector();
-            connector.
-            return true;
-        }
-        */
-
-
-
-        /*
          * METHODES
          */
 

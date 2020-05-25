@@ -32,8 +32,8 @@ namespace AeroCalcCore {
 
         List<PerfPile> dataModels;
         //ConnectorUnitCSVFile unitsConnector;
-        ConnectorXML xmlConnector;
-        ConnectorModelCSVFile csvConnector;
+        XMLFile xmlConnector;
+        ModelFile csvConnector;
 
         private char[] commandSeparator = { ' ' };
 
@@ -50,8 +50,8 @@ namespace AeroCalcCore {
         public DataModelContainer() {
 
             dataModels = new List<PerfPile>();
-            xmlConnector = new ConnectorXML();
-            csvConnector = new ConnectorModelCSVFile();
+            xmlConnector = new XMLFile();
+            csvConnector = new ModelFile();
 
         }
 
@@ -210,7 +210,7 @@ namespace AeroCalcCore {
                         foundIndex = count;
                     }
                     else {
-                        // Déjà plusieurs occurence
+                        // Déjà plusieurs occurences
                     }
                     foundIndex--;
                 }

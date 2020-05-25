@@ -10,7 +10,7 @@ namespace AeroCalcCore
     /// <summary>
     /// Classe de conversion d'un fichier .csv en fichier de performances de vol XML
     /// </summary>
-    public class ConnectorXML : FileConnector {
+    public class XMLFile : FileIO {
 
         /*
          * CONSTANTES
@@ -81,20 +81,20 @@ namespace AeroCalcCore
          * CONSTRUCTEURS
          */
 
-        public ConnectorXML() : base() {
+        public XMLFile() : base() {
             xDoc = new XDocument();
         }
 
-        public ConnectorXML(string workDirectoryPath) : base(workDirectoryPath) {
+        public XMLFile(string workDirectoryPath) : base(workDirectoryPath) {
             xDoc = new XDocument();
         }
 
-        public ConnectorXML(string workDirectoryPath, 
+        public XMLFile(string workDirectoryPath, 
                                 string fileAbsolutePath) : base(workDirectoryPath, fileAbsolutePath) {
             readXmlFile();
         }
 
-        public ConnectorXML(string workDirectoryPath,
+        public XMLFile(string workDirectoryPath,
                                 string inputFileAbsolutePath,
                                 string outputFileAbsolutePath) : base(workDirectoryPath, 
                                                                       inputFileAbsolutePath, 
@@ -241,7 +241,7 @@ namespace AeroCalcCore
             XDocument xmlPerfDoc = new XDocument();
             xmlPerfDoc.AddFirst(xmlPerfPile(pp));
             xmlPerfDoc.Save(xmlFileAbsolutePath);
-            return ConnectorXML.FILEOP_SUCCESSFUL;
+            return XMLFile.FILEOP_SUCCESSFUL;
         }
 
 
@@ -260,7 +260,7 @@ namespace AeroCalcCore
             XDocument xmlUnitsDoc = new XDocument();
             xmlUnitsDoc.AddFirst(xmlUnitDictionary(ud));
             xmlUnitsDoc.Save(xmlFileAbsolutePath);
-            return ConnectorXML.FILEOP_SUCCESSFUL;
+            return XMLFile.FILEOP_SUCCESSFUL;
         }
 
 
