@@ -143,6 +143,7 @@ namespace AeroCalcCore {
         }
 
 
+
         /// Lecture du fichier de configuration
         /// TODO: Doit assurer le traitement de toutes les exceptions pour retourner un status exploitable
         bool loadConfiguration() {
@@ -169,6 +170,7 @@ namespace AeroCalcCore {
                 unitsEnabled = getBoolValue(configFile, XMLFile.NODE_SETTING, XMLFile.ATTRIB_NAME, XMLFile.UNITS_ENABLED, true);
                 // Mode Logger
                 logger = getBoolValue(configFile, XMLFile.NODE_SETTING, XMLFile.ATTRIB_NAME, XMLFile.LOGGER, true);
+
                 status = FileIO.FILEOP_SUCCESSFUL;
             }
             else {

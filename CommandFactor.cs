@@ -9,47 +9,39 @@ namespace AeroCalcCore {
     public class CommandFactor : IEquatable<CommandFactor> {
 
         // Properties
-        public string name {
-            get;
-            private set;
-        }
+        public string name { get; private set; }
 
-        public double value {
-            get;
-            private set;
-        }
+        public double value { get; private set; }
 
-        public int unitCode {
-            get;
-            private set;
-        }
+
+        public int unitCode { get; private set; }
+
 
         /*
          * Constructors
          */
 
         public CommandFactor(string factorName, double factorValue, int factorUnitCode) {
-            this.name = factorName.ToUpper();
-            this.value = factorValue;
-            this.unitCode = factorUnitCode;
+            name = factorName.ToUpper();
+            value = factorValue;
+            unitCode = factorUnitCode;
         }
 
         public CommandFactor(string factor) {
 
-            //string name = "";
-            //int unitDictionaryIndex = 0;
             double val;
-            this.name = "";
+            name = "";
 
             // DEBUG les séparateurs ne doivent pas être locaux
-            char[] separators = { '=', ':' };
+            // char[] separators = { '=', ':' };
+            char[] separators = { AeroCalcCommand.CMD_OPERATOR_AFFECT, AeroCalcCommand.CMD_OPERATOR_UNIT };
             string[] subStrings = factor.Split(separators);
 
             if (subStrings.Length == 2) {
                 // Facteur sans unité
                 if (double.TryParse(subStrings[1], out val)) {
-                    this.name = subStrings[0];
-                    this.value = val;
+                    name = subStrings[0];
+                    value = val;
                     unitCode = AeroCalc.UNIT_UNDETERMINED;
                 }
                 else {
@@ -60,8 +52,8 @@ namespace AeroCalcCore {
             else if (subStrings.Length == 3) {
                 // Facteur avec unité
                 if (double.TryParse(subStrings[1], out val)) {
-                    this.name = subStrings[0];
-                    this.value = val;
+                    name = subStrings[0];
+                    value = val;
                     /// <remarks>
                     /// DEBUG, à modifier une fois la gestion des unités implémentée
                     /// </remarks>
@@ -79,11 +71,11 @@ namespace AeroCalcCore {
             }
             else {
                 // Le facteur ne répond pas à un format connu, on 
-                this.value = double.NaN;
-                this.unitCode = AeroCalc.UNIT_UNDETERMINED;
+                value = double.NaN;
+                unitCode = AeroCalc.UNIT_UNDETERMINED;
             }
             // Les noms des facteurs doivent être exprimés en majuscules
-            this.name = this.name.ToUpper();
+            name = name.ToUpper();
         }
 
 
@@ -97,7 +89,7 @@ namespace AeroCalcCore {
             if (cmdFactor == null) {
                 return false;
             }
-            return this.name.Equals(cmdFactor.name);
+            return name.Equals(cmdFactor.name);
         }
     }
 }
