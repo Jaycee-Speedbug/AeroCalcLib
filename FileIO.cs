@@ -2,11 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
+using System.Security;
 using System.Globalization;
 
 
 
-namespace AeroCalcCore {
+namespace AeroCalcCore
+{
 
 
 
@@ -15,11 +17,12 @@ namespace AeroCalcCore {
     /// spécialisés dans la connexion aux fichiers de données textes/XML/JSON...
     /// </summary>
     /// 
-    public abstract class FileIO {
+    public abstract class FileIO
+    {
 
         /*
          * CONSTANTES
-         */ 
+         */
 
         // Constantes liées aux opérations sur les fichiers
         public const int FILEOP_SUCCESSFUL = 1;
@@ -104,12 +107,12 @@ namespace AeroCalcCore {
 
         /*
          * PROPRIETES
-         */ 
+         */
 
         /// <summary>
         /// Chemin du répertoire contenant les fichiers utilisés
         /// </summary>
-        public string directoryAbsolutePath { get; protected set;}
+        public string directoryAbsolutePath { get; protected set; }
 
         /// <summary>
         /// Chemin du fichier utilisé en entrée
@@ -127,7 +130,8 @@ namespace AeroCalcCore {
          * CONSTRUCTEURS
          */
 
-        public FileIO() {
+        public FileIO()
+        {
             directoryAbsolutePath = "";
             inputFileAbsolutePath = "";
             outputFileAbsolutePath = "";
@@ -138,7 +142,8 @@ namespace AeroCalcCore {
         /// </summary>
         /// <param name="workDirectoryPath">Chemin absolu du répertoire de travail</param>
         /// 
-        public FileIO(string workDirectoryPath) {
+        public FileIO(string workDirectoryPath)
+        {
             setWorkDirectory(workDirectoryPath);
             inputFileAbsolutePath = "";
             outputFileAbsolutePath = "";
@@ -150,7 +155,8 @@ namespace AeroCalcCore {
         /// <param name="workDirectoryPath">Chemin absolu du répertoire de travail</param>
         /// <param name="inputFileAbsolutePath">Chemin absolu du fichier d'entrée</param>
         /// 
-        public FileIO(string workDirectoryPath, string inputFileAbsolutePath) {
+        public FileIO(string workDirectoryPath, string inputFileAbsolutePath)
+        {
             setWorkDirectory(workDirectoryPath);
             setInputFileAbsolutePath(inputFileAbsolutePath);
             outputFileAbsolutePath = "";
@@ -164,7 +170,8 @@ namespace AeroCalcCore {
         /// <param name="inputFileAbsolutePath">Chemin absolu du fichier d'entrée</param>
         /// <param name="outputFileAbsolutePath">Chemin absolu du fichier de sortie</param>
         /// 
-        public FileIO(string workDirectoryPath, string inputFileAbsolutePath, string outputFileAbsolutePath) {
+        public FileIO(string workDirectoryPath, string inputFileAbsolutePath, string outputFileAbsolutePath)
+        {
             setWorkDirectory(workDirectoryPath);
             setInputFileAbsolutePath(inputFileAbsolutePath);
             setOutputFileAbsolutePath(outputFileAbsolutePath);
@@ -182,9 +189,11 @@ namespace AeroCalcCore {
         /// </summary>
         /// <param name="lines">Tableau de String</param>
         /// 
-        public void setFileLines(string[] lines) {
+        public void setFileLines(string[] lines)
+        {
             int count = 0;
-            while (count < lines.Length) {
+            while (count < lines.Length)
+            {
                 fileLines.Add(lines[count]);
                 count++;
             }
@@ -201,15 +210,19 @@ namespace AeroCalcCore {
         /// <param name="fileNameFilter">Filtre des noms de fichiers</param>
         /// <returns></returns>
         /// 
-        public IEnumerable<string> filesList(string folderAbsolutePath, string fileNameFilter) {
+        public IEnumerable<string> filesList(string folderAbsolutePath, string fileNameFilter)
+        {
 
-            if (folderAbsolutePath == "") {
+            if (folderAbsolutePath == "")
+            {
                 folderAbsolutePath = directoryAbsolutePath;
             }
-            if (Directory.Exists(folderAbsolutePath)) {
+            if (Directory.Exists(folderAbsolutePath))
+            {
                 return Directory.EnumerateFiles(folderAbsolutePath, fileNameFilter, SearchOption.AllDirectories);
             }
-            else {
+            else
+            {
                 return new List<string>();
             }
         }
@@ -222,9 +235,12 @@ namespace AeroCalcCore {
         /// </summary>
         /// <param name="absolutePath"></param>
         /// <returns></returns>
-        public bool setWorkDirectory(string absolutePath) {
-            if (!string.IsNullOrEmpty(absolutePath)) {
-                if (Directory.Exists(absolutePath)) {
+        public bool setWorkDirectory(string absolutePath)
+        {
+            if (!string.IsNullOrEmpty(absolutePath))
+            {
+                if (Directory.Exists(absolutePath))
+                {
                     // Le Directory proposé existe, on l'enregistre en temps que Directory de travail
                     directoryAbsolutePath = absolutePath;
                     return true;
@@ -245,9 +261,12 @@ namespace AeroCalcCore {
         /// 
         /// </remarks>
         /// 
-        public bool setInputFileAbsolutePath(string absolutePath) {
-            if (!string.IsNullOrEmpty(absolutePath)) {
-                if (File.Exists(absolutePath)) {
+        public bool setInputFileAbsolutePath(string absolutePath)
+        {
+            if (!string.IsNullOrEmpty(absolutePath))
+            {
+                if (File.Exists(absolutePath))
+                {
                     // Le fichier proposé existe, on l'enregistre en temps que fichier d'entrée
                     inputFileAbsolutePath = absolutePath;
                     return true;
@@ -269,9 +288,12 @@ namespace AeroCalcCore {
         /// 
         /// </remarks>
         /// 
-        public bool setOutputFileAbsolutePath(string absolutePath) {
-            if (!string.IsNullOrEmpty(absolutePath)) {
-                if (File.Exists(absolutePath)) {
+        public bool setOutputFileAbsolutePath(string absolutePath)
+        {
+            if (!string.IsNullOrEmpty(absolutePath))
+            {
+                if (File.Exists(absolutePath))
+                {
                     // Le fichier proposé existe, on l'enregistre en temps que fichier d'entrée
                     outputFileAbsolutePath = absolutePath;
                     return true;
@@ -286,7 +308,7 @@ namespace AeroCalcCore {
         /*
          *  METHODS
          */
-        
+
         /// <summary>
         /// Retourne un int désignant le type de fichier identifié, sur la simple base de l'extension de nom
         /// </summary>
@@ -298,20 +320,25 @@ namespace AeroCalcCore {
         /// DEBUG: A améliorer pour inclure des vérifications plus poussées
         /// </remarks>
         /// 
-        protected int fileType(string fileName) {
+        protected int fileType(string fileName)
+        {
 
             string fileExt = Path.GetExtension(fileName);
 
-            if (fileExt.Equals(FILENAME_EXTENSION_XML, StringComparison.InvariantCultureIgnoreCase)) {
+            if (fileExt.Equals(FILENAME_EXTENSION_XML, StringComparison.InvariantCultureIgnoreCase))
+            {
                 return FILE_TYPE_XML;
             }
-            if (fileExt.Equals(FILENAME_EXTENSION_CSV, StringComparison.InvariantCultureIgnoreCase)) {
+            if (fileExt.Equals(FILENAME_EXTENSION_CSV, StringComparison.InvariantCultureIgnoreCase))
+            {
                 return FILE_TYPE_CSV;
             }
-            if (fileExt.Equals(FILENAME_EXTENSION_SCRIPT, StringComparison.InvariantCultureIgnoreCase)) {
+            if (fileExt.Equals(FILENAME_EXTENSION_SCRIPT, StringComparison.InvariantCultureIgnoreCase))
+            {
                 return FILE_TYPE_SCRIPT;
             }
-            if (fileExt.Equals(FILENAME_EXTENSION_JSON, StringComparison.InvariantCultureIgnoreCase)) {
+            if (fileExt.Equals(FILENAME_EXTENSION_JSON, StringComparison.InvariantCultureIgnoreCase))
+            {
                 return FILE_TYPE_JSON;
             }
             return FILE_TYPE_UNKNOWN;
@@ -326,7 +353,8 @@ namespace AeroCalcCore {
         /// Bool, True si le répertoire existe, False sinon
         /// </returns>
         /// 
-        protected bool workDirExists() {
+        protected bool workDirExists()
+        {
             return Directory.Exists(directoryAbsolutePath);
         }
 
@@ -337,7 +365,8 @@ namespace AeroCalcCore {
         /// </summary>
         /// <returns>Tue si le fichier existe</returns>
         /// 
-        protected bool inputFileExists() {
+        protected bool inputFileExists()
+        {
             return File.Exists(inputFileAbsolutePath);
         }
 
@@ -348,7 +377,8 @@ namespace AeroCalcCore {
         /// </summary>
         /// <returns>True si le fichier existe</returns>
         /// 
-        protected bool outputFileExists() {
+        protected bool outputFileExists()
+        {
             return File.Exists(outputFileAbsolutePath);
         }
 
@@ -361,13 +391,16 @@ namespace AeroCalcCore {
         /// <param name="commentFiltering">True pour filtrer les lignes de commentaires</param>
         /// <returns>Code d'erreur résultant de l'opération de lecture</returns>
         /// 
-        protected int readTextFile(string absoluteFilePath, bool commentFiltering) {
+        protected int readTextFile(string absoluteFilePath, bool commentFiltering)
+        {
 
-            try {
+            try
+            {
                 // Lecture de toutes les lignes du fichier
                 rawFileLines = File.ReadAllLines(absoluteFilePath, Encoding.UTF8);
             }
-            catch (Exception e) {
+            catch (Exception e)
+            {
 
                 if (e is ArgumentException) { return FILEOP_INVALID_PATH; }
                 if (e is ArgumentNullException) { return FILEOP_INVALID_PATH; }
@@ -384,8 +417,10 @@ namespace AeroCalcCore {
                 if (e is NotSupportedException) { return FILEOP_UNKNOWN_ERROR; }
             }
             // Filtrage éventuel des commentaires du fichier source
-            if (commentFiltering) {
-                if (!filterComments(rawFileLines, fileLines)) {
+            if (commentFiltering)
+            {
+                if (!filterComments(rawFileLines, fileLines))
+                {
                     return FILEOP_UNKNOWN_ERROR;
                 }
             }
@@ -394,13 +429,16 @@ namespace AeroCalcCore {
 
 
 
-        protected int checkFile(string absoluteFilePath) {
+        protected int checkFile(string absoluteFilePath)
+        {
 
-            try {
+            try
+            {
                 File.GetAttributes(absoluteFilePath);
                 return FILEOP_SUCCESSFUL;
             }
-            catch (Exception e) {
+            catch (Exception e)
+            {
                 if (e is ArgumentException) { return FILEOP_INVALID_PATH; }
                 if (e is ArgumentNullException) { return FILEOP_INVALID_PATH; }
                 if (e is PathTooLongException) { return FILEOP_INVALID_PATH; }
@@ -409,14 +447,37 @@ namespace AeroCalcCore {
                 if (e is IOException) { return FILEOP_IO_ERROR; }
 
                 if (e is UnauthorizedAccessException) { return FILEOP_INPUT_FILE_IS_LOCKED; }
-                if (e is System.Security.SecurityException) { return FILEOP_INPUT_FILE_IS_LOCKED; }
+                if (e is SecurityException) { return FILEOP_INPUT_FILE_IS_LOCKED; }
 
-                if (e is System.IO.FileNotFoundException) { return FILEOP_FILE_DOES_NOT_EXIST; }
+                if (e is FileNotFoundException) { return FILEOP_FILE_DOES_NOT_EXIST; }
 
                 if (e is NotSupportedException) { return FILEOP_UNKNOWN_ERROR; }
                 return FILEOP_UNKNOWN_ERROR;
             }
         }
+
+
+
+        protected int checkPath(string pathValue)
+        {
+            try
+            {
+                Path.GetFullPath(pathValue);
+                return FILEOP_SUCCESSFUL;
+            }
+            catch (Exception e)
+            {
+                if (e is ArgumentException) { return FILEOP_INVALID_PATH; }
+                if (e is ArgumentNullException) { return FILEOP_INVALID_PATH; }
+                if (e is PathTooLongException) { return FILEOP_INVALID_PATH; }
+
+                if (e is SecurityException) { return FILEOP_INPUT_FILE_IS_LOCKED; }
+
+                if (e is NotSupportedException) { return FILEOP_UNKNOWN_ERROR; }
+                return FILEOP_UNKNOWN_ERROR;
+            }
+        }
+
 
 
         /// <summary>
@@ -433,14 +494,18 @@ namespace AeroCalcCore {
 
             int parsedInt;
 
-            if (!bool.TryParse(word, out result)) {
+            if (!bool.TryParse(word, out result))
+            {
                 // La conversion directe en booléen n'a pas fonctionné, on essaye de trouver les valeurs 0 ou 1
-                if (int.TryParse(word, out parsedInt)) {
-                    if (parsedInt == 0) {
+                if (int.TryParse(word, out parsedInt))
+                {
+                    if (parsedInt == 0)
+                    {
                         result = false;
                         return true;
                     }
-                    else if (parsedInt == 1) {
+                    else if (parsedInt == 1)
+                    {
                         result = true;
                         return true;
                     }
@@ -448,7 +513,8 @@ namespace AeroCalcCore {
                 result = false;
                 return false;
             }
-            else {
+            else
+            {
                 return true;
             }
         }
@@ -469,7 +535,8 @@ namespace AeroCalcCore {
         /// <param name="result"></param>
         /// <returns>True si la conversion a réussie, False dans le cas contraire</returns>
         /// 
-        protected bool parseADouble(string word, out double result) {
+        protected bool parseADouble(string word, out double result)
+        {
             return Double.TryParse(word,
                                    System.Globalization.NumberStyles.Float,
                                    new CultureInfo("fr-FR"),
@@ -488,7 +555,8 @@ namespace AeroCalcCore {
         /// </summary>
         /// <returns>True, si réussite</returns>
         /// 
-        private bool filterComments(string[] originalLines, List<String> filteredLines) {
+        private bool filterComments(string[] originalLines, List<String> filteredLines)
+        {
 
             int count = 0;
             int pos = -1;
@@ -496,16 +564,20 @@ namespace AeroCalcCore {
             // Vider filteredLines
             filteredLines.Clear();
             // Lecture et filtrage des lignes
-            while (count < originalLines.Length) {
+            while (count < originalLines.Length)
+            {
                 pos = originalLines[count].IndexOf(IDENTIFIER_COMMENT_LINE);
-                if (pos > 0) {
+                if (pos > 0)
+                {
                     // La ligne est partiellement commentée
                     filteredLines.Add(originalLines[count].Remove(pos));
                 }
-                else if (pos == 0) {
+                else if (pos == 0)
+                {
                     // La ligne commence par l'opérateur de commentaire
                 }
-                else {
+                else
+                {
                     // Pas d'occurence trouvée
                     filteredLines.Add(originalLines[count]);
                 }

@@ -59,14 +59,14 @@ namespace AeroCalcCore
         /// <returns>Objet UnitDictionary</returns>
         /// <remarks>Masque la méthode héritée readFile</remarks>
         /// 
-        public UnitDictionary readFile(string fileAbsolutePath) {
+        public Units readFile(string fileAbsolutePath) {
 
             String unitDimension, unitName, unitAlias;
             bool unitIsRef;
             double unitFactor, unitConstant;
             int unitDimensionColumn, unitNameColumn, unitAliasColumn, unitIsRefColumn, unitFactorColumn, unitConstantColumn;
             int cursor;
-            UnitDictionary dico = new UnitDictionary();
+            Units dico = new Units();
             unitFactor = 1;
             unitConstant = 0;
 

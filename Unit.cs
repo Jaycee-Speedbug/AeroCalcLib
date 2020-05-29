@@ -6,7 +6,7 @@ namespace AeroCalcCore {
 
 
 
-    public class UnitItem {
+    public class Unit {
 
         /*
          * PROPRIETES
@@ -43,7 +43,7 @@ namespace AeroCalcCore {
         /// <param name="unitFactor"></param>
         /// <param name="unitIsRef"></param>
         /// 
-        public UnitItem(String unitDimension, String unitName, String unitAlias, bool unitIsRef, double unitFactor, double unitConstant) {
+        public Unit(String unitDimension, String unitName, String unitAlias, bool unitIsRef, double unitFactor, double unitConstant) {
             dimension = unitDimension;
             name = unitName;
             alias = unitAlias;
@@ -98,7 +98,7 @@ namespace AeroCalcCore {
         /// </summary>
         /// <param name="unit"></param>
         /// <returns></returns>
-        private bool equals(UnitItem unit) {
+        private bool equals(Unit unit) {
             if (unit.dimension== this.dimension &&
                 unit.name == this.name) {
                 return true;

@@ -13,9 +13,11 @@ namespace AeroCalcCore
     public class PostProcessor
     {
 
+        private EventMessages EMsgLib;
+
         public PostProcessor(EnvironmentContext EC)
         {
-
+            EMsgLib = new EventMessages();
 
 
         }

@@ -1,3 +1,4 @@
+using System;
 using System.Xml.Linq;
 
 
@@ -236,6 +237,40 @@ namespace AeroCalcCore
 
 
         /// <summary>
+        /// Renvoie le Boolean d'un noeud, identifié par le nom du noeud et un attribut de ce noeud, sinon la valeur par défaut 
+        /// </summary>
+        /// <param name="nodeName">
+        /// Nom du noeud
+        /// </param>
+        /// <param name="attributeName">
+        /// Nom de l'attribut
+        /// </param>
+        /// <param name="attributeValue">
+        /// Contenu de l'attribut
+        /// </param>
+        /// <param name="defaultValue">
+        /// Valeur par défaut
+        /// </param>
+        /// <returns>
+        /// Boolean contenu dans le loeud désigné, ou la valeur par défaut
+        /// </returns>
+        /// 
+        public bool getBoolean(string nodeName, string attributeName, string attributeValue, bool defaultValue) {
+            
+            bool b;
+
+            if (!Boolean.TryParse(getValue(nodeName, attributeName, attributeValue), out b) )
+            {
+                return defaultValue;
+            }
+            else
+            {
+                return b;
+            }
+        }
+
+
+        /// <summary>
         /// Sauvegarde un objet PerfPile dans un fichier XML
         /// </summary>
         /// <param name="pp">Objet PerfPile à sauvegarder</param>
@@ -268,7 +303,7 @@ namespace AeroCalcCore
         /// DEBUG: A DEVELOPPER
         /// </remarks>
         /// 
-        public int saveUnitDictionaryToXML(UnitDictionary ud, string xmlFileAbsolutePath) {
+        public int saveUnitDictionaryToXML(Units ud, string xmlFileAbsolutePath) {
             XDocument xmlUnitsDoc = new XDocument();
             xmlUnitsDoc.AddFirst(xmlUnitDictionary(ud));
             xmlUnitsDoc.Save(xmlFileAbsolutePath);
@@ -287,7 +322,7 @@ namespace AeroCalcCore
         /// <param name="u">Unité de mesure</param>
         /// <returns></returns>
         /// 
-        private XElement xmlUnit(UnitItem u) {
+        private XElement xmlUnit(Unit u) {
 
             string isref;
 
@@ -313,11 +348,11 @@ namespace AeroCalcCore
         /// <param name="dico">Dictionnaire des unités</param>
         /// <returns></returns>
         /// 
-        private XElement xmlUnitDictionary(UnitDictionary dico) {
+        private XElement xmlUnitDictionary(Units dico) {
 
             XElement x = new XElement(DICTIONARY);
 
-            foreach (UnitItem u in dico.units) {
+            foreach (Unit u in dico.units) {
                 x.Add(xmlUnit(u));
             }
             return x;

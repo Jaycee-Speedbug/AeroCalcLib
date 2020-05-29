@@ -23,7 +23,7 @@ namespace AeroCalcCore {
          * Propriétés
          */
 
-        public UnitDictionary dataUnits { get; set; }
+        public Units dataUnits { get; set; }
         
         
         /*

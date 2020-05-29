@@ -8,7 +8,7 @@ namespace AeroCalcCore {
 
 
 
-    public class UnitDictionary {
+    public class Units {
 
         /*
          *  CONSTANTES
@@ -50,7 +50,7 @@ namespace AeroCalcCore {
         /// <summary>
         /// Structure du dictionnaire des unités sous forme de List<UnitItem>
         /// </summary>
-        public List<UnitItem> units { get; private set; }
+        public List<Unit> units { get; private set; }
 
 
 
@@ -62,12 +62,12 @@ namespace AeroCalcCore {
         /// Constructeur
         /// Insertion de la première unité dédiée aux nombres sans unité
         /// </summary>
-        public UnitDictionary() {
+        public Units() {
 
-            units = new List<UnitItem>();
+            units = new List<Unit>();
 
             // Insertion de la première unité
-            units.Add(new UnitItem("", "NUMBER", "", true, 1, 0));
+            units.Add(new Unit("", "NUMBER", "", true, 1, 0));
 
         }
 
@@ -91,10 +91,10 @@ namespace AeroCalcCore {
         public void add(String unitDimension, String unitName, String unitAlias, 
                         bool unitIsRef, double unitFactor, double unitConstant) {
 
-            UnitItem newUnit;
+            Unit newUnit;
             // Vérifications et inscription de l'unité au dictionnaire
             if (unitDimension.Length > 0 && unitName.Length > 0 && unitAlias.Length > 0) {
-                newUnit = new UnitItem(unitDimension, unitName, unitAlias, unitIsRef, unitFactor, unitConstant);
+                newUnit = new Unit(unitDimension, unitName, unitAlias, unitIsRef, unitFactor, unitConstant);
                 if (!unitExists(unitName) && isDimensionAccepted(unitDimension)) {
                     // Le nom complet de l'unité doit être unique et la dimension reconnue
                     units.Add(newUnit);
@@ -129,7 +129,7 @@ namespace AeroCalcCore {
         /// <param name="name">Nom complet de l'unité</param>
         /// <returns>Objet UnitItem</returns>
         /// 
-        public UnitItem getUnitByName(String name) {
+        public Unit getUnitByName(String name) {
 
             int index = getIndexByName(name);
 
@@ -147,7 +147,7 @@ namespace AeroCalcCore {
         /// <param name="alias">Alias de l'unité</param>
         /// <returns>Objet UnitItem</returns>
         /// 
-        public UnitItem getUnitByAlias(String alias) {
+        public Unit getUnitByAlias(String alias) {
 
             int index = getIndexByAlias(alias);
 
@@ -163,7 +163,7 @@ namespace AeroCalcCore {
         /// Renvoie la liste des unités
         /// </summary>
         /// <returns></returns>
-        public List<UnitItem> getUnits() {
+        public List<Unit> getUnits() {
             return units;
         }
 
@@ -178,7 +178,7 @@ namespace AeroCalcCore {
         public int getIndexByAlias(String alias) {
 
             for (int index = 0; index < units.Count; index++) {
-                if (units.ElementAt<UnitItem>(index).alias.Equals(alias)) {
+                if (units.ElementAt<Unit>(index).alias.Equals(alias)) {
                     return index;
                 }
             }
@@ -200,7 +200,7 @@ namespace AeroCalcCore {
         private int getIndexByName(String name) {
 
             for (int index = 0; index < units.Count; index++) {
-                if (units.ElementAt<UnitItem>(index).name.Equals(name)) {
+                if (units.ElementAt<Unit>(index).name.Equals(name)) {
                     return index;
                 }
             }

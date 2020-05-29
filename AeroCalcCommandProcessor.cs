@@ -33,7 +33,7 @@ namespace AeroCalcCore {
 
         public DataModelContainer Container { get; private set; }
 
-        public UnitDictionary Units { get; private set; }
+        public Units Units { get; private set; }
 
 
         /*
@@ -64,6 +64,7 @@ namespace AeroCalcCore {
 
 
 
+        /*
         public AeroCalcCommandProcessor(string configFileRelativePath) {
             // Création du container de données de performances
             Container = new DataModelContainer();
@@ -73,7 +74,7 @@ namespace AeroCalcCore {
             EnvContext = new EnvironmentContext(configFileRelativePath);
             // Reglage intial du flag initialized
             initialized = false;
-        }
+        }*/
 
 
 

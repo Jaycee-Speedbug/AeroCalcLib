@@ -694,7 +694,7 @@ namespace AeroCalcCore {
             // Liste des unités enregitrées
             setResultText("");
             string msg = "";
-            foreach (UnitItem item in Container.dataUnits.getUnits()) {
+            foreach (Unit item in Container.dataUnits.getUnits()) {
                 msg += item.ToString() + "\n";
                 setResultText(msg);
             }
