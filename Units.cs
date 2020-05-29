@@ -4,16 +4,18 @@ using System.Linq;
 
 
 
-namespace AeroCalcCore {
+namespace AeroCalcCore
+{
 
 
 
-    public class Units {
+    public class Units
+    {
 
         /*
          *  CONSTANTES
          */
-        
+
         public static string UNIT_DIM_LENGHT = "LENGHT";
         public static string UNIT_DIM_TIME = "TIME";
         public static string UNIT_DIM_MASS = "MASS";
@@ -24,11 +26,11 @@ namespace AeroCalcCore {
         public static string UNIT_DIM_ANGLE = "ANGLE";
 
 
-        
+
         /*
          *  MEMBRES
          */
-        
+
         /// <summary>
         /// Tableau des différentes dimensions d'unité acceptées par AirCalc
         /// </summary>
@@ -62,11 +64,12 @@ namespace AeroCalcCore {
         /// Constructeur
         /// Insertion de la première unité dédiée aux nombres sans unité
         /// </summary>
-        public Units() {
+        public Units()
+        {
 
             units = new List<Unit>();
 
-            // Insertion de la première unité
+            // Insertion de la première unité (qui ne répond pas aux critères que doivent satisfaire le autres unités)
             units.Add(new Unit("", "NUMBER", "", true, 1, 0));
 
         }
@@ -79,7 +82,8 @@ namespace AeroCalcCore {
 
         /// <summary>
         /// Ajoute une unité au dictionnaire des unités, après vérification du nom de l'unité et de l'existence
-        /// de la dimension
+        /// de la dimension. Le nom de l'unité et la dimension doivent être fournis. L'alias est optionnel.
+        /// Dans ce cas, l'utilisateur devra utiliser le nom complet de l'unité.
         /// </summary>
         /// <param name="unitName">Nom complet de l'unité</param>
         /// <param name="unitDimension">Nom de la dimension de l'unité</param>
@@ -88,21 +92,32 @@ namespace AeroCalcCore {
         /// <param name="unitFactor">Facteur à utiliser pour convertir vers la référence de la dimension</param>
         /// <param name="unitConstant">Constante à utiliser pour convertir vers la référence de la dimension</param>
         /// 
-        public void add(String unitDimension, String unitName, String unitAlias, 
-                        bool unitIsRef, double unitFactor, double unitConstant) {
-
+        public void add(String unitDimension, String unitName, String unitAlias,
+                        bool unitIsRef, double unitFactor, double unitConstant)
+        {
             Unit newUnit;
             // Vérifications et inscription de l'unité au dictionnaire
-            if (unitDimension.Length > 0 && unitName.Length > 0 && unitAlias.Length > 0) {
+            if (unitDimension.Length > 0 && unitName.Length > 0)
+            {
+                if (unitIsRef)
+                {
+                    unitFactor = 1;
+                    unitConstant = 0;
+                }
                 newUnit = new Unit(unitDimension, unitName, unitAlias, unitIsRef, unitFactor, unitConstant);
-                if (!unitExists(unitName) && isDimensionAccepted(unitDimension)) {
+                if (!unitExists(unitName) && isDimensionAccepted(unitDimension))
+                {
                     // Le nom complet de l'unité doit être unique et la dimension reconnue
                     units.Add(newUnit);
                 }
             }
 
         }
-
+        
+        public void add(Unit newUnit)
+        {
+            add(newUnit.dimension, newUnit.name, newUnit.alias, newUnit.isRef, newUnit.factor, newUnit.constant);
+        }
 
 
         /// <summary>
@@ -112,10 +127,12 @@ namespace AeroCalcCore {
         /// <param name="unitNameTable">Table des noms complets</param>
         /// <param name="unitAliasTable">Table des alias</param>
         /// 
-        public void add(String[] unitDimensionTable, String[] unitNameTable, String[] unitAliasTable, 
-                        bool[] unitIsRef, double[] unitFactor, double[] unitConstant) {
+        public void add(String[] unitDimensionTable, String[] unitNameTable, String[] unitAliasTable,
+                        bool[] unitIsRef, double[] unitFactor, double[] unitConstant)
+        {
 
-            for (int count = 0; count < unitNameTable.Length; count++) {
+            for (int count = 0; count < unitNameTable.Length; count++)
+            {
                 add(unitDimensionTable[count], unitNameTable[count], unitAliasTable[count],
                     unitIsRef[count], unitFactor[count], unitConstant[count]);
             }
@@ -129,11 +146,13 @@ namespace AeroCalcCore {
         /// <param name="name">Nom complet de l'unité</param>
         /// <returns>Objet UnitItem</returns>
         /// 
-        public Unit getUnitByName(String name) {
+        public Unit getUnitByName(String name)
+        {
 
             int index = getIndexByName(name);
 
-            if (index >= 0) {
+            if (index >= 0)
+            {
                 return units.ElementAt(index);
             }
             return null;
@@ -147,11 +166,13 @@ namespace AeroCalcCore {
         /// <param name="alias">Alias de l'unité</param>
         /// <returns>Objet UnitItem</returns>
         /// 
-        public Unit getUnitByAlias(String alias) {
+        public Unit getUnitByAlias(String alias)
+        {
 
             int index = getIndexByAlias(alias);
 
-            if (index >= 0) {
+            if (index >= 0)
+            {
                 return units.ElementAt(index);
             }
             return null;
@@ -163,7 +184,8 @@ namespace AeroCalcCore {
         /// Renvoie la liste des unités
         /// </summary>
         /// <returns></returns>
-        public List<Unit> getUnits() {
+        public List<Unit> getUnits()
+        {
             return units;
         }
 
@@ -175,10 +197,13 @@ namespace AeroCalcCore {
         /// <param name="alias">String, alias de l'unité à chercher dans la liste</param>
         /// <returns>int, valeur de l'index désigant l'unité recherchée</returns>
         /// 
-        public int getIndexByAlias(String alias) {
+        public int getIndexByAlias(String alias)
+        {
 
-            for (int index = 0; index < units.Count; index++) {
-                if (units.ElementAt<Unit>(index).alias.Equals(alias)) {
+            for (int index = 0; index < units.Count; index++)
+            {
+                if (units.ElementAt<Unit>(index).alias.Equals(alias))
+                {
                     return index;
                 }
             }
@@ -197,10 +222,13 @@ namespace AeroCalcCore {
         /// <param name="name">Nom complet de l'unité</param>
         /// <returns>int index dans la liste des unités</returns>
         /// 
-        private int getIndexByName(String name) {
+        private int getIndexByName(String name)
+        {
 
-            for (int index = 0; index < units.Count; index++) {
-                if (units.ElementAt<Unit>(index).name.Equals(name)) {
+            for (int index = 0; index < units.Count; index++)
+            {
+                if (units.ElementAt<Unit>(index).name.Equals(name))
+                {
                     return index;
                 }
             }
@@ -215,9 +243,11 @@ namespace AeroCalcCore {
         /// <param name="code">int Code d'identification de l'unité</param>
         /// <returns>True si une unité ayant le code fourni en argument, False dans le cas contraire</returns>
         /// 
-        private bool unitExists(String name) {
+        private bool unitExists(String name)
+        {
 
-            if (getIndexByName(name) >= 0) {
+            if (getIndexByName(name) >= 0)
+            {
                 return true;
             }
             return false;
@@ -231,10 +261,13 @@ namespace AeroCalcCore {
         /// <param name="dimension">Nom de la dimension proposée à la vérification</param>
         /// <returns>True, si la dimension fait partie de la liste des dimensions acceptées</returns>
         /// 
-        private bool isDimensionAccepted(String dimension) {
+        private bool isDimensionAccepted(String dimension)
+        {
 
-            for (int index=0;index<unitDimensions.Length;index++) {
-                if (dimension.Equals(unitDimensions[index])) {
+            for (int index = 0; index < unitDimensions.Length; index++)
+            {
+                if (dimension.Equals(unitDimensions[index]))
+                {
                     return true;
                 }
             }

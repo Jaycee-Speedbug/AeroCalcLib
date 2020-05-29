@@ -31,9 +31,9 @@ namespace AeroCalcCore {
 
         public ScriptFile ScriptConnect { get; private set; }
 
-        public DataModelContainer Container { get; private set; }
+        public DataModelContainer ModelLib { get; private set; }
 
-        public Units Units { get; private set; }
+        public Units UnitLib { get; private set; }
 
 
         /*
@@ -52,12 +52,14 @@ namespace AeroCalcCore {
         /// </summary>
         /// 
         public AeroCalcCommandProcessor() {
-            // Création du container de données de performances
-            Container = new DataModelContainer();
-            // Création de l'objet de connexion aux fichiers de Script
+            // Construction du container de données de performances
+            ModelLib = new DataModelContainer();
+            // Construction de l'objet de connexion aux fichiers de Script
             ScriptConnect = new ScriptFile();
-            // Création de l'objet d'environnement
+            // Construction de l'objet d'environnement
             EnvContext = new EnvironmentContext();
+            // Construction du dictionnaire des unités 
+            UnitLib = new Units();
             // Reglage intial du flag initialized
             initialized = false;
         }
@@ -97,7 +99,7 @@ namespace AeroCalcCore {
             // Une commande complexe (nécessitant l'exécution de plus d'une commande simple) doit
             // d'abord être décomposée
 
-            AeroCalcCommand Cmd = new AeroCalcCommand(txtCommand, Container, EnvContext);
+            AeroCalcCommand Cmd = new AeroCalcCommand(txtCommand, ModelLib, EnvContext);
 
             // Certaines commandes rendent la main pour être traitées ici, dans le processeur
             switch (Cmd.action) {
@@ -154,12 +156,17 @@ namespace AeroCalcCore {
         private bool initProcessor(AeroCalcCommand Cmd) {
             
             int loadStatus;
+            UnitsXMLFile unitsFile = new UnitsXMLFile("");
 
             if (!initialized) {
                 //
                 // TODO: Ici, coder l'initialisation
                 //
                 loadStatus = EnvContext.loadConfigFile(Cmd.subs[1]);
+
+                // Chargement du dictionnaire des unités
+                UnitLib = unitsFile.getUnitsFromXML(EnvContext.unitsFileName);
+                
 
                 switch (loadStatus)
                 {
@@ -265,7 +272,7 @@ namespace AeroCalcCore {
             else if (words.Length == 3) {
                 // Facteur avec unité
                 if (double.TryParse(words[1], out val)) {
-                    unitDictionaryIndex = Units.getIndexByAlias(words[2]);
+                    unitDictionaryIndex = UnitLib.getIndexByAlias(words[2]);
                     if (unitDictionaryIndex != AeroCalc.UNIT_UNDETERMINED) {
                         name = words[0];
                     }

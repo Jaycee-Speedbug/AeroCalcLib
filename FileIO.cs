@@ -554,7 +554,7 @@ namespace AeroCalcCore
         /// Expurge les lignes du fichier des commentaires
         /// </summary>
         /// <returns>True, si réussite</returns>
-        /// 
+        /// <TODO> A déplacer dans la classe en charge des SCRIPTS 
         private bool filterComments(string[] originalLines, List<String> filteredLines)
         {
 

@@ -11,7 +11,8 @@ namespace AeroCalcCore
     /// <summary>
     /// Classe de conversion d'un fichier .csv en fichier de performances de vol XML
     /// </summary>
-    public class XMLFile : FileIO {
+    public class XMLFile : FileIO
+    {
 
         /*
          * CONSTANTES
@@ -43,17 +44,6 @@ namespace AeroCalcCore
         public const string LOGGER = "Logger";
         public const string TRUE = "True";
         public const string FALSE = "False";
-        
-
-        // Units dictionnary XML mapping
-        public const string DICTIONARY = "Dictionary";
-        public const string UNIT_ITEM = "Unit";
-        public const string UNIT_NAME = "Name";
-        public const string DIMENSION = "Dimension";
-        public const string ALIAS = "Alias";
-        public const string ISREF = "IsRef";
-        public const string FACTOR = "Factor";
-        public const string CONSTANT = "Constant";
 
 
 
@@ -75,7 +65,7 @@ namespace AeroCalcCore
         /// <summary>
         /// Document XML
         /// </summary>
-        XDocument xDoc;
+        protected XDocument xDoc;
 
 
 
@@ -83,21 +73,25 @@ namespace AeroCalcCore
          * CONSTRUCTEURS
          */
 
-        public XMLFile() : base() {
+        public XMLFile() : base()
+        {
             xDoc = new XDocument();
         }
 
-        public XMLFile(string workDirectoryPath) : base(workDirectoryPath) {
+        public XMLFile(string workDirectoryPath) : base(workDirectoryPath)
+        {
             xDoc = new XDocument();
         }
 
-        public XMLFile(string workDirectoryPath, string fileAbsolutePath) : base(workDirectoryPath, fileAbsolutePath) {
+        public XMLFile(string workDirectoryPath, string fileAbsolutePath) : base(workDirectoryPath, fileAbsolutePath)
+        {
             readXmlFile();
         }
 
-        public XMLFile(string workDirectoryPath, 
-                       string inputFileAbsolutePath, 
-                       string outputFileAbsolutePath) : base(workDirectoryPath,  inputFileAbsolutePath, outputFileAbsolutePath) {
+        public XMLFile(string workDirectoryPath,
+                       string inputFileAbsolutePath,
+                       string outputFileAbsolutePath) : base(workDirectoryPath, inputFileAbsolutePath, outputFileAbsolutePath)
+        {
             readXmlFile();
         }
 
@@ -129,23 +123,28 @@ namespace AeroCalcCore
         /// Lit le fichier XML dont le chemin absolu est passé en argument
         /// </summary>
         /// <param name="absolutePath">Chemin absolu vers le fichier XML</param>
-        /// <returns>True en cas de succès, false sinon</returns>
+        /// <returns>Int renseignant sur la réalisation de l'opération sur le fichier. Voir FILEIO.FILEOP_</returns>
         /// 
-        public int readXmlFile() {
+        protected int readXmlFile()
+        {
 
             IOStatus = checkFile(inputFileAbsolutePath);
 
-            if (IOStatus == FILEOP_SUCCESSFUL) {
+            if (IOStatus == FILEOP_SUCCESSFUL)
+            {
                 xDoc = XDocument.Load(inputFileAbsolutePath);
-                if (xDoc != null) {
+                if (xDoc != null)
+                {
                     return FILEOP_SUCCESSFUL;
                 }
-                else {
+                else
+                {
                     // TODO: Valeur de retour à améliorer
                     return FILEOP_UNKNOWN_ERROR;
                 }
             }
-            else {
+            else
+            {
                 return IOStatus;
             }
         }
@@ -163,10 +162,13 @@ namespace AeroCalcCore
         /// Chaine contenant l'attribut, ou une chaine vide si l'attribut n'a pas été trouvé
         /// </returns>
         /// 
-        public string getAttribute(string attributeName, string[] nodeNames) {
-            if (xDoc != null && nodeNames != null) {
+        public string getAttribute(string attributeName, string[] nodeNames)
+        {
+            if (xDoc != null && nodeNames != null)
+            {
                 XElement xe = xDoc.Element(nodeNames[0]);
-                for (int index = 1; index < nodeNames.Length; index++) {
+                for (int index = 1; index < nodeNames.Length; index++)
+                {
                     xe = xe.Element(nodeNames[index]);
                 }
                 return xe.Attribute(attributeName).Value;
@@ -186,10 +188,13 @@ namespace AeroCalcCore
         /// Chaine contenant l'attribut, ou une chaine vide si l'attribut n'a pas été trouvé
         /// </returns>
         /// 
-        public string getValue(string[] nodeNames) {
-            if (xDoc != null && nodeNames != null) {
+        public string getValue(string[] nodeNames)
+        {
+            if (xDoc != null && nodeNames != null)
+            {
                 XElement xe = xDoc.Element(nodeNames[0]);
-                for (int index = 1; index < nodeNames.Length; index++) {
+                for (int index = 1; index < nodeNames.Length; index++)
+                {
                     xe = xe.Element(nodeNames[index]);
                 }
                 return xe.Value;
@@ -215,15 +220,19 @@ namespace AeroCalcCore
         /// Chaine contenant l'attribut, ou une chaine vide si l'attribut n'a pas été trouvé
         /// </returns>
         /// 
-        public string getValue(string nodeName, string attributeName, string attributeValue) {
-            if (nodeName != null && attributeName != null && attributeValue != null) {
+        public string getValue(string nodeName, string attributeName, string attributeValue)
+        {
+            if (nodeName != null && attributeName != null && attributeValue != null)
+            {
                 foreach (XElement elemt in xDoc.Descendants())
                 {
-                    if (elemt.Name.LocalName.Equals(nodeName)) {
+                    if (elemt.Name.LocalName.Equals(nodeName))
+                    {
                         // Noeud trouvé !
                         foreach (XAttribute attrib in elemt.Attributes())
                         {
-                            if (attrib.Name.LocalName.Equals(attributeName) && attrib.Value.Equals(attributeValue)) {
+                            if (attrib.Name.LocalName.Equals(attributeName) && attrib.Value.Equals(attributeValue))
+                            {
                                 // Attribut trouvé
                                 return elemt.Value;
                             }
@@ -255,17 +264,48 @@ namespace AeroCalcCore
         /// Boolean contenu dans le loeud désigné, ou la valeur par défaut
         /// </returns>
         /// 
-        public bool getBoolean(string nodeName, string attributeName, string attributeValue, bool defaultValue) {
-            
+        public bool getBoolean(string nodeName, string attributeName, string attributeValue, bool defaultValue)
+        {
+            return getBoolean(getValue(nodeName, attributeName, attributeValue), defaultValue);
+
+            /*
             bool b;
 
-            if (!Boolean.TryParse(getValue(nodeName, attributeName, attributeValue), out b) )
+            if (!Boolean.TryParse(getValue(nodeName, attributeName, attributeValue), out b))
             {
                 return defaultValue;
             }
             else
             {
                 return b;
+            }
+            */
+        }
+        public bool getBoolean(string fieldString, bool defaultValue)
+        {
+            bool b;
+
+            if (!Boolean.TryParse(fieldString, out b))
+            {
+                return defaultValue;
+            }
+            else
+            {
+                return b;
+            }
+        }
+
+
+        public double getDouble(string fieldString)
+        {
+            double d;
+            if (!Double.TryParse(fieldString, out d))
+            {
+                return Double.NaN;
+            }
+            else
+            {
+                return d;
             }
         }
 
@@ -284,78 +324,12 @@ namespace AeroCalcCore
         /// DEBUG: A DEVELOPPER
         /// </remarks>
         /// 
-        public int savePerfPileToXML(PerfPile pp, string xmlFileAbsolutePath) {
+        public int savePerfPileToXML(PerfPile pp, string xmlFileAbsolutePath)
+        {
             XDocument xmlPerfDoc = new XDocument();
             xmlPerfDoc.AddFirst(xmlPerfPile(pp));
             xmlPerfDoc.Save(xmlFileAbsolutePath);
             return XMLFile.FILEOP_SUCCESSFUL;
-        }
-
-
-        /// <summary>
-        /// Sauvegarde un objet UnitDictionary dans un fichier XML
-        /// </summary>
-        /// <param name="ud">Objet UnitDictionary à sauvegarder</param>
-        /// <param name="xmlFileAbsolutePath">Chemin absolu vers le fichier XML à créer</param>
-        /// <returns>
-        /// </returns>
-        /// <remarks>
-        /// DEBUG: A DEVELOPPER
-        /// </remarks>
-        /// 
-        public int saveUnitDictionaryToXML(Units ud, string xmlFileAbsolutePath) {
-            XDocument xmlUnitsDoc = new XDocument();
-            xmlUnitsDoc.AddFirst(xmlUnitDictionary(ud));
-            xmlUnitsDoc.Save(xmlFileAbsolutePath);
-            return XMLFile.FILEOP_SUCCESSFUL;
-        }
-
-
-
-        /*
-         *  METHODES 
-         */
-
-        /// <summary>
-        /// Retourne un XElement contenant la définition XML d'une unité de mesure
-        /// </summary>
-        /// <param name="u">Unité de mesure</param>
-        /// <returns></returns>
-        /// 
-        private XElement xmlUnit(Unit u) {
-
-            string isref;
-
-            if (u.isRef) {
-                isref = "1";
-            }
-            else {
-                isref = "0";
-            }
-            return new XElement(UNIT_ITEM, new XAttribute(DIMENSION, u.dimension),
-                                               new XAttribute(UNIT_NAME, u.name),
-                                               new XAttribute(ISREF,isref),
-                                               new XAttribute(ALIAS,u.alias),
-                                               new XAttribute(FACTOR,u.factor),
-                                               new XAttribute(CONSTANT,u.constant));
-        }
-
-
-
-        /// <summary>
-        /// Retourne un XElement contenant l'ensemble des défintions d'unités du dictionnaire
-        /// </summary>
-        /// <param name="dico">Dictionnaire des unités</param>
-        /// <returns></returns>
-        /// 
-        private XElement xmlUnitDictionary(Units dico) {
-
-            XElement x = new XElement(DICTIONARY);
-
-            foreach (Unit u in dico.units) {
-                x.Add(xmlUnit(u));
-            }
-            return x;
         }
 
 
@@ -366,7 +340,8 @@ namespace AeroCalcCore
         /// <param name="pp">Objet PerfPoint</param>
         /// <returns>Un élément XML</returns>
         /// 
-        private XElement xmlPerfPoint(PerfPoint pp) {
+        private XElement xmlPerfPoint(PerfPoint pp)
+        {
             XElement xElem = new XElement("Point", new XAttribute("In", pp.factorValue),
                                                    new XAttribute("Out", pp.output),
                                                    new XAttribute("Break", pp.isBreak));
@@ -381,12 +356,14 @@ namespace AeroCalcCore
         /// <param name="pp">Objet PerfSerie</param>
         /// <returns>Un élément XML</returns>
         /// 
-        private XElement xmlPerfSerie(PerfSerie pf) {
+        private XElement xmlPerfSerie(PerfSerie pf)
+        {
             XElement xElem = new XElement("Serie", new XAttribute("Key", pf.dataBaseKey),
                                                    new XAttribute("Factor", pf.factorValue));
             XElement xColElem = new XElement("Points");
             // Ajout de chaque point de la série
-            for (int count = 0; count < pf.count; count++) {
+            for (int count = 0; count < pf.count; count++)
+            {
                 xColElem.Add(xmlPerfPoint(pf.pointAt(count)));
             }
             xElem.Add(xColElem);
@@ -401,7 +378,8 @@ namespace AeroCalcCore
         /// <param name="pp">Objet PerfLayer</param>
         /// <returns>Un élément XML</returns>
         /// 
-        private XElement xmlPerfLayer(PerfLayer pl) {
+        private XElement xmlPerfLayer(PerfLayer pl)
+        {
             XElement xElem = new XElement("Layer", new XAttribute("Name", pl.outputName),
                                                    new XAttribute("Key", pl.dataBaseKey),
                                                    new XAttribute("Factor", pl.factorValue),
@@ -411,7 +389,8 @@ namespace AeroCalcCore
                                                    new XAttribute("SerieFactorUnitCode", pl.serieFactorUnitCode));
             XElement xColElem = new XElement("Series");
             // Ajout de chaque série de la layer
-            for (int count = 0; count < pl.count; count++) {
+            for (int count = 0; count < pl.count; count++)
+            {
                 xColElem.Add(xmlPerfSerie(pl.SerieAt(count)));
             }
             xElem.Add(xColElem);
@@ -426,7 +405,8 @@ namespace AeroCalcCore
         /// <param name="pp">Objet PerfPile</param>
         /// <returns>Un élément XML</returns>
         /// 
-        private XElement xmlPerfPile(PerfPile pp) {
+        private XElement xmlPerfPile(PerfPile pp)
+        {
             XElement xElem = new XElement("Pile", new XAttribute("Name", pp.outputName),
                                                   new XAttribute("Key", pp.dataBaseKey),
                                                   new XAttribute("Hidden", (pp.hidden == true ? "1" : "0")),
@@ -441,7 +421,8 @@ namespace AeroCalcCore
                                                   new XAttribute("LayerFactorUnitCode", pp.layerFactorUnitCode));
             XElement xColElem = new XElement("Layers");
             // Ajout de chaque layer de la pile
-            for (int count = 0; count < pp.count; count++) {
+            for (int count = 0; count < pp.count; count++)
+            {
                 xColElem.Add(xmlPerfLayer(pp.layerAt(count)));
             }
             xElem.Add(xColElem);

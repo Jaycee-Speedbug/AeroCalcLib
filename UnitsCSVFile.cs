@@ -8,8 +8,9 @@ namespace AeroCalcCore
 
 
     /// <summary>
-    /// Classe assurant l'interface entre un container de modèles de performance de vol et les fichiers textes CSV
-    /// permettant la persistance des unités de mesures utilisées dans ces modèles.
+    /// Classe assurant l'interface entre un container des unités employées dans l'utilisation des modèles
+    /// de calcul et les fichiers CSV contenant les caractéristiques de ces unités.
+    /// Permet la persistance des unités de mesures utilisées dans les modèles.
     /// 
     /// Principe:
     /// Reçoit le chemin du dossier à traiter et le filtre à appliquer sur les noms de fichiers.
@@ -17,7 +18,7 @@ namespace AeroCalcCore
     /// Renvoie les données des unités de mesures trouvées dans ces fichiers
     /// </summary>
     /// 
-    class UnitsFile : CSVFile {
+    public class UnitsCSVFile : CSVFile {
 
 
         /*
@@ -41,7 +42,7 @@ namespace AeroCalcCore
         /// Constructeur de la classe, simple appel au constructeur de la classe mère
         /// </summary>
         /// 
-        public UnitsFile() : base() {
+        public UnitsCSVFile() : base() {
 
         }
 
@@ -59,7 +60,7 @@ namespace AeroCalcCore
         /// <returns>Objet UnitDictionary</returns>
         /// <remarks>Masque la méthode héritée readFile</remarks>
         /// 
-        public Units readFile(string fileAbsolutePath) {
+        public Units getUnitsFromCSV(string fileAbsolutePath) {
 
             String unitDimension, unitName, unitAlias;
             bool unitIsRef;
