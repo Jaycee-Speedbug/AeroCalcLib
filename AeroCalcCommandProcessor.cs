@@ -152,7 +152,6 @@ namespace AeroCalcCore {
         /// </summary>
         /// <param name="Cmd">Commande active</param>
         /// <returns>Etat de réussite de la commande</returns>
-        /// 
         private bool initProcessor(AeroCalcCommand Cmd) {
             
             int loadStatus;
@@ -196,7 +195,7 @@ namespace AeroCalcCore {
                         break;
                 }
 
-                // DEBUG
+                // TODO remove ater use
                 Console.WriteLine(EnvContext.ToString());
                 
                 // Fin du processus d'initialisation
@@ -250,7 +249,7 @@ namespace AeroCalcCore {
         /// <param name="subString">Chaine à analyser comme facteur d'un calcul multi-dimensionnel</param>
         /// <returns>objet commandFactor contenant les éléments du facteur</returns>
         /// <remarks>
-        /// DEBUG: OLD doit être remplacé par un constructeur d'objet commandFactor
+        /// : OLD doit être remplacé par un constructeur d'objet commandFactor
         /// </remarks>
         /// 
         private CommandFactor getFactor(string subString) {
@@ -258,7 +257,7 @@ namespace AeroCalcCore {
             string name = "";
             int unitDictionaryIndex = 0;
             double val = double.NaN;
-            // DEBUG les séparateurs ne doit pas être locaux
+            // TODO les séparateurs ne doit pas être locaux
             char[] separators = { '=', ':' };
             string[] words = subString.Split(separators);
 

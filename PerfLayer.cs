@@ -243,8 +243,7 @@ namespace AeroCalcCore {
             // newPerfSerie est bien une nouvelle série de layers de performance de vol
             perfSerieList.Add(newPerfSerie);
             perfSerieList.Sort(newPerfSerie);
-            /// <!-- DEBUG
-            /// Lors de l'ajout de la première Serie, on récupère les infos de la dimension inférieure
+            // TODO Lors de l'ajout de la première Serie, on récupère les infos de la dimension inférieure
             /// pointFactorName = newPerfSerie.getPrimaryDimension();
             /// pointFactorUnitCode = newPerfSerie.getPrimaryDimensionUnitCode();
             /// -->

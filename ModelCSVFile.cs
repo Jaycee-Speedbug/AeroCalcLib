@@ -15,7 +15,7 @@ namespace AeroCalcCore {
     /// Renvoie un modèle de performance de vol sur requète d'un nom de fichier de cette liste
     /// </summary>
     /// 
-    public class ModelFile : CSVFile {
+    public class ModelCSVFile : CSVFile {
 
 
         /*
@@ -56,7 +56,7 @@ namespace AeroCalcCore {
         /// Constructeur de la classe, simple appel au constructeur de la classe mère
         /// </summary>
         /// 
-        public ModelFile():base() {
+        public ModelCSVFile():base() {
 
         }
 
@@ -99,7 +99,7 @@ namespace AeroCalcCore {
                     hidden = false;
                 }
 
-                /// <remarks>DEBUG UnitCode as int should be replaced by string</remarks>
+                // TODO UnitCode as int should be replaced by string
                 /*
                 pointFactorUnit = parseUnitCode(KWD_POINT_FACTOR_UNIT);
                 serieFactorUnit = parseUnitCode(KWD_SERIE_FACTOR_UNIT);

@@ -363,15 +363,15 @@ namespace AeroCalcCore {
 
         /// <summary>
         /// Retourne True si la valeur du facteur dont le nom a été passé en argument a bien été
-        /// affectée à l'argument value.
+        /// affecté à l'argument value.
         /// </summary>
         /// <param name="factorName">Nom du facteur</param>
         /// <param name="value">Valeur du facteur</param>
         /// <returns></returns>
         /// 
+        // TODO, Pas normal de renvoyer true is le factorName est invalide !!! 
         public bool factor(string factorName, out double value) {
-            // DEBUG, Définir
-            if (factorName.Length == 0) {
+            if (string.IsNullOrEmpty(factorName)) {
                 value = AeroCalc.MODEL_DIMENSION_DEFAULT_VALUE;
                 return true;
             }
@@ -589,7 +589,7 @@ namespace AeroCalcCore {
             catch (ModelException e) {
                 // La commande a échouée pendant le calcul
                 setEventCode(AeroCalcCommand.EVENTCODE_PROCESSOR_ERROR);
-                // DEBUG, revoir le formatage du message d'erreur, en utilisant aussi la nature de l'exception
+                // TODO, revoir le formatage du message d'erreur, en utilisant aussi la nature de l'exception
                 setCommentText("Erreur lors du calcul de " + e.modelName + " : " + e.factor);
             }
 
@@ -661,8 +661,8 @@ namespace AeroCalcCore {
         /// disponibles dans le container de performances
         /// </summary>
         /// <returns>Bool résultat du traitement</returns>
-        /// <remarks>DEBUG: Objectif non atteint, on doit pouvoir lister les modèles avec filtrage</remarks>
-        /// 
+        /// <remarks></remarks>
+        /// TODO Objectif non atteint, on doit pouvoir lister les modèles avec filtrage
         private bool cmd_LIST_MODELS() {
             /*
             if (Cmd.subs.Length != 2) {
@@ -688,8 +688,8 @@ namespace AeroCalcCore {
         /// </summary>
         /// <param name="Cmd">Commande active</param>
         /// <returns>True si le traitement n'a pas généré d'erreur</returns>
-        /// <remarks>DEBUG: Objectif non atteint, on doit pouvoir lister les unités avec filtrage</remarks>
-        /// 
+        /// <remarks></remarks>
+        /// TODO: Objectif non atteint, on doit pouvoir lister les unités avec filtrage
         private bool cmd_LIST_UNITS() {
             // Liste des unités enregitrées
             setResultText("");
@@ -823,7 +823,7 @@ namespace AeroCalcCore {
             string name = "";
             int unitDictionaryIndex = 0;
             double val = double.NaN;
-            // DEBUG les séparateurs ne doit pas être locaux
+            // TODO les séparateurs ne doit pas être locaux
             char[] separators = { '=', ':' };
             string[] words = subString.Split(separators);
 

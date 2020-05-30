@@ -33,7 +33,7 @@ namespace AeroCalcCore {
         List<PerfPile> dataModels;
         //ConnectorUnitCSVFile unitsConnector;
         XMLFile xmlConnector;
-        ModelFile csvConnector;
+        ModelCSVFile csvConnector;
 
         private char[] commandSeparator = { ' ' };
 
@@ -51,7 +51,7 @@ namespace AeroCalcCore {
 
             dataModels = new List<PerfPile>();
             xmlConnector = new XMLFile();
-            csvConnector = new ModelFile();
+            csvConnector = new ModelCSVFile();
 
         }
 
@@ -181,7 +181,7 @@ namespace AeroCalcCore {
                     result = Pile.predict(pointFactorValue, serieFactorValue, layerFactorValue);
                 } catch (ModelException e) {
                     // On récupère d'une exception ou un paramètre est hors du range ou il peut être utilisé
-                    // DEBUG les infos de l'exception sont générées directement dans predict()
+                    // TODO les infos de l'exception sont générées directement dans predict()
                     throw;
                 }
             }
@@ -479,7 +479,7 @@ namespace AeroCalcCore {
         /// signatures au format texte du modèle FUNCTION_NAME PARAM1 PARAM2 ...
         /// </returns>
         /// <remarks>
-        /// DEBUG counter est un int, attention au dépassement de capacité en production
+        /// TODO counter est un int, attention au dépassement de capacité en production
         /// </remarks>
         /// 
         public string dataModelSignatures() {

@@ -52,7 +52,7 @@ namespace AeroCalcCore
         /// <returns>
         /// </returns>
         /// <remarks>
-        /// <TODO> A DEVELOPPER, il faut rajouter la branche <Dimension> dans laquelle placer les <Unit>
+        /// TODO A DEVELOPPER, il faut rajouter la branche <Dimension> dans laquelle placer les <Unit>
         /// </remarks>
         /// 
         public int saveUnitDictionaryToXML(Units ud, string xmlFileAbsolutePath)
@@ -68,7 +68,7 @@ namespace AeroCalcCore
         /// <summary>
         /// Récupère les unités utiliées dans les calculs dans le fichier xml des unités.
         /// </summary>
-        /// <TODO>Doit on renvoyer un null en cas d'échec ???</TODO>
+        /// TODO Doit on renvoyer un null en cas d'échec ???</TODO>
         public Units getUnitsFromXML(string xmlFileAbsolutePath)
         {
             Units units = new Units();

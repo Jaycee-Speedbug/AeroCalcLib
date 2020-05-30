@@ -19,7 +19,6 @@ namespace AeroCalcCore {
          * CONSTANTES
          */
 
-
         // Constantes d'analyse des fichiers des modèles de calcul, d'unités
         protected const char CELL_SEPARATOR_SEMICOLON = ';';
         protected const char CELL_SEPARATOR_TAB = '\t';
@@ -45,6 +44,7 @@ namespace AeroCalcCore {
         protected const string KWD_START_TABLE_5 = "TABLE_5";
         protected const string KWD_END_TABLE_5 = "END_TABLE_5";
 
+
         
         /*
          * MEMBRES 
@@ -60,7 +60,6 @@ namespace AeroCalcCore {
         /*
          * CONSTRUCTEUR
          */
-
 
         /// <summary>
         /// Constructeur de la classe

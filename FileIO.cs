@@ -16,10 +16,12 @@ namespace AeroCalcCore
     /// Classe abstraite définissant les services de base offerts par les Objets dérivés 
     /// spécialisés dans la connexion aux fichiers de données textes/XML/JSON...
     /// </summary>
+    // <remarks>
+    // TODO: Tests unitaires à mettre en place
+    // </remarks>
     /// 
     public abstract class FileIO
     {
-
         /*
          * CONSTANTES
          */
@@ -27,19 +29,19 @@ namespace AeroCalcCore
         // Constantes liées aux opérations sur les fichiers
         public const int FILEOP_SUCCESSFUL = 1;
 
-
         //   T:System.NotSupportedException:
         //     path is in an invalid format.
         public const int FILEOP_UNKNOWN_ERROR = -1;
 
-
         public const int FILEOP_UNABLE_TO_CREATE_OUTPUT_FILE = -2;
 
+        //   T:System.ArgumentOutOfRangeException
+        //     A parameter of an operation is inapplicable
+        public const int FILEOP_INAPPLICABLE_PARAMETER = -3;
 
         //   T:System.IO.IOException:
         //     An I/O error occurred while opening the file.
         public const int FILEOP_IO_ERROR = -4;
-
 
         //   T:System.ArgumentException:
         //     path is a zero-length string, contains only white space, or contains one or more
@@ -52,7 +54,6 @@ namespace AeroCalcCore
         //     The specified path is invalid (for example, it is on an unmapped drive).
         public const int FILEOP_INVALID_PATH = -6;
 
-
         //   T:System.UnauthorizedAccessException:
         //     path specified a file that is read-only. -or- This operation is not supported
         //     on the current platform. -or- path specified a directory. -or- The caller does
@@ -61,10 +62,11 @@ namespace AeroCalcCore
         //     The caller does not have the required permission.
         public const int FILEOP_INPUT_FILE_IS_LOCKED = -7;
 
-
         //   T:System.IO.FileNotFoundException:
         //     The file specified in path was not found.
         public const int FILEOP_FILE_DOES_NOT_EXIST = -8;
+
+
 
 
         // Constantes des types de fichiers gérés
@@ -123,6 +125,11 @@ namespace AeroCalcCore
         /// Chemin du fichier utilisé en sortie
         /// </summary>
         public string outputFileAbsolutePath { get; protected set; }
+
+        /// <summary>
+        /// Recoit le code de la dernière opération IO (voir constantes FILEOP)
+        /// </summary>
+        public int IOStatus { get; protected set; }
 
 
 
@@ -205,26 +212,33 @@ namespace AeroCalcCore
         /// Retourne une liste des noms de fichiers trouvés dans le répertoire passé en argument,
         /// répondants au critère de filtre passé en argument
         /// </summary>
-        /// <param name="folderAbsolutePath">Répertoire ou chercher les fichiers, s'il est différent du
+        /// <param name="directoryAbsolutePath">Répertoire ou chercher les fichiers, s'il est différent du
         /// répertoire de travail</param>
         /// <param name="fileNameFilter">Filtre des noms de fichiers</param>
         /// <returns></returns>
         /// 
-        public IEnumerable<string> filesList(string folderAbsolutePath, string fileNameFilter)
+        public List<string> filesList(string directoryAbsolutePath, string fileNameFilter)
         {
-
-            if (folderAbsolutePath == "")
+            if (string.IsNullOrEmpty(directoryAbsolutePath))
             {
-                folderAbsolutePath = directoryAbsolutePath;
+                directoryAbsolutePath = this.directoryAbsolutePath;
             }
-            if (Directory.Exists(folderAbsolutePath))
+            if (Directory.Exists(directoryAbsolutePath))
             {
-                return Directory.EnumerateFiles(folderAbsolutePath, fileNameFilter, SearchOption.AllDirectories);
+                try
+                {
+                    List<string> l = (List<string>)Directory.EnumerateFiles(directoryAbsolutePath,
+                                                                            fileNameFilter,
+                                                                            SearchOption.AllDirectories);
+                    IOStatus = FILEOP_SUCCESSFUL;
+                    return l;
+                }
+                catch (Exception e)
+                {
+                    setIOStatus(e);
+                }
             }
-            else
-            {
-                return new List<string>();
-            }
+            return new List<string>();
         }
 
 
@@ -258,7 +272,7 @@ namespace AeroCalcCore
         /// <param name="absolutePath">Chemin absolu du fichier</param>
         /// <returns>True en cas de succès, False sinon.</returns>
         /// <remarks>
-        /// 
+        /// No Exception to handle
         /// </remarks>
         /// 
         public bool setInputFileAbsolutePath(string absolutePath)
@@ -272,7 +286,6 @@ namespace AeroCalcCore
                     return true;
                 }
             }
-            // TODO: Pb à résoudre ici, un chemin incorect vers un fichier ne conduit pas à une chaine vide !!!!
             inputFileAbsolutePath = "";
             return false;
         }
@@ -287,7 +300,6 @@ namespace AeroCalcCore
         /// <remarks>
         /// 
         /// </remarks>
-        /// 
         public bool setOutputFileAbsolutePath(string absolutePath)
         {
             if (!string.IsNullOrEmpty(absolutePath))
@@ -309,37 +321,67 @@ namespace AeroCalcCore
          *  METHODS
          */
 
+        protected void setIOStatus(Exception fileOperationException)
+        {
+            // Invalid path
+            if (fileOperationException is ArgumentException) { IOStatus = FILEOP_INVALID_PATH; }
+            if (fileOperationException is ArgumentNullException) { IOStatus = FILEOP_INVALID_PATH; }
+            if (fileOperationException is PathTooLongException) { IOStatus = FILEOP_INVALID_PATH; }
+            if (fileOperationException is DirectoryNotFoundException) { IOStatus = FILEOP_INVALID_PATH; }
+            // Inapplicable parameter
+            if (fileOperationException is ArgumentOutOfRangeException) { IOStatus = FILEOP_INAPPLICABLE_PARAMETER; }
+            // IO Error
+            if (fileOperationException is IOException) { IOStatus = FILEOP_IO_ERROR; }
+            // Security
+            if (fileOperationException is UnauthorizedAccessException) { IOStatus = FILEOP_INPUT_FILE_IS_LOCKED; }
+            if (fileOperationException is SecurityException) { IOStatus = FILEOP_INPUT_FILE_IS_LOCKED; }
+            // Does not exist
+            if (fileOperationException is FileNotFoundException) { IOStatus = FILEOP_FILE_DOES_NOT_EXIST; }
+            // Unknown
+            if (fileOperationException is NotSupportedException) { IOStatus = FILEOP_UNKNOWN_ERROR; }
+        }
+
+
+
         /// <summary>
-        /// Retourne un int désignant le type de fichier identifié, sur la simple base de l'extension de nom
+        /// Retourne un int figurant le type de l'extension du nom de fichier passé en argument
         /// </summary>
         /// <param name="fileName">Nom du fichier</param>
         /// <returns>
-        /// Constante int
+        /// Constante int négative en cas d'erreur, positive en cas d'identification réussie de l'extension du nom de fichier
         /// </returns>
         /// <remarks>
-        /// DEBUG: A améliorer pour inclure des vérifications plus poussées
         /// </remarks>
-        /// 
         protected int fileType(string fileName)
         {
-
-            string fileExt = Path.GetExtension(fileName);
-
-            if (fileExt.Equals(FILENAME_EXTENSION_XML, StringComparison.InvariantCultureIgnoreCase))
+            string fileExt;
+            if (!string.IsNullOrEmpty(fileName))
             {
-                return FILE_TYPE_XML;
-            }
-            if (fileExt.Equals(FILENAME_EXTENSION_CSV, StringComparison.InvariantCultureIgnoreCase))
-            {
-                return FILE_TYPE_CSV;
-            }
-            if (fileExt.Equals(FILENAME_EXTENSION_SCRIPT, StringComparison.InvariantCultureIgnoreCase))
-            {
-                return FILE_TYPE_SCRIPT;
-            }
-            if (fileExt.Equals(FILENAME_EXTENSION_JSON, StringComparison.InvariantCultureIgnoreCase))
-            {
-                return FILE_TYPE_JSON;
+                try
+                {
+                    fileExt = Path.GetExtension(fileName);
+                }
+                catch (Exception e)
+                {
+                    setIOStatus(e);
+                    return IOStatus;
+                }
+                if (fileExt.Equals(FILENAME_EXTENSION_XML, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    return FILE_TYPE_XML;
+                }
+                if (fileExt.Equals(FILENAME_EXTENSION_CSV, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    return FILE_TYPE_CSV;
+                }
+                if (fileExt.Equals(FILENAME_EXTENSION_SCRIPT, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    return FILE_TYPE_SCRIPT;
+                }
+                if (fileExt.Equals(FILENAME_EXTENSION_JSON, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    return FILE_TYPE_JSON;
+                }
             }
             return FILE_TYPE_UNKNOWN;
         }
@@ -352,7 +394,6 @@ namespace AeroCalcCore
         /// <returns>
         /// Bool, True si le répertoire existe, False sinon
         /// </returns>
-        /// 
         protected bool workDirExists()
         {
             return Directory.Exists(directoryAbsolutePath);
@@ -393,7 +434,6 @@ namespace AeroCalcCore
         /// 
         protected int readTextFile(string absoluteFilePath, bool commentFiltering)
         {
-
             try
             {
                 // Lecture de toutes les lignes du fichier
@@ -401,59 +441,37 @@ namespace AeroCalcCore
             }
             catch (Exception e)
             {
-
-                if (e is ArgumentException) { return FILEOP_INVALID_PATH; }
-                if (e is ArgumentNullException) { return FILEOP_INVALID_PATH; }
-                if (e is PathTooLongException) { return FILEOP_INVALID_PATH; }
-                if (e is DirectoryNotFoundException) { return FILEOP_INVALID_PATH; }
-
-                if (e is IOException) { return FILEOP_IO_ERROR; }
-
-                if (e is UnauthorizedAccessException) { return FILEOP_INPUT_FILE_IS_LOCKED; }
-                if (e is System.Security.SecurityException) { return FILEOP_INPUT_FILE_IS_LOCKED; }
-
-                if (e is System.IO.FileNotFoundException) { return FILEOP_FILE_DOES_NOT_EXIST; }
-
-                if (e is NotSupportedException) { return FILEOP_UNKNOWN_ERROR; }
+                setIOStatus(e);
+                return IOStatus;
             }
             // Filtrage éventuel des commentaires du fichier source
             if (commentFiltering)
             {
                 if (!filterComments(rawFileLines, fileLines))
                 {
+                    // TODO Erreur de traitement interne et non IO !!
+                    // filterComments devrait être traité au niveau de classe supérieure
                     return FILEOP_UNKNOWN_ERROR;
                 }
             }
-            return FILEOP_SUCCESSFUL;
+            IOStatus = FILEOP_SUCCESSFUL;
+            return IOStatus;
         }
 
 
 
         protected int checkFile(string absoluteFilePath)
         {
-
             try
             {
                 File.GetAttributes(absoluteFilePath);
-                return FILEOP_SUCCESSFUL;
+                IOStatus = FILEOP_SUCCESSFUL;
             }
             catch (Exception e)
             {
-                if (e is ArgumentException) { return FILEOP_INVALID_PATH; }
-                if (e is ArgumentNullException) { return FILEOP_INVALID_PATH; }
-                if (e is PathTooLongException) { return FILEOP_INVALID_PATH; }
-                if (e is DirectoryNotFoundException) { return FILEOP_INVALID_PATH; }
-
-                if (e is IOException) { return FILEOP_IO_ERROR; }
-
-                if (e is UnauthorizedAccessException) { return FILEOP_INPUT_FILE_IS_LOCKED; }
-                if (e is SecurityException) { return FILEOP_INPUT_FILE_IS_LOCKED; }
-
-                if (e is FileNotFoundException) { return FILEOP_FILE_DOES_NOT_EXIST; }
-
-                if (e is NotSupportedException) { return FILEOP_UNKNOWN_ERROR; }
-                return FILEOP_UNKNOWN_ERROR;
+                setIOStatus(e);
             }
+            return IOStatus;
         }
 
 
@@ -463,19 +481,13 @@ namespace AeroCalcCore
             try
             {
                 Path.GetFullPath(pathValue);
-                return FILEOP_SUCCESSFUL;
+                IOStatus = FILEOP_SUCCESSFUL;
             }
             catch (Exception e)
             {
-                if (e is ArgumentException) { return FILEOP_INVALID_PATH; }
-                if (e is ArgumentNullException) { return FILEOP_INVALID_PATH; }
-                if (e is PathTooLongException) { return FILEOP_INVALID_PATH; }
-
-                if (e is SecurityException) { return FILEOP_INPUT_FILE_IS_LOCKED; }
-
-                if (e is NotSupportedException) { return FILEOP_UNKNOWN_ERROR; }
-                return FILEOP_UNKNOWN_ERROR;
+                setIOStatus(e);
             }
+            return IOStatus;
         }
 
 
@@ -491,7 +503,6 @@ namespace AeroCalcCore
         /// 
         protected bool parseABoolean(string word, out bool result)
         {
-
             int parsedInt;
 
             if (!bool.TryParse(word, out result))
@@ -551,10 +562,10 @@ namespace AeroCalcCore
 
 
         /// <summary>
-        /// Expurge les lignes du fichier des commentaires
+        /// Expurge les commentaires
         /// </summary>
         /// <returns>True, si réussite</returns>
-        /// <TODO> A déplacer dans la classe en charge des SCRIPTS 
+        /// TODO A déplacer dans une classe supérieure, en charge des SCRIPTS et MODELS
         private bool filterComments(string[] originalLines, List<String> filteredLines)
         {
 

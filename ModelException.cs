@@ -58,7 +58,7 @@ namespace AeroCalcCore {
         /// <param name="message">Message lié à l'exception
         /// </param>
         /// <remarks>
-        /// DEBUG, non implémenté pour l'instant
+        /// TODO, non implémenté pour l'instant
         /// </remarks>
         public ModelException(String message)
             : base(message) {

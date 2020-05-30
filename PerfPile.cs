@@ -19,8 +19,7 @@ namespace AeroCalcCore {
     /// PREV IMPLEMENTATION:
     /// public class PerfPile : IComparer<PerfPile>, IEquatable<PerfPile>
     /// 
-    /// DEBUG: Attention, les implémentations des interfaces sont minimalistes et ne comprennent pas les
-    /// surcharges d'opérateurs
+    /// TODO: Attention, les implémentations des interfaces sont minimalistes et ne comprennent pas les surcharges d'opérateurs
     /// </remarks>
     /// 
     public class PerfPile : IComparable<PerfPile>, IEquatable<PerfPile> {
@@ -434,8 +433,7 @@ namespace AeroCalcCore {
         /// <param name="layerFactorValue">Facteur des Layer de performances</param>
         /// <returns>Double, valeur prédite pour les facteurs passés en arguments</returns>
         /// <remarks>
-        /// DEBUG
-        /// Cette fonction doit générer les différentes exceptions qui caractérisent les cas de calculs
+        /// TODO Cette fonction doit générer les différentes exceptions qui caractérisent les cas de calculs
         /// impossibles, mais ce n'est pas à la Pile d'intervenir dans le traitement des exceptions
         /// y compris pour stocker les informations liées à ces exceptions.
         /// Il reste à revoir la structure des blocs try, une imbrication n'est pas judicieuse
@@ -474,7 +472,7 @@ namespace AeroCalcCore {
                     }
                     if (ps.count >= 1) {
                         //
-                        // DEBUG, Attention, la fonction predict va travailler sur une création de données
+                        // TODO, Attention, la fonction predict va travailler sur une création de données
                         // nécessaires à une interpolation sur plusieurs Layer. En cas d'exception, ce ne sont pas
                         // des données originales des modèles de performances.
                         // REVOIR l'imbrication des blocs try pour simplifier la structure du code

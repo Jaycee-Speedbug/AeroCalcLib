@@ -54,7 +54,7 @@ namespace AeroCalcCore
         /// <summary>
         /// Recoit le code de traitement du fichier XML
         /// </summary>
-        public int IOStatus { get; private set; }
+        //public int IOStatus { get; private set; }
 
 
 
@@ -321,7 +321,7 @@ namespace AeroCalcCore
         ///     XMLConnector.FILEOP_UNKNOWN_ERROR : Erreur non identifiable
         /// </returns>
         /// <remarks>
-        /// DEBUG: A DEVELOPPER
+        /// TODO: A DEVELOPPER
         /// </remarks>
         /// 
         public int savePerfPileToXML(PerfPile pp, string xmlFileAbsolutePath)
