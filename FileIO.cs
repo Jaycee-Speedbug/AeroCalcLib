@@ -136,6 +136,7 @@ namespace AeroCalcCore
         /*
          * CONSTRUCTEURS
          */
+        // TODO Revoir les constructeurs, 1 argument: doit etre un inputfilepath et non un workdirectory
 
         public FileIO()
         {

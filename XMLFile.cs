@@ -26,11 +26,14 @@ namespace AeroCalcCore
         public const string NODE_LANGUAGE = "Language";
 
         public const string ATTRIB_NAME = "name";
+        public const string ATTRIB_SHORT_NAME = "shortname";
         public const string ATTRIB_VERSION = "version";
         public const string ATTRIB_ID = "id";
 
         public const string MODELS = "Models";
         public const string UNITS = "Units";
+
+        public const string LOGS = "Logs";
 
         public const string SCRIPTS = "Scripts";
         public const string ABSOLUTE_PATH = "AbsolutePath";
@@ -42,6 +45,7 @@ namespace AeroCalcCore
         public const string VERBOSE_ALLOWED = "VerboseAllowed";
         public const string UNITS_ENABLED = "UnitsEnabled";
         public const string LOGGER = "Logger";
+        public const string LANGUAGE = "Language";
         public const string TRUE = "True";
         public const string FALSE = "False";
 
@@ -161,19 +165,40 @@ namespace AeroCalcCore
         /// <returns>
         /// Chaine contenant l'attribut, ou une chaine vide si l'attribut n'a pas été trouvé
         /// </returns>
-        /// 
-        public string getAttribute(string attributeName, string[] nodeNames)
+        /// TODO A revoir complètement ! a besoin d'un appel récursif
+        public string getAttribute(string[] nodeNames, string attributeName)
         {
             if (xDoc != null && nodeNames != null)
             {
+                XElement xElem = (XElement)xDoc.Descendants(nodeNames[0]);
+                foreach (XElement item in xDoc.Descendants(nodeNames[0]))
+                {
+                    
+                }
+                if (xElem != null) {
+                    for (int i = 0; i < nodeNames.Length; i++)
+                    {
+                        xElem = (XElement)xElem.Descendants(nodeNames[i]);
+                        if (xElem==null){
+                            break;
+                        }
+
+                    }
+                    if (xElem != null)
+                    {
+                        return xElem.Attribute(attributeName).Value;
+                    }
+                }
+                /*
                 XElement xe = xDoc.Element(nodeNames[0]);
                 for (int index = 1; index < nodeNames.Length; index++)
                 {
                     xe = xe.Element(nodeNames[index]);
                 }
                 return xe.Attribute(attributeName).Value;
+                */
             }
-            else return "";
+            return "";
         }
 
 
@@ -188,6 +213,8 @@ namespace AeroCalcCore
         /// Chaine contenant l'attribut, ou une chaine vide si l'attribut n'a pas été trouvé
         /// </returns>
         /// 
+        // TODO ne parcourt pas tous les Nodes !!!!
+        // BUG Ne pas utiliser
         public string getValue(string[] nodeNames)
         {
             if (xDoc != null && nodeNames != null)
@@ -224,23 +251,47 @@ namespace AeroCalcCore
         {
             if (nodeName != null && attributeName != null && attributeValue != null)
             {
-                foreach (XElement elemt in xDoc.Descendants())
+                foreach (XElement elemt in xDoc.Descendants(nodeName))
                 {
-                    if (elemt.Name.LocalName.Equals(nodeName))
+                    // Noeud trouvé !
+                    foreach (XAttribute attrib in elemt.Attributes())
                     {
-                        // Noeud trouvé !
-                        foreach (XAttribute attrib in elemt.Attributes())
+                        if (attrib.Name.LocalName.Equals(attributeName) && attrib.Value.Equals(attributeValue))
                         {
-                            if (attrib.Name.LocalName.Equals(attributeName) && attrib.Value.Equals(attributeValue))
-                            {
-                                // Attribut trouvé
-                                return elemt.Value;
-                            }
+                            // Attribut trouvé
+                            return elemt.Value;
                         }
                     }
                 }
             }
             return "";
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        // TODO A transférer dans une classe chargée d traitement du fichier de configuration
+        public Languages GetLanguagesFromXML()
+        {
+            Languages langs = new Languages();
+
+            if (IOStatus != FileIO.FILEOP_SUCCESSFUL) { return null; }
+            // Nodes Languages
+            foreach (XElement xe in xDoc.Descendants(NODE_LANGUAGE))
+            {
+                // This is a Language Node
+                string shortName = xe.Attribute(ATTRIB_SHORT_NAME).Value;
+                string name = xe.Attribute(ATTRIB_NAME).Value;
+                string filePath = xe.Value;
+                if (string.IsNullOrEmpty(shortName) || string.IsNullOrEmpty(name) || string.IsNullOrEmpty(filePath))
+                {
+                    // Not a valid Language block
+                    break;
+                }
+                langs.Add(new Language(name, shortName, filePath, true));
+            }
+            return langs;
         }
 
 
@@ -267,20 +318,8 @@ namespace AeroCalcCore
         public bool getBoolean(string nodeName, string attributeName, string attributeValue, bool defaultValue)
         {
             return getBoolOrDefault(getValue(nodeName, attributeName, attributeValue), defaultValue);
-
-            /*
-            bool b;
-
-            if (!Boolean.TryParse(getValue(nodeName, attributeName, attributeValue), out b))
-            {
-                return defaultValue;
-            }
-            else
-            {
-                return b;
-            }
-            */
         }
+
         public bool getBoolOrDefault(string fieldString, bool defaultValue)
         {
             bool b;
@@ -322,16 +361,6 @@ namespace AeroCalcCore
                 return d;
             }
             return double.NaN;
-            /*
-            if (!Double.TryParse(fieldString, out d))
-            {
-                return Double.NaN;
-            }
-            else
-            {
-                return d;
-            }
-            */
         }
 
 

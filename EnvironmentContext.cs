@@ -35,12 +35,13 @@ namespace AeroCalcCore
         public string publicAppVersion { get; private set; }
         public string publicAppName { get; private set; }
 
-        public int configFileVersion { get; private set; }
+        public string configFileVersion { get; private set; }
 
         public string appDirPath { get; private set; }
         public string configDirPath { get; private set; }
         public string modelsDirPath { get; private set; }
         public string scriptsDirPath { get; private set; }
+        public string logDirPath { get; private set; }
 
         public string configFilePath { get; private set; }
 
@@ -51,9 +52,13 @@ namespace AeroCalcCore
         public bool verbose { get; private set; }
         public bool verboseAllowed { get; private set; }
         public bool logger { get; private set; }
-        public int activeLanguageRef { get; private set; }
+        public int activeLangIndex { get; private set; }
 
-        public string[] languageList { get; private set; }
+        public string activeLang { get; private set; }
+
+        public Languages Langs { get; private set; }
+
+        // public string[] languageList { get; private set; }
 
 
         public int status { get; private set; }
@@ -62,7 +67,6 @@ namespace AeroCalcCore
         /*
          * CONSTRUCTEUR
          */
-
 
         public EnvironmentContext()
         {
@@ -97,11 +101,22 @@ namespace AeroCalcCore
             if (configFile.IOStatus == FileIO.FILEOP_SUCCESSFUL)
             {
                 // Langue active
-                activeLanguageRef = 0;
+                activeLangIndex = 0;
+                activeLang = configFile.getValue(XMLFile.NODE_SETTING, XMLFile.ATTRIB_NAME, XMLFile.LANGUAGE);
                 // Dossier de l'application
                 appDirPath = appDirPath;
                 // Fichier de configuration
                 configFilePath = configFilePath;
+                string[] nodes = { XMLFile.NODE_CONFIG };
+                
+                // TODO ne fonctionne pas
+                // BUG
+                //configFileVersion = configFile.getAttribute(nodes, XMLFile.ATTRIB_VERSION);
+
+                // Packs de langue
+                Langs = configFile.GetLanguagesFromXML();
+                // Dossiers des logs
+                logDirPath = appDirPath + configFile.getValue(XMLFile.NODE_DIR, XMLFile.ATTRIB_NAME, XMLFile.LOGS);
                 // Mode Logger
                 logger = configFile.getBoolean(XMLFile.NODE_SETTING, XMLFile.ATTRIB_NAME, XMLFile.LOGGER, true);
                 // Dossier des modèles de calcul
@@ -124,10 +139,11 @@ namespace AeroCalcCore
                 verboseAllowed = configFile.getBoolean(XMLFile.NODE_SETTING, XMLFile.ATTRIB_NAME, XMLFile.VERBOSE_ALLOWED, true);
                 // Mode VERBOSE
                 setVerbose(configFile.getBoolean(XMLFile.NODE_SETTING, XMLFile.ATTRIB_NAME, XMLFile.VERBOSE, false));
-                // Packs de langue
-                
 
                 status = FileIO.FILEOP_SUCCESSFUL;
+
+                // Recherche de l'index du language sélectionné
+                activeLangIndex = Langs.languageIndex(activeLang);
             }
             else
             {
@@ -159,17 +175,25 @@ namespace AeroCalcCore
             string msg;
 
             msg = "EnvironmentContext";
+            msg += "\n activeLanguageRef     : " + activeLangIndex;
+            msg += "\n activeLang            : " + activeLang;
             msg += "\n appDirectory          : " + appDirPath;
             msg += "\n configurationDirectory: " + configDirPath;
             msg += "\n configurationFileName : " + configFilePath;
+            msg += "\n configFileVersion     : " + configFileVersion;
             msg += "\n unitsFileName         : " + unitsFileName;
             msg += "\n modelsDirectory       : " + modelsDirPath;
             msg += "\n scriptsDirectory      : " + scriptsDirPath;
+            msg += "\n logDirPath            : " + logDirPath;
             msg += "\n verboseAllowed        : " + verboseAllowed;
             msg += "\n verbose               : " + verbose;
             msg += "\n unitsEnabled          : " + unitsEnabled;
             msg += "\n logger                : " + logger;
-
+            msg += "\n Languages             : ";
+            foreach (Language l in Langs.LanguageLibrary)
+            {
+                msg += "\n     " + l.shortName + " " + l.name + " " + l.fileAbsolutePath;
+            }
             return msg;
         }
 

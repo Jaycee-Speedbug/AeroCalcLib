@@ -72,9 +72,9 @@ namespace AeroCalcCore
 
 
         /// <summary>
-        /// Récupère les unités utiliées dans les calculs dans le fichier xml des unités.
+        /// Récupère les unités utilisées dans les calculs dans le fichier XML des unités.
         /// </summary>
-        /// TODO Doit on renvoyer un null en cas d'échec ???</TODO>
+        /// TODO Doit on renvoyer un null en cas d'échec ???
         public Units getUnitsFromXML(string xmlFileAbsolutePath)
         {
             // Introducing a new file
@@ -86,95 +86,44 @@ namespace AeroCalcCore
                 }
             }
             return getUnitsFromXML();
-            /*
-
-            //Units units = new Units();
-            units = getUnitsFromXML();
-
-            // Déclenche la lecture du fichier
-            if (readXmlFile() != FileIO.FILEOP_SUCCESSFUL) { return null; }
-
-            // Node principal
-            XElement mainElement = xDoc.Element(NODE_UNITS);
-
-            foreach (XElement xe in mainElement.Elements())
-            {
-                if (xe.Name.LocalName == NODE_DIMENSION)
-                {
-                    // This is a DIMENSION node
-                    string dimension = xe.Value;
-                    if (dimension != null && dimension != "")
-                    {
-                        foreach (XElement item in xe.Elements())
-                        {
-                            if (item.Name.LocalName == NODE_UNIT)
-                            {
-                                // This is a UNIT node, let's get the data
-                                string unitName = item.Attribute(ATTRIB_NAME).Value;
-                                bool isRef = getBoolean(item.Attribute(UNIT_ATTR_ISREF).Value, false);
-                                string alias = item.Attribute(UNIT_ATTR_ALIAS).Value;
-                                double factor = getDouble(item.Attribute(UNIT_ATTR_FACTOR).Value);
-                                double constant = getDouble(item.Attribute(UNIT_ATTR_CONST).Value);
-                                if (!isRef && factor == Double.NaN || constant == Double.NaN)
-                                {
-                                    // Not a valid unit
-                                    break;
-                                }
-                                units.add(new Unit(xe.Value, unitName, alias, isRef, factor, constant));
-                            }
-                        }
-                    }
-
-                }
-            }
-            return units;
-            */
         }
+
+        /// <summary>
+        /// Récupère les unités utilisées dans les calculs dans le fichier XML des unités.
+        /// </summary>
         public Units getUnitsFromXML()
         {
             Units units = new Units();
 
-            // Déclenche la lecture du fichier
-            // TODO Faut-il vraiment déclencher la lecture ??? cela devrait être fait par le constructeur qui reçoit 
-            //      le path du fichier....
-            if (readXmlFile() != FileIO.FILEOP_SUCCESSFUL) { return null; }
-
-            // Node principal des unités
-            XElement mainElement = xDoc.Element(NODE_UNITS);
-
-            foreach (XElement xe in mainElement.Elements())
+            if (IOStatus != FileIO.FILEOP_SUCCESSFUL)
             {
-                if (xe.Name.LocalName == NODE_DIMENSION)
+                return null;
+            }
+            foreach (XElement xe in xDoc.Descendants(NODE_DIMENSION))
+            {
+                // This is a DIMENSION node
+                string dimension = xe.Value;
+                if (dimension != null && dimension != "")
                 {
-                    // This is a DIMENSION node
-                    string dimension = xe.Value;
-                    if (dimension != null && dimension != "")
+                    foreach (XElement item in xe.Descendants(NODE_UNIT))
                     {
-                        foreach (XElement item in xe.Elements())
+                        // This is a UNIT node, let's get the data
+                        string unitName = item.Attribute(ATTRIB_NAME).Value;
+                        bool isRef = getBoolOrDefault(item.Attribute(UNIT_ATTR_ISREF).Value, false);
+                        string alias = item.Attribute(UNIT_ATTR_ALIAS).Value;
+                        double factor = getDoubleOrNan(item.Attribute(UNIT_ATTR_FACTOR).Value);
+                        double constant = getDoubleOrNan(item.Attribute(UNIT_ATTR_CONST).Value);
+                        if (!isRef && factor == Double.NaN || constant == Double.NaN)
                         {
-                            if (item.Name.LocalName == NODE_UNIT)
-                            {
-                                // This is a UNIT node, let's get the data
-                                string unitName = item.Attribute(ATTRIB_NAME).Value;
-                                bool isRef = getBoolOrDefault(item.Attribute(UNIT_ATTR_ISREF).Value, false);
-                                string alias = item.Attribute(UNIT_ATTR_ALIAS).Value;
-                                double factor = getDoubleOrNan(item.Attribute(UNIT_ATTR_FACTOR).Value);
-                                double constant = getDoubleOrNan(item.Attribute(UNIT_ATTR_CONST).Value);
-                                if (!isRef && factor == Double.NaN || constant == Double.NaN)
-                                {
-                                    // Not a valid unit
-                                    break;
-                                }
-                                units.add(new Unit(xe.Value, unitName, alias, isRef, factor, constant));
-                            }
+                            // Not a valid unit
+                            break;
                         }
+                        units.add(new Unit(xe.Value, unitName, alias, isRef, factor, constant));
                     }
-
                 }
             }
             return units;
         }
-
 
 
 

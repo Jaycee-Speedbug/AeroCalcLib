@@ -15,12 +15,15 @@ namespace AeroCalcCore
 
         private EventMessages EMsgLib;
 
+        /*
+         * CONSTRUCTEUR
+         */
         public PostProcessor(EnvironmentContext EC)
         {
             // TODO A intégrer pleinement à l'object EnvironmentContext
             EventMessagesXMLFile xmlFile = new EventMessagesXMLFile("");
 
-            EMsgLib = xmlFile.loadEventMessages();
+            EMsgLib = xmlFile.getEventMessagesFromXML();
 
 
             

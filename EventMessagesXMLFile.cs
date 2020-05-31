@@ -28,21 +28,32 @@ namespace AeroCalcCore
 
 
 
-
-
         /*
          * SERVICES
          */
 
-        public EventMessages loadEventMessages()
+        public EventMessages getEventMessagesFromXML()
         {
             EventMessages EMLib = new EventMessages();
 
             // TODO load the file here
 
+            foreach (XElement item in xDoc.Descendants(NODE_MESSAGE))
+            {
+                // This is a Message node, let's get the data
+                string msg = item.Value;
+                int codeNb = getIntOrMinValue(item.Attribute(ATTRIB_ID).Value);
+                if (codeNb != int.MinValue)
+                {
+                    EMLib.Add(new EventMessage(codeNb, msg));
+                }
+            }
 
+            /*
             // Node principal des messages
             XElement mainElement = xDoc.Element(NODE_MESSAGES);
+            if (mainElement is null) return EMLib;
+
             foreach (XElement xe in mainElement.Elements())
             {
                 if (xe.Name.LocalName == NODE_MESSAGE)
@@ -50,22 +61,24 @@ namespace AeroCalcCore
                     // This is a Message node, let's get the data
                     string msg = xe.Value;
                     int codeNb = getIntOrMinValue(xe.Attribute(ATTRIB_ID).Value);
-                    if (codeNb!=int.MinValue) {
-                        EMLib.Add(new EventMessage(codeNb,msg));
+                    if (codeNb != int.MinValue)
+                    {
+                        EMLib.Add(new EventMessage(codeNb, msg));
                     }
 
                 }
 
             }
+            */
             return EMLib;
         }
 
-        public EventMessages loadEventMessages(string absoluteFilePath)
+        public EventMessages getEventMessagesFromXML(string absoluteFilePath)
         {
             EventMessages EMLib = new EventMessages();
             if (setInputFileAbsolutePath(absoluteFilePath))
             {
-                return loadEventMessages();
+                return getEventMessagesFromXML();
             }
             return EMLib;
         }
