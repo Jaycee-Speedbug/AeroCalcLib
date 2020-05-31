@@ -13,17 +13,17 @@ namespace AeroCalcCore
     /// </summary>
     public class XMLFile : FileIO
     {
-
         /*
          * CONSTANTES
          */
-
-        // Constantes des balises XML du fichier de configuration
+        // XML mapping
         public const string NODE_APP = "Application";
         public const string NODE_CONFIG = "Configuration";
         public const string NODE_DIR = "Directory";
         public const string NODE_FILE = "File";
         public const string NODE_SETTING = "Setting";
+        public const string NODE_LANGUAGES = "Languages";
+        public const string NODE_LANGUAGE = "Language";
 
         public const string ATTRIB_NAME = "name";
         public const string ATTRIB_VERSION = "version";
@@ -266,7 +266,7 @@ namespace AeroCalcCore
         /// 
         public bool getBoolean(string nodeName, string attributeName, string attributeValue, bool defaultValue)
         {
-            return getBoolean(getValue(nodeName, attributeName, attributeValue), defaultValue);
+            return getBoolOrDefault(getValue(nodeName, attributeName, attributeValue), defaultValue);
 
             /*
             bool b;
@@ -281,7 +281,7 @@ namespace AeroCalcCore
             }
             */
         }
-        public bool getBoolean(string fieldString, bool defaultValue)
+        public bool getBoolOrDefault(string fieldString, bool defaultValue)
         {
             bool b;
 
@@ -296,9 +296,33 @@ namespace AeroCalcCore
         }
 
 
-        public double getDouble(string fieldString)
+
+        public int getIntOrMinValue(string fieldString)
+        {
+            int i;
+            if (!int.TryParse(fieldString, out i))
+            {
+                // TODO Vérifier la compatibilité sur les plateforme Int16/Int32/Int64
+                //      Eventuellement faire un choix qui permettent de viser Linux et Windows 10...
+                return int.MinValue;
+            }
+            else
+            {
+                return i;
+            }
+        }
+
+
+
+        public double getDoubleOrNan(string fieldString)
         {
             double d;
+            if (Double.TryParse(fieldString, out d))
+            {
+                return d;
+            }
+            return double.NaN;
+            /*
             if (!Double.TryParse(fieldString, out d))
             {
                 return Double.NaN;
@@ -307,6 +331,7 @@ namespace AeroCalcCore
             {
                 return d;
             }
+            */
         }
 
 

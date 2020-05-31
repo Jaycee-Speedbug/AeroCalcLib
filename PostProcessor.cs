@@ -7,7 +7,7 @@ namespace AeroCalcCore
 
 
 /// <summary>
-/// Classe destinée uniquement au traitement de la commande prost process, pour mise en forme des messages textes
+/// Classe destinée uniquement au traitement 'prost process' des commandes, pour mise en forme des messages textes.
 /// Utilisera le package de langue
 /// </summary>
     public class PostProcessor
@@ -17,12 +17,14 @@ namespace AeroCalcCore
 
         public PostProcessor(EnvironmentContext EC)
         {
-            EMsgLib = new EventMessages();
+            // TODO A intégrer pleinement à l'object EnvironmentContext
+            EventMessagesXMLFile xmlFile = new EventMessagesXMLFile("");
+
+            EMsgLib = xmlFile.loadEventMessages();
 
 
+            
         }
-
-
 
     }
     

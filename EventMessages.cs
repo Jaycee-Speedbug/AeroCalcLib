@@ -10,13 +10,11 @@ namespace AeroCalcCore
 
     public class EventMessages
     {
-
-        List<EventMessage> eMsgList;
-
-
         /*
          * PROPRIETES
          */
+        List<EventMessage> eMsgList;
+
 
         public int Count => eMsgList.Count;
         public int Capacity => eMsgList.Capacity;
@@ -26,16 +24,18 @@ namespace AeroCalcCore
         /*
          * CONSTRUCTEURS
          */
+        /// <summary>
+        /// Construit un objet EventMessage
+        /// </summary>
         public EventMessages()
         {
             eMsgList = new List<EventMessage>();
-
-
-
-
         }
 
 
+        /*
+         * SERVICES
+         */
 
         public void Clear() => eMsgList.Clear();
 
@@ -50,7 +50,7 @@ namespace AeroCalcCore
             EventMessage eMsg = new EventMessage(eventCode, eventMessage);
             if (eMsgList.Exists(eMsg => eMsg.eCode == eventCode))
             {
-                /// No double EventMessage with the same id
+                /// No two EventMessage with the same id
                 return false;
             }
             else

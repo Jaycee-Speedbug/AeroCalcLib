@@ -53,6 +53,8 @@ namespace AeroCalcCore
         public bool logger { get; private set; }
         public int activeLanguageRef { get; private set; }
 
+        public string[] languageList { get; private set; }
+
 
         public int status { get; private set; }
 
@@ -122,6 +124,8 @@ namespace AeroCalcCore
                 verboseAllowed = configFile.getBoolean(XMLFile.NODE_SETTING, XMLFile.ATTRIB_NAME, XMLFile.VERBOSE_ALLOWED, true);
                 // Mode VERBOSE
                 setVerbose(configFile.getBoolean(XMLFile.NODE_SETTING, XMLFile.ATTRIB_NAME, XMLFile.VERBOSE, false));
+                // Packs de langue
+                
 
                 status = FileIO.FILEOP_SUCCESSFUL;
             }

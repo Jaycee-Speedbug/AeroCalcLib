@@ -26,7 +26,7 @@ namespace AeroCalcCore
         }
 
 
-        
+
         public bool Equals(EventMessage EM)
         {
             /// TODO: simplifier
@@ -48,7 +48,7 @@ namespace AeroCalcCore
 
         public override string ToString()
         {
-            return "[" + this.eCode + "] " + this.eMessage;
+            return string.Format("[{0:D5}]", this.eCode) + this.eMessage;
         }
 
     }
