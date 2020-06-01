@@ -23,15 +23,7 @@ namespace AeroCalcCore
         /*
          * CONSTANTES
          */
-        // XML mapping
-        public const string NODE_UNITS = "Units";
-        public const string NODE_UNIT = "Unit";
-        public const string NODE_DIMENSION = "Dimension";
-        public const string UNIT_ATTR_NAME = "name";
-        public const string UNIT_ATTR_ALIAS = "alias";
-        public const string UNIT_ATTR_ISREF = "isref";
-        public const string UNIT_ATTR_FACTOR = "factor";
-        public const string UNIT_ATTR_CONST = "constant";
+        //! Placer les constantes de mapping XML dans la classe de base XMLFile
 
 
 
@@ -109,10 +101,10 @@ namespace AeroCalcCore
                     {
                         // This is a UNIT node, let's get the data
                         string unitName = item.Attribute(ATTRIB_NAME).Value;
-                        bool isRef = getBoolOrDefault(item.Attribute(UNIT_ATTR_ISREF).Value, false);
-                        string alias = item.Attribute(UNIT_ATTR_ALIAS).Value;
-                        double factor = getDoubleOrNan(item.Attribute(UNIT_ATTR_FACTOR).Value);
-                        double constant = getDoubleOrNan(item.Attribute(UNIT_ATTR_CONST).Value);
+                        bool isRef = getBoolOrDefault(item.Attribute(ATTRIB_ISREF).Value, false);
+                        string alias = item.Attribute(ATTRIB_ALIAS).Value;
+                        double factor = getDoubleOrNaN(item.Attribute(ATTRIB_FACTOR).Value);
+                        double constant = getDoubleOrNaN(item.Attribute(ATTRIB_CONST).Value);
                         if (!isRef && factor == Double.NaN || constant == Double.NaN)
                         {
                             // Not a valid unit
@@ -150,11 +142,11 @@ namespace AeroCalcCore
             {
                 isref = "false";
             }
-            return new XElement(NODE_UNIT, new XAttribute(UNIT_ATTR_NAME, u.name),
-                                           new XAttribute(UNIT_ATTR_ISREF, isref),
-                                           new XAttribute(UNIT_ATTR_ALIAS, u.alias),
-                                           new XAttribute(UNIT_ATTR_FACTOR, u.factor),
-                                           new XAttribute(UNIT_ATTR_CONST, u.constant));
+            return new XElement(NODE_UNIT, new XAttribute(ATTRIB_NAME, u.name),
+                                           new XAttribute(ATTRIB_ISREF, isref),
+                                           new XAttribute(ATTRIB_ALIAS, u.alias),
+                                           new XAttribute(ATTRIB_FACTOR, u.factor),
+                                           new XAttribute(ATTRIB_CONST, u.constant));
         }
 
 

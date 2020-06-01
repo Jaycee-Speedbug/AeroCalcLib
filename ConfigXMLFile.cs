@@ -11,7 +11,10 @@ namespace AeroCalcCore
 
     public class ConfigXMLFile : XMLFile
     {
-
+        /*
+         * CONSTANTES
+         */
+        //! Placer les constantes de mapping XML dans la classe de base XMLFile
 
 
         /*
