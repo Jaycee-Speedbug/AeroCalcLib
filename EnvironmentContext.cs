@@ -96,7 +96,7 @@ namespace AeroCalcCore
             // Dossier de configuration
             configDirPath = configFilePath.Substring(0, configFilePath.LastIndexOf(Path.DirectorySeparatorChar));
             // Lecture et exploitation du fichier XML de configuration
-            XMLFile configFile = new XMLFile("", configFilePath);
+            ConfigXMLFile configFile = new ConfigXMLFile(configFilePath);
 
             if (configFile.IOStatus == FileIO.FILEOP_SUCCESSFUL)
             {

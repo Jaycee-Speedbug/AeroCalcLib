@@ -266,34 +266,6 @@ namespace AeroCalcCore
 
 
         /// <summary>
-        /// 
-        /// </summary>
-        // TODO A transférer dans une classe chargée du traitement du fichier de configuration
-        public Languages GetLanguagesFromXML()
-        {
-            Languages langs = new Languages();
-
-            if (IOStatus != FileIO.FILEOP_SUCCESSFUL) { return null; }
-            // Nodes Languages
-            foreach (XElement xe in xDoc.Descendants(NODE_LANGUAGE))
-            {
-                // This is a Language Node
-                string shortName = xe.Attribute(ATTRIB_SHORT_NAME).Value;
-                string name = xe.Attribute(ATTRIB_NAME).Value;
-                string filePath = xe.Value;
-                if (string.IsNullOrEmpty(shortName) || string.IsNullOrEmpty(name) || string.IsNullOrEmpty(filePath))
-                {
-                    // Not a valid Language block
-                    break;
-                }
-                langs.Add(new Language(name, shortName, filePath, true));
-            }
-            return langs;
-        }
-
-
-
-        /// <summary>
         /// Renvoie le Boolean d'un noeud, identifié par le nom du noeud et un attribut de ce noeud, sinon la valeur par défaut 
         /// </summary>
         /// <param name="nodeName">
