@@ -1,5 +1,6 @@
 using System;
 using System.Xml.Linq;
+using System.Collections.Generic;
 
 
 
@@ -156,7 +157,7 @@ namespace AeroCalcCore
 
 
         /// <summary>
-        /// Renvoie le contenu d'un attribut d'un noeud situé dans une lignée hyérarchique de noeuds
+        /// Renvoie le contenu d'un attribut du dernier noeud situé dans une lignée hyérarchique de noeuds
         /// </summary>
         /// <param name="attributeName">Nom XML de l'attribut à chercher</param>
         /// <param name="nodeNames">
@@ -165,38 +166,27 @@ namespace AeroCalcCore
         /// <returns>
         /// Chaine contenant l'attribut, ou une chaine vide si l'attribut n'a pas été trouvé
         /// </returns>
-        /// TODO A revoir complètement ! a besoin d'un appel récursif
+        /// TODO A revoir complètement ! a peut-etre besoin d'un appel récursif
         public string getAttribute(string[] nodeNames, string attributeName)
         {
-            if (xDoc != null && nodeNames != null)
+            if (xDoc == null || nodeNames == null || string.IsNullOrEmpty(attributeName)) { return ""; }
+            List<XElement> collec = new List<XElement>();
+            collec.Add((XElement)xDoc.FirstNode);
+            for (int index = 0; index < nodeNames.Length; index++)
             {
-                XElement xElem = (XElement)xDoc.Descendants(nodeNames[0]);
-                foreach (XElement item in xDoc.Descendants(nodeNames[0]))
+                List<XElement> loopCollec = new List<XElement>();
+                foreach (XElement item in collec)
                 {
-                    
+                    loopCollec.AddRange(item.Descendants(nodeNames[index]));
                 }
-                if (xElem != null) {
-                    for (int i = 0; i < nodeNames.Length; i++)
-                    {
-                        xElem = (XElement)xElem.Descendants(nodeNames[i]);
-                        if (xElem==null){
-                            break;
-                        }
-
-                    }
-                    if (xElem != null)
-                    {
-                        return xElem.Attribute(attributeName).Value;
-                    }
-                }
-                /*
-                XElement xe = xDoc.Element(nodeNames[0]);
-                for (int index = 1; index < nodeNames.Length; index++)
+                collec = loopCollec;
+            }
+            foreach (XElement xe in collec)
+            {
+                if (xe.Attribute(attributeName) != null)
                 {
-                    xe = xe.Element(nodeNames[index]);
+                    return xe.Attribute(attributeName).Value;
                 }
-                return xe.Attribute(attributeName).Value;
-                */
             }
             return "";
         }
@@ -204,7 +194,7 @@ namespace AeroCalcCore
 
 
         /// <summary>
-        /// Renvoie le contenu d'un noeud situé dans une lignée hyérarchique de noeuds fournie en argument
+        /// Renvoie le contenu du premier noeud situé dans une lignée hyérarchique de noeuds, fournie en argument
         /// </summary>
         /// <param name="nodeNames">
         /// Tableau string contenant les noms XML des noeuds à examiner, en ordre hyérarchique.
@@ -213,20 +203,26 @@ namespace AeroCalcCore
         /// Chaine contenant l'attribut, ou une chaine vide si l'attribut n'a pas été trouvé
         /// </returns>
         /// 
-        // TODO ne parcourt pas tous les Nodes !!!!
-        // BUG Ne pas utiliser
+        // BUG Corrigé main non testé
         public string getValue(string[] nodeNames)
         {
-            if (xDoc != null && nodeNames != null)
+            if (xDoc == null || nodeNames == null) { return ""; }
+            List<XElement> collec = new List<XElement>();
+            collec.Add((XElement)xDoc.FirstNode);
+            for (int index = 0; index < nodeNames.Length; index++)
             {
-                XElement xe = xDoc.Element(nodeNames[0]);
-                for (int index = 1; index < nodeNames.Length; index++)
+                List<XElement> loopCollec = new List<XElement>();
+                foreach (XElement item in collec)
                 {
-                    xe = xe.Element(nodeNames[index]);
+                    loopCollec.AddRange(item.Descendants(nodeNames[index]));
                 }
+                collec = loopCollec;
+            }
+            foreach (XElement xe in collec)
+            {
                 return xe.Value;
             }
-            else return "";
+            return "";
         }
 
 
@@ -268,10 +264,11 @@ namespace AeroCalcCore
         }
 
 
+
         /// <summary>
         /// 
         /// </summary>
-        // TODO A transférer dans une classe chargée d traitement du fichier de configuration
+        // TODO A transférer dans une classe chargée du traitement du fichier de configuration
         public Languages GetLanguagesFromXML()
         {
             Languages langs = new Languages();

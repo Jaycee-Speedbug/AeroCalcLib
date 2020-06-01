@@ -107,11 +107,11 @@ namespace AeroCalcCore
                 appDirPath = appDirPath;
                 // Fichier de configuration
                 configFilePath = configFilePath;
+
+                // Version du fichier de configuration (non utilisé)
+                // TODO implémenter l'utilisation du numéro de version du fichier de configuration
                 string[] nodes = { XMLFile.NODE_CONFIG };
-                
-                // TODO ne fonctionne pas
-                // BUG
-                //configFileVersion = configFile.getAttribute(nodes, XMLFile.ATTRIB_VERSION);
+                configFileVersion = configFile.getAttribute(nodes, XMLFile.ATTRIB_VERSION);
 
                 // Packs de langue
                 Langs = configFile.GetLanguagesFromXML();
