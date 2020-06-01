@@ -18,9 +18,8 @@ namespace AeroCalcCore {
 
 
         /*
-         * Constructors
+         * CONSTRUCTEUR
          */
-
         public CommandFactor(string factorName, double factorValue, int factorUnitCode) {
             name = factorName.ToUpper();
             value = factorValue;
