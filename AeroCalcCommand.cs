@@ -101,51 +101,56 @@ namespace AeroCalcCore {
         /// </summary>
         ///
         public const int EVENTCODE_VERBOSE_ACTIVE = 910;
-        public const string RESULT_VERBOSE_ACTIVE = "Mode VERBOSE activé";
+        //public const string RESULT_VERBOSE_ACTIVE = "Mode VERBOSE activé";
 
         public const int EVENTCODE_VERBOSE_INACTIVE = 911;
-        public const string RESULT_VERBOSE_INACTIVE = "Mode VERBOSE désactivé";
+        //public const string RESULT_VERBOSE_INACTIVE = "Mode VERBOSE désactivé";
+
 
         public const int EVENTCODE_HELP_REQUESTED = 900;
 
         public const int EVENTCODE_LOAD_MODELS_SUCCESSFULL = 500;
-        public const string RESULT_LOAD_MODELS_SUCCESSFULL = "";
+        //public const string RESULT_LOAD_MODELS_SUCCESSFULL = "DEPRECATED MSG";
 
         public const int EVENTCODE_CALCULATE_SUCCESSFULL = 200;
-        public const string RESULT_CALCULATE_SUCCESSFULL = "Calcul traité avec succès";
+        public const string RESULT_CALCULATE_SUCCESSFULL = "Calcul traité avec succès DEPRECATED MSG";
 
         public const int EVENTCODE_PROCESS_SUCCESSFULL = 100;
-        public const string RESULT_PROCESS_SUCCESSFULL = "Commande traitée avec succès";
+        //public const string RESULT_PROCESS_SUCCESSFULL = "Commande traitée avec succès DEPRECATED MSG";
 
         public const int EVENTCODE_INIT_SUCCESSFULL = 110;
-        public const string RESULT_INIT_SUCCESSFULL = "Interprète de commande initialisé avec succès";
+        //public const string RESULT_INIT_SUCCESSFULL = "Interprète de commande initialisé avec succès";
 
         public const int EVENTCODE_CMD_HANDOVER = 20;
 
         public const int EVENTCODE_EXIT_REQUESTED = 10;
-        public const string RESULT_EXIT_REQUESTED = "Fermeture de AeroCalc2017...";
+        //public const string RESULT_EXIT_REQUESTED = "Fermeture de AeroCalc2017...";
 
         //
-        public const int EVENTCODE_INIT_VALUE = 0; // Valeur d'initialisation
+        public const int EVENTCODE_INITIAL = 0; // Valeur d'initialisation
         //
 
         public const int EVENTCODE_INIT_UNSUCCESSFULL = -1;
-        public const string RESULT_ERROR_INIT_UNSUCCESSFULL = "Echec de l'intialisation";
-        public const string COMMENT_ERROR_INIT_UNSUCCESSFULL = "Une erreur s'est produite durant l'initialisation du processeur";
+        //public const string RESULT_ERROR_INIT_UNSUCCESSFULL = "Echec de l'intialisation";
+        //public const string COMMENT_ERROR_INIT_UNSUCCESSFULL = "Une erreur s'est produite durant l'initialisation du processeur";
 
         public const int EVENTCODE_REINIT_NOT_ALLOWED = -2;
-        public const string RESULT_ERROR_REINIT_NOT_ALLOWED = "Impossible d'initialiser l'interprète une seconde fois";
-        public const string COMMENT_ERROR_REINIT_NOT_ALLOWED = "Pour ré-initialiser l'interprète, il est nécessaire de quitter et de relancer le programme";
+        //public const string RESULT_ERROR_REINIT_NOT_ALLOWED = "Impossible d'initialiser l'interprète une seconde fois";
+        //public const string COMMENT_ERROR_REINIT_NOT_ALLOWED = "Pour ré-initialiser l'interprète, il est nécessaire de quitter et de relancer le programme";
         public const int EVENTCODE_ERROR_INIT_CONFIGFILE_PATH = -3;
-        public const string RESULT_ERROR_INIT_ERROR_CONFIGFILE_PATH = "Echec de l'initialisation";
-        public const string COMMENT_ERROR_INIT_CONFIGFILE_PATH = "Le chemin du fichier de configuration n'est pas valide";
+        //public const string RESULT_ERROR_INIT_ERROR_CONFIGFILE_PATH = "Echec de l'initialisation";
+        //public const string COMMENT_ERROR_INIT_CONFIGFILE_PATH = "Le chemin du fichier de configuration n'est pas valide";
         public const int EVENTCODE_ERROR_INIT_IO_ERROR = -4;
-        public const string RESULT_ERROR_INIT_IO_ERROR = "Echec de l'initialisation";
-        public const string COMMENT_ERROR_INIT_IO_ERROR = "Erreur lors de la lecture du fichier de configuration du processeur";
+        //public const string RESULT_ERROR_INIT_IO_ERROR = "Echec de l'initialisation";
+        //public const string COMMENT_ERROR_INIT_IO_ERROR = "Erreur lors de la lecture du fichier de configuration du processeur";
 
         public const int EVENTCODE_ERROR_INIT_UKN_FILE_ERROR = -5;
-        public const string RESULT_ERROR_INIT_UKN_FILE_ERROR = "Echec de l'initialisation";
-        public const string COMMENT_ERROR_INIT_UKN_FILE_ERROR = "Erreur non reconnue lors de la lecture du fichier de configuration du processeur";
+        //public const string RESULT_ERROR_INIT_UKN_FILE_ERROR = "Echec de l'initialisation";
+        //public const string COMMENT_ERROR_INIT_UKN_FILE_ERROR = "Erreur non reconnue lors de la lecture du fichier de configuration du processeur";
+        public const int EVENTCODE_ERROR_INIT_UKN_ERROR = -6;
+
+        public const int EVENTCODE_ERROR_INIT_UNITS_FILE=-7;
+        public const int EVENTCODE_ERROR_INIT_LANGUAGE_FILE = -8;
 
 
 
@@ -293,7 +298,7 @@ namespace AeroCalcCore {
             directory = "";
             inputFileName = "";
             outputFileName = "";
-            eventCode = EVENTCODE_INIT_VALUE;
+            eventCode = EVENTCODE_INITIAL;
             numericResult = Double.NaN;
             subs = null;
             txtResult = RESULT_ERROR_COMMAND_UNPROCESSED;
@@ -528,11 +533,12 @@ namespace AeroCalcCore {
                     }
                 }
 
+                /*
                 if (subs[0].Equals(CMD_WORD_PRINT, StrCompOpt)) {
                     // Commande PRINT MODEL
                     action = ACTION_PRINT;
                     cmd_PRINT(subs[1]);
-                }
+                } */
 
                 if (subs[0].Equals(CMD_WORD_STOP, StrCompOpt) &&
                     subs[1].Equals(CMD_WORD_VERBOSE, StrCompOpt)) {
@@ -615,10 +621,11 @@ namespace AeroCalcCore {
 
         private bool cmd_CONVERT() {
             // COMMANDE NON SUPPORTEE
-            eventCode = eventCode;
-            txtResult = COMMENT_ERROR_UNSUPPORTED_COMMAND;
-            txtComment = "";
+            //eventCode = eventCode;
+            //txtResult = COMMENT_ERROR_UNSUPPORTED_COMMAND;
+            //txtComment = "";
             numericResult = Double.NaN;
+            eventCode=EVENTCODE_UNSUPPORTED_COMMAND;
             return true;
         }
 
@@ -626,9 +633,10 @@ namespace AeroCalcCore {
 
         private bool cmd_EXIT() {
             // Commande traitée par le processeur
-            txtResult = RESULT_EXIT_REQUESTED;
-            txtComment = "";
-            eventCode = EVENTCODE_CMD_HANDOVER;
+            //txtResult = RESULT_EXIT_REQUESTED;
+            //txtComment = "";
+            // TODO eventCode à générer ds le processeur
+            eventCode = EVENTCODE_EXIT_REQUESTED;
             return true;
         }
 
@@ -637,8 +645,9 @@ namespace AeroCalcCore {
         private bool cmd_HELP() {
             // Commande traitée par le processeur
             numericResult = double.NaN;
-            txtComment = "";
-            eventCode = EVENTCODE_CMD_HANDOVER;
+            //txtComment = "";
+            // TODO eventCode à générer ds le processeur
+            eventCode = EVENTCODE_HELP_REQUESTED;
             return true;
         }
 
@@ -647,9 +656,9 @@ namespace AeroCalcCore {
         private bool cmd_INIT() {
             // Commande traitée par le processeur
             numericResult = double.NaN;
-            txtResult="";
-            txtComment = "";
-            eventCode = EVENTCODE_CMD_HANDOVER;
+            //txtResult="";
+            //txtComment = "";
+            //eventCode = EVENTCODE_CMD_HANDOVER;
 
             return true;
         }
@@ -674,7 +683,7 @@ namespace AeroCalcCore {
             setResultText(Container.dataModelSignatures());
             eventCode = AeroCalcCommand.EVENTCODE_PROCESS_SUCCESSFULL;
             // No change to txtResult, may contain output
-            txtComment = AeroCalcCommand.RESULT_PROCESS_SUCCESSFULL;
+            //txtComment = AeroCalcCommand.RESULT_PROCESS_SUCCESSFULL;
             // No change to numericResult, may contain output
             numericResult = Double.NaN;
             return true;
@@ -701,7 +710,7 @@ namespace AeroCalcCore {
             //postProcess(AeroCalcCommand.EVENTCODE_PROCESS_SUCCESSFULL);
             eventCode = EVENTCODE_PROCESS_SUCCESSFULL;
             // No change to txtResult, may contain output
-            txtComment = RESULT_PROCESS_SUCCESSFULL;
+            //txtComment = RESULT_PROCESS_SUCCESSFULL;
             // No change to numericResult, may contain output
             return true;
         }
@@ -716,8 +725,8 @@ namespace AeroCalcCore {
         private bool cmd_LOAD_CATALOG() {
             // COMMANDE NON SUPPORTEE
             eventCode = EVENTCODE_UNSUPPORTED_COMMAND;
-            txtResult = RESULT_ERROR_UNSUPPORTED_COMMAND;
-            txtComment = COMMENT_ERROR_UNSUPPORTED_COMMAND;
+            //txtResult = RESULT_ERROR_UNSUPPORTED_COMMAND;
+            //txtComment = COMMENT_ERROR_UNSUPPORTED_COMMAND;
             numericResult = Double.NaN;
             return true;
         }
@@ -742,13 +751,13 @@ namespace AeroCalcCore {
             if (counter > 0) {
                 eventCode = EVENTCODE_LOAD_MODELS_SUCCESSFULL;
                 txtResult = String.Format("{0} modèle(s) ont été chargés en mémoire.", counter);
-                txtComment = "";
+                //txtComment = "";
                 numericResult = Double.NaN;
             }
             else {
                 eventCode = EVENTCODE_NO_MODEL_LOADED;
                 txtResult = RESULT_ERROR_NO_MODEL_LOADED;
-                txtComment = COMMENT_ERROR_NO_MODEL_LOADED;
+                //txtComment = COMMENT_ERROR_NO_MODEL_LOADED;
                 numericResult = Double.NaN;
             }
             return true;
@@ -761,6 +770,7 @@ namespace AeroCalcCore {
         /// </summary>
         /// <param name="Cmd">Commande active</param>
         /// <returns></returns>
+        /*
         private bool cmd_PRINT(string modelNameFilter) {
             // COMMANDE NON SUPPORTEE
             eventCode = eventCode;
@@ -768,7 +778,7 @@ namespace AeroCalcCore {
             txtComment = "";
             numericResult = Double.NaN;
             return true;
-        }
+        } */
 
 
 

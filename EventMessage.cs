@@ -13,16 +13,16 @@ namespace AeroCalcCore
     public class EventMessage : IEquatable<EventMessage>
     {
 
-        public int eCode { get; private set; }
+        public int msgID { get; private set; }
 
-        public string eMessage { get; private set; }
+        public string msgStr { get; private set; }
 
 
 
-        public EventMessage(int eventCode, string eventMessage)
+        public EventMessage(int messageID, string messageString)
         {
-            eCode = eventCode;
-            eMessage = eventMessage;
+            msgID = messageID;
+            msgStr = messageString;
         }
 
 
@@ -34,7 +34,7 @@ namespace AeroCalcCore
             {
                 return false;
             }
-            if (this.eCode == EM.eCode)
+            if (this.msgID == EM.msgID)
             {
                 return true;
             }
@@ -48,7 +48,7 @@ namespace AeroCalcCore
 
         public override string ToString()
         {
-            return string.Format("[{0:D5}]", this.eCode) + this.eMessage;
+            return string.Format("[{0:D5}]", this.msgID) + this.msgStr;
         }
 
     }

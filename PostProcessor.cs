@@ -1,4 +1,5 @@
 using System;
+using System.IO; // TODO remove when messages filename integrated with EnvContext
 
 
 namespace AeroCalcCore
@@ -38,7 +39,10 @@ namespace AeroCalcCore
         public PostProcessor(EnvironmentContext EC)
         {
             // TODO A intégrer pleinement à l'object EnvironmentContext
-            EventMessagesXMLFile xmlFile = new EventMessagesXMLFile("");
+            //! Remove when possible
+            string fileName = EC.configDirPath + Path.AltDirectorySeparatorChar + "fr.xml";
+
+            EventMessagesXMLFile xmlFile = new EventMessagesXMLFile(fileName);
 
             EMsgLib = xmlFile.getEventMessagesFromXML();
 
@@ -54,7 +58,7 @@ namespace AeroCalcCore
         public void processCommand(AeroCalcCommand Cmd)
         {
 
-            if (Cmd.eventCode == AeroCalcCommand.EVENTCODE_INIT_VALUE)
+            if (Cmd.eventCode == AeroCalcCommand.EVENTCODE_INITIAL)
             {
                 // Command totally unprocessed, not a normal situation
                 string msg = "[" + Cmd.eventCode + "]" + " POSTPROC:UNPROCESSED COMMAND";

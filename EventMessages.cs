@@ -48,7 +48,7 @@ namespace AeroCalcCore
         public bool addItem(int eventCode, string eventMessage)
         {
             EventMessage eMsg = new EventMessage(eventCode, eventMessage);
-            if (eMsgList.Exists(eMsg => eMsg.eCode == eventCode))
+            if (eMsgList.Exists(eMsg => eMsg.msgID == eventCode))
             {
                 /// No two EventMessage with the same id
                 return false;
@@ -64,7 +64,7 @@ namespace AeroCalcCore
 
         public string getMessageWith(int eventCode)
         {
-            EventMessage EM = eMsgList.Find(em => em.eCode == eventCode);
+            EventMessage EM = getEventMessage(eventCode);
             if (EM != null)
             {
                 return EM.ToString();
@@ -74,11 +74,21 @@ namespace AeroCalcCore
 
 
 
-        public EventMessage getEventMessage(int eventCode) {
-            return eMsgList.Find(em => em.eCode == eventCode);
+        /*
+         * METHODES
+         */
+
+        private EventMessage getEventMessage(int eventCode)
+        {
+            // eventCode to messageID, les codes d'événement négatifs (erreurs) sont changés en ajoutant 10000 à leur valeur absolue
+            if (eventCode < 0)
+            {
+                int messageID = 10000 + Math.Abs(eventCode);
+            }
+
+            return eMsgList.Find(em => em.msgID == eventCode);
         }
 
     }
-
 
 }

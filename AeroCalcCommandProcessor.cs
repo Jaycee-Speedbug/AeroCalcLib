@@ -106,6 +106,9 @@ namespace AeroCalcCore
 
                 case AeroCalcCommand.ACTION_INIT_INTERPRETER:
                     // Initialisation
+                    initProcessor(Cmd);
+                    break;
+                    /*
                     if (initProcessor(Cmd))
                     {
                         Cmd.setEventCode(AeroCalcCommand.EVENTCODE_INIT_SUCCESSFULL);
@@ -117,16 +120,23 @@ namespace AeroCalcCore
                         Cmd.setCommentText(AeroCalcCommand.COMMENT_ERROR_INIT_UNSUCCESSFULL);
                     }
                     break;
+                    */
 
                 case AeroCalcCommand.ACTION_SCRIPTFILE:
-                    readScriptFile(Cmd.subs[1]);
+                    readScriptFile(Cmd);
                     break;
 
                 case AeroCalcCommand.ACTION_HELP:
+                    // To be done by PostProcess
+                    /*
                     Cmd.setResultText(helpMsg());
                     Cmd.setEventCode(AeroCalcCommand.EVENTCODE_PROCESS_SUCCESSFULL);
+                    */
                     break;
             }
+            
+            // Post process
+            PostProc.processCommand(Cmd);
             return Cmd;
         }
 
@@ -142,9 +152,10 @@ namespace AeroCalcCore
         /// <returns>
         /// True, si la commande a été traitée sans erreur
         /// </returns>
-        private bool readScriptFile(string fileAbsolutePath)
+        private bool readScriptFile(AeroCalcCommand Cmd)
         {
             // COMMANDE NON SUPPORTEE
+            Cmd.setEventCode(AeroCalcCommand.EVENTCODE_UNSUPPORTED_COMMAND);
             return true;
         }
 
@@ -166,47 +177,53 @@ namespace AeroCalcCore
             {
                 //
                 // TODO: Ici, coder l'initialisation
+                // eventCode à inscrire ici
                 //
                 loadStatus = EnvContext.loadConfigFile(Cmd.subs[1]);
-
-                // Chargement du dictionnaire des unités
-                if (EnvContext.unitsEnabled)
-                {
-                    UnitLib = unitsFile.getUnitsFromXML(EnvContext.unitsFileName);
-                }
-
-                // Chargement de la librairie des messages
-                PostProc = new PostProcessor(EnvContext);
-
                 switch (loadStatus)
                 {
                     case FileIO.FILEOP_SUCCESSFUL:
-                        Cmd.setResultText(AeroCalcCommand.RESULT_INIT_SUCCESSFULL);
-                        Cmd.setCommentText("");
+                        Cmd.setEventCode(AeroCalcCommand.EVENTCODE_INIT_SUCCESSFULL);
+                        //Cmd.setResultText(AeroCalcCommand.RESULT_INIT_SUCCESSFULL);
+                        //Cmd.setCommentText("");
+
+                        // Chargement du dictionnaire des unités
+                        if (EnvContext.unitsEnabled)
+                        {
+                            UnitLib = unitsFile.getUnitsFromXML(EnvContext.unitsFileName);
+                        }
+
+                        // Chargement de la librairie des messages
+                        PostProc = new PostProcessor(EnvContext);
                         break;
 
                     case FileIO.FILEOP_INVALID_PATH:
-                        Cmd.setResultText(AeroCalcCommand.RESULT_ERROR_INIT_ERROR_CONFIGFILE_PATH);
-                        Cmd.setCommentText(AeroCalcCommand.COMMENT_ERROR_INIT_CONFIGFILE_PATH);
+                        Cmd.setEventCode(AeroCalcCommand.EVENTCODE_ERROR_INIT_CONFIGFILE_PATH);
+                        //Cmd.setResultText(AeroCalcCommand.RESULT_ERROR_INIT_ERROR_CONFIGFILE_PATH);
+                        //Cmd.setCommentText(AeroCalcCommand.COMMENT_ERROR_INIT_CONFIGFILE_PATH);
                         break;
 
                     case FileIO.FILEOP_IO_ERROR:
-                        Cmd.setResultText(AeroCalcCommand.RESULT_ERROR_INIT_IO_ERROR);
-                        Cmd.setCommentText(AeroCalcCommand.COMMENT_ERROR_INIT_IO_ERROR);
+                        Cmd.setEventCode(AeroCalcCommand.EVENTCODE_ERROR_INIT_IO_ERROR);
+                        //Cmd.setResultText(AeroCalcCommand.RESULT_ERROR_INIT_IO_ERROR);
+                        //Cmd.setCommentText(AeroCalcCommand.COMMENT_ERROR_INIT_IO_ERROR);
                         break;
 
                     case FileIO.FILEOP_UNKNOWN_ERROR:
-                        Cmd.setResultText(AeroCalcCommand.RESULT_ERROR_INIT_UKN_FILE_ERROR);
-                        Cmd.setCommentText(AeroCalcCommand.COMMENT_ERROR_INIT_UKN_FILE_ERROR);
+                        Cmd.setEventCode(AeroCalcCommand.EVENTCODE_ERROR_INIT_UKN_FILE_ERROR);
+                        //Cmd.setResultText(AeroCalcCommand.RESULT_ERROR_INIT_UKN_FILE_ERROR);
+                        //Cmd.setCommentText(AeroCalcCommand.COMMENT_ERROR_INIT_UKN_FILE_ERROR);
                         break;
 
                     default:
-                        Cmd.setResultText(AeroCalcCommand.RESULT_ERROR_INIT_UKN_FILE_ERROR);
-                        Cmd.setCommentText(AeroCalcCommand.COMMENT_ERROR_INIT_UKN_FILE_ERROR);
+                        Cmd.setEventCode(AeroCalcCommand.EVENTCODE_ERROR_INIT_UKN_ERROR);
+                        //Cmd.setCommentText(AeroCalcCommand.COMMENT_ERROR_INIT_UKN_FILE_ERROR);
                         break;
                 }
 
-                // TODO remove ater use
+
+
+                // TODO remove after use
                 Console.WriteLine(EnvContext.ToString());
 
                 // Fin du processus d'initialisation
@@ -235,7 +252,7 @@ namespace AeroCalcCore
             if (!EnvContext.verboseAllowed)
             {
                 Cmd.setEventCode(AeroCalcCommand.EVENTCODE_UNABLE_VERBOSE_MODIFICATION);
-                Cmd.setResultText(AeroCalcCommand.RESULT_UNABLE_VERBOSE_MODIFICATION);
+                //Cmd.setResultText(AeroCalcCommand.RESULT_UNABLE_VERBOSE_MODIFICATION);
             }
             else
             {
@@ -244,14 +261,14 @@ namespace AeroCalcCore
                     // Commande VERBOSE
                     EnvContext.setVerbose(true);
                     Cmd.setEventCode(AeroCalcCommand.EVENTCODE_VERBOSE_ACTIVE);
-                    Cmd.setResultText(AeroCalcCommand.RESULT_VERBOSE_ACTIVE);
+                    //Cmd.setResultText(AeroCalcCommand.RESULT_VERBOSE_ACTIVE);
                 }
                 else
                 {
                     // Commande STOP VERBOSE
                     EnvContext.setVerbose(false);
                     Cmd.setEventCode(AeroCalcCommand.EVENTCODE_VERBOSE_INACTIVE);
-                    Cmd.setResultText(AeroCalcCommand.RESULT_VERBOSE_INACTIVE);
+                    //Cmd.setResultText(AeroCalcCommand.RESULT_VERBOSE_INACTIVE);
                 }
             }
             return true;
@@ -308,7 +325,7 @@ namespace AeroCalcCore
         /// Génère la chaine de caractère en réponse à la demande d'aide
         /// </summary>
         /// <returns>Chaine de caractère d'aide à l'utilisateur</returns>
-        /// 
+        /*
         private string helpMsg()
         {
 
@@ -327,7 +344,7 @@ namespace AeroCalcCore
             msg += "\n";
             msg += "EXIT         : End AeroCalc\n";
             return msg;
-        }
+        }*/
 
 
 
