@@ -55,7 +55,7 @@ namespace AeroCalcCore
         /*
          * SERVICES
          */
-        public void processCommand(AeroCalcCommand Cmd)
+        public void postProcess(AeroCalcCommand Cmd)
         {
 
             if (Cmd.eventCode == AeroCalcCommand.EVENTCODE_INITIAL)
@@ -67,20 +67,27 @@ namespace AeroCalcCore
             if (Cmd.eventCode > 0)
             {
                 // Successfull operations
-                if (Cmd.numericResult != double.NaN)
+                if (!double.IsNaN(Cmd.numericResult))
                 {
                     // A numeric value has been produced
-                    Cmd.setResultText("");
+                    Cmd.setResultText(Cmd.rawTxtCommand + " = " + Cmd.numericResult);
                 }
                 else
                 {
                     // No numeric value to expose
                     string msg = EMsgLib.getMessageWith(Cmd.eventCode);
-                    if (string.IsNullOrEmpty(msg))
+                    if (!string.IsNullOrEmpty(Cmd.txtResult))
                     {
-                        msg = "[" + Cmd.eventCode + "]" + " POSTPROC:ERROR MSG NOT IMPLEMENTED";
+                        // A message has been prepared, NOTHING TO ADD
                     }
-                    Cmd.setResultText(msg);
+                    else
+                    {
+                        if (string.IsNullOrEmpty(msg))
+                        {
+                            msg = "[" + Cmd.eventCode + "]" + " POSTPROC:ERROR MSG NOT IMPLEMENTED";
+                        }
+                        Cmd.setResultText(msg);
+                    }
                 }
             }
             if (Cmd.eventCode < 0)
@@ -96,7 +103,6 @@ namespace AeroCalcCore
 
 
         }
-
 
 
 

@@ -62,11 +62,6 @@ namespace AeroCalcCore
             ScriptConnect = new ScriptFile();
             // Construction de l'objet d'environnement
             EnvContext = new EnvironmentContext();
-            // Construction du dictionnaire des unités 
-            //UnitLib = new Units();
-            // Construction du post processor
-            //PostProc=new PostProcessor(EnvContext);
-
             // Reglage intial du flag initialized
             initialized = false;
         }
@@ -99,7 +94,6 @@ namespace AeroCalcCore
             // d'abord être décomposée
 
             AeroCalcCommand Cmd = new AeroCalcCommand(txtCommand, ModelLib, EnvContext);
-
             // Certaines commandes rendent la main pour être traitées ici, dans le processeur
             switch (Cmd.action)
             {
@@ -108,37 +102,21 @@ namespace AeroCalcCore
                     // Initialisation
                     initProcessor(Cmd);
                     break;
-                    /*
-                    if (initProcessor(Cmd))
-                    {
-                        Cmd.setEventCode(AeroCalcCommand.EVENTCODE_INIT_SUCCESSFULL);
-                        Cmd.setResultText(initMsg());
-                    }
-                    else
-                    {
-                        Cmd.setEventCode(AeroCalcCommand.EVENTCODE_INIT_UNSUCCESSFULL);
-                        Cmd.setCommentText(AeroCalcCommand.COMMENT_ERROR_INIT_UNSUCCESSFULL);
-                    }
-                    break;
-                    */
 
                 case AeroCalcCommand.ACTION_SCRIPTFILE:
                     readScriptFile(Cmd);
                     break;
 
                 case AeroCalcCommand.ACTION_HELP:
-                    // To be done by PostProcess
-                    /*
-                    Cmd.setResultText(helpMsg());
-                    Cmd.setEventCode(AeroCalcCommand.EVENTCODE_PROCESS_SUCCESSFULL);
-                    */
+                    Cmd.setEventCode(AeroCalcCommand.EVENTCODE_HELP_REQUESTED);
                     break;
             }
-            
+
             // Post process
-            PostProc.processCommand(Cmd);
+            PostProc.postProcess(Cmd);
             return Cmd;
         }
+
 
 
         /*
@@ -169,7 +147,6 @@ namespace AeroCalcCore
         /// <returns>Etat de réussite de la commande</returns>
         private bool initProcessor(AeroCalcCommand Cmd)
         {
-
             int loadStatus;
             UnitsXMLFile unitsFile = new UnitsXMLFile("");
 
@@ -184,54 +161,43 @@ namespace AeroCalcCore
                 {
                     case FileIO.FILEOP_SUCCESSFUL:
                         Cmd.setEventCode(AeroCalcCommand.EVENTCODE_INIT_SUCCESSFULL);
-                        //Cmd.setResultText(AeroCalcCommand.RESULT_INIT_SUCCESSFULL);
-                        //Cmd.setCommentText("");
-
                         // Chargement du dictionnaire des unités
                         if (EnvContext.unitsEnabled)
                         {
                             UnitLib = unitsFile.getUnitsFromXML(EnvContext.unitsFileName);
                         }
-
                         // Chargement de la librairie des messages
                         PostProc = new PostProcessor(EnvContext);
                         break;
 
                     case FileIO.FILEOP_INVALID_PATH:
                         Cmd.setEventCode(AeroCalcCommand.EVENTCODE_ERROR_INIT_CONFIGFILE_PATH);
-                        //Cmd.setResultText(AeroCalcCommand.RESULT_ERROR_INIT_ERROR_CONFIGFILE_PATH);
-                        //Cmd.setCommentText(AeroCalcCommand.COMMENT_ERROR_INIT_CONFIGFILE_PATH);
                         break;
 
                     case FileIO.FILEOP_IO_ERROR:
                         Cmd.setEventCode(AeroCalcCommand.EVENTCODE_ERROR_INIT_IO_ERROR);
-                        //Cmd.setResultText(AeroCalcCommand.RESULT_ERROR_INIT_IO_ERROR);
-                        //Cmd.setCommentText(AeroCalcCommand.COMMENT_ERROR_INIT_IO_ERROR);
                         break;
 
                     case FileIO.FILEOP_UNKNOWN_ERROR:
                         Cmd.setEventCode(AeroCalcCommand.EVENTCODE_ERROR_INIT_UKN_FILE_ERROR);
-                        //Cmd.setResultText(AeroCalcCommand.RESULT_ERROR_INIT_UKN_FILE_ERROR);
-                        //Cmd.setCommentText(AeroCalcCommand.COMMENT_ERROR_INIT_UKN_FILE_ERROR);
                         break;
 
                     default:
                         Cmd.setEventCode(AeroCalcCommand.EVENTCODE_ERROR_INIT_UKN_ERROR);
-                        //Cmd.setCommentText(AeroCalcCommand.COMMENT_ERROR_INIT_UKN_FILE_ERROR);
                         break;
                 }
-
-
-
                 // TODO remove after use
                 Console.WriteLine(EnvContext.ToString());
-
                 // Fin du processus d'initialisation
                 initialized = true;
                 return true;
             }
+            else
+            {
+                // Already initialized
+                Cmd.setEventCode(AeroCalcCommand.EVENTCODE_REINIT_NOT_ALLOWED);
+            }
             return false;
-            // Already initialized
         }
 
 
@@ -252,7 +218,6 @@ namespace AeroCalcCore
             if (!EnvContext.verboseAllowed)
             {
                 Cmd.setEventCode(AeroCalcCommand.EVENTCODE_UNABLE_VERBOSE_MODIFICATION);
-                //Cmd.setResultText(AeroCalcCommand.RESULT_UNABLE_VERBOSE_MODIFICATION);
             }
             else
             {
@@ -261,115 +226,15 @@ namespace AeroCalcCore
                     // Commande VERBOSE
                     EnvContext.setVerbose(true);
                     Cmd.setEventCode(AeroCalcCommand.EVENTCODE_VERBOSE_ACTIVE);
-                    //Cmd.setResultText(AeroCalcCommand.RESULT_VERBOSE_ACTIVE);
                 }
                 else
                 {
                     // Commande STOP VERBOSE
                     EnvContext.setVerbose(false);
                     Cmd.setEventCode(AeroCalcCommand.EVENTCODE_VERBOSE_INACTIVE);
-                    //Cmd.setResultText(AeroCalcCommand.RESULT_VERBOSE_INACTIVE);
                 }
             }
             return true;
-        }
-
-
-
-        /// <summary>
-        /// Retourne un objet commandFactor sur la base d'une saisie texte par l'utilisateur
-        /// </summary>
-        /// <param name="subString">Chaine à analyser comme facteur d'un calcul multi-dimensionnel</param>
-        /// <returns>objet commandFactor contenant les éléments du facteur</returns>
-        /// <remarks>
-        /// : OLD doit être remplacé par un constructeur d'objet commandFactor
-        /// </remarks>
-        /// 
-        private CommandFactor getFactor(string subString)
-        {
-
-            string name = "";
-            int unitDictionaryIndex = 0;
-            double val = double.NaN;
-            // TODO les séparateurs ne doit pas être locaux
-            char[] separators = { '=', ':' };
-            string[] words = subString.Split(separators);
-
-            if (words.Length == 2)
-            {
-                // Facteur sans unité
-                if (double.TryParse(words[1], out val))
-                {
-                    name = words[0];
-                    unitDictionaryIndex = AeroCalc.UNIT_UNDETERMINED;
-                }
-            }
-            else if (words.Length == 3)
-            {
-                // Facteur avec unité
-                if (double.TryParse(words[1], out val))
-                {
-                    unitDictionaryIndex = UnitLib.getIndexByAlias(words[2]);
-                    if (unitDictionaryIndex != AeroCalc.UNIT_UNDETERMINED)
-                    {
-                        name = words[0];
-                    }
-                }
-            }
-            return new CommandFactor(name, val, unitDictionaryIndex);
-        }
-
-
-
-        /// <summary>
-        /// Génère la chaine de caractère en réponse à la demande d'aide
-        /// </summary>
-        /// <returns>Chaine de caractère d'aide à l'utilisateur</returns>
-        /*
-        private string helpMsg()
-        {
-
-            string msg = "";
-
-            msg += "************  AeroCalc  HELP  ************\n";
-            msg += "Commands:\n";
-            msg += "HELP         : Get some help about AeroCalc commands\n";
-            msg += "VERBOSE      : Interpreter issue extended information on command process\n";
-            msg += "CONVERT      : Conversion between various units\n";
-            msg += "LOAD MODEL   : Load flight performance models from current data directory\n";
-            msg += "LIST         : List performance models currently loaded\n";
-            msg += "PRINT PERF   : Print full flight performance data in memory\n";
-            msg += "CATALOG      : Print all flight performances model names loadable from current\n";
-            msg += "data directory\n";
-            msg += "\n";
-            msg += "EXIT         : End AeroCalc\n";
-            return msg;
-        }*/
-
-
-
-        /// <summary>
-        /// Génère la chaine de caractère du message d'accueil
-        /// </summary>
-        /// <returns>Chaine de caractère du message d'accueil</returns>
-        /// 
-        private string initMsg()
-        {
-
-            string msg = "";
-
-            msg += "*****************************************\n";
-            msg += "*                                       *\n";
-            msg += "*            AeroCalc CL                *\n";
-            msg += "*                                       *\n";
-            msg += "* Flight Performance Computer           *\n";
-            msg += "* Command Line version                  *\n";
-            msg += "*                                       *\n";
-            msg += "* PetitLu AeroDevelopment (c) 2017      *\n";
-            msg += "*                                       *\n";
-            msg += "*****************************************\n";
-            msg += "\n";
-            return msg;
         }
 
     }

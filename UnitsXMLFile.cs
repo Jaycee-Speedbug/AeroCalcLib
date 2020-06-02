@@ -70,12 +70,14 @@ namespace AeroCalcCore
         public Units getUnitsFromXML(string xmlFileAbsolutePath)
         {
             // Introducing a new file
-            if (xmlFileAbsolutePath != "")
+            if (!string.IsNullOrEmpty(xmlFileAbsolutePath))
             {
                 if (!setInputFileAbsolutePath(xmlFileAbsolutePath))
                 {
                     return null;
                 }
+                // This new file seems fine !
+                readXmlFile();
             }
             return getUnitsFromXML();
         }
@@ -87,30 +89,29 @@ namespace AeroCalcCore
         {
             Units units = new Units();
 
-            if (IOStatus != FileIO.FILEOP_SUCCESSFUL)
+            if (xDoc != null)
             {
-                return null;
-            }
-            foreach (XElement xe in xDoc.Descendants(NODE_DIMENSION))
-            {
-                // This is a DIMENSION node
-                string dimension = xe.Value;
-                if (dimension != null && dimension != "")
+                foreach (XElement xe in xDoc.Descendants(NODE_DIMENSION))
                 {
-                    foreach (XElement item in xe.Descendants(NODE_UNIT))
+                    // This is a DIMENSION node
+                    string dimension = xe.Attribute(ATTRIB_NAME).Value;
+                    if (dimension != null && dimension != "")
                     {
-                        // This is a UNIT node, let's get the data
-                        string unitName = item.Attribute(ATTRIB_NAME).Value;
-                        bool isRef = getBoolOrDefault(item.Attribute(ATTRIB_ISREF).Value, false);
-                        string alias = item.Attribute(ATTRIB_ALIAS).Value;
-                        double factor = getDoubleOrNaN(item.Attribute(ATTRIB_FACTOR).Value);
-                        double constant = getDoubleOrNaN(item.Attribute(ATTRIB_CONST).Value);
-                        if (!isRef && factor == Double.NaN || constant == Double.NaN)
+                        foreach (XElement item in xe.Descendants(NODE_UNIT))
                         {
-                            // Not a valid unit
-                            break;
+                            // This is a UNIT node, let's get the data
+                            string unitName = item.Attribute(ATTRIB_NAME).Value;
+                            bool isRef = getBoolOrDefault(item.Attribute(ATTRIB_ISREF).Value, false);
+                            string alias = item.Attribute(ATTRIB_ALIAS).Value;
+                            double factor = getDoubleOrNaN(item.Attribute(ATTRIB_FACTOR).Value);
+                            double constant = getDoubleOrNaN(item.Attribute(ATTRIB_CONST).Value);
+                            if (!isRef && factor == Double.NaN || constant == Double.NaN)
+                            {
+                                // Not a valid unit
+                                break;
+                            }
+                            units.add(new Unit(xe.Value, unitName, alias, isRef, factor, constant));
                         }
-                        units.add(new Unit(xe.Value, unitName, alias, isRef, factor, constant));
                     }
                 }
             }

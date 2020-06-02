@@ -258,6 +258,8 @@ namespace AeroCalcCore
                 {
                     // Le Directory proposé existe, on l'enregistre en temps que Directory de travail
                     directoryAbsolutePath = absolutePath;
+                    // On réinitialise le status
+                    IOStatus = FILEOP_SUCCESSFUL;
                     return true;
                 }
             }
@@ -284,6 +286,8 @@ namespace AeroCalcCore
                 {
                     // Le fichier proposé existe, on l'enregistre en temps que fichier d'entrée
                     inputFileAbsolutePath = absolutePath;
+                    // On réinitialise le status
+                    IOStatus=FILEOP_SUCCESSFUL;
                     return true;
                 }
             }
@@ -309,6 +313,8 @@ namespace AeroCalcCore
                 {
                     // Le fichier proposé existe, on l'enregistre en temps que fichier d'entrée
                     outputFileAbsolutePath = absolutePath;
+                    // On réinitialise le status
+                    IOStatus = FILEOP_SUCCESSFUL;
                     return true;
                 }
             }

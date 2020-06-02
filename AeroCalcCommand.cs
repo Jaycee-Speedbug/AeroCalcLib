@@ -5,7 +5,8 @@ using System.Linq;
 
 
 
-namespace AeroCalcCore {
+namespace AeroCalcCore
+{
 
 
 
@@ -19,7 +20,8 @@ namespace AeroCalcCore {
     /// post traitements sont à réaliser par le processeur
     /// 
     /// </summary>
-    public class AeroCalcCommand {
+    public class AeroCalcCommand
+    {
 
         /*
          * CONSTANTES
@@ -48,7 +50,6 @@ namespace AeroCalcCore {
         public const string CMD_WORD_CALCULATE = "CALCULATE";
         public const string CMD_WORD_CATALOG = "CATALOG";
         public const string CMD_WORD_CONVERT = "CONVERT";
-        //public const string CMD_WORD_EXECUTE = "EXECUTE";
         public const string CMD_WORD_EXIT = "EXIT";
         public const string CMD_WORD_HELP = "HELP";
         public const string CMD_WORD_INIT_INTERPRETER = "INIT";
@@ -87,74 +88,37 @@ namespace AeroCalcCore {
 
 
         /// <summary>
-        /// Constantes d'identification des événements rencontrées dans le traitement de la commande
+        /// Constantes d'identification de l'évènement final rencontré dans le traitement de la commande
         /// -> eventCode
         /// Un eventCode positif correspond à un traitement conforme à la définition de la commande
         /// Un eventCode négatif signale un événement non conforme à la définition de la commande
         /// 
-        /// Messages texte associés à ces événements
-        /// -> txtResult (quand l'opération ne fournit pas de résultat numérique)
+        /// Message texte retour vers l'utilisateur
+        /// -> txtResult
         /// 
-        /// Message complémentaire associé à l'événement
-        /// -> comment
         /// N'existe qu'en cas de présence d'une erreur
         /// </summary>
         ///
         public const int EVENTCODE_VERBOSE_ACTIVE = 910;
-        //public const string RESULT_VERBOSE_ACTIVE = "Mode VERBOSE activé";
-
         public const int EVENTCODE_VERBOSE_INACTIVE = 911;
-        //public const string RESULT_VERBOSE_INACTIVE = "Mode VERBOSE désactivé";
-
-
         public const int EVENTCODE_HELP_REQUESTED = 900;
-
         public const int EVENTCODE_LOAD_MODELS_SUCCESSFULL = 500;
-        //public const string RESULT_LOAD_MODELS_SUCCESSFULL = "DEPRECATED MSG";
-
         public const int EVENTCODE_CALCULATE_SUCCESSFULL = 200;
-        public const string RESULT_CALCULATE_SUCCESSFULL = "Calcul traité avec succès DEPRECATED MSG";
-
         public const int EVENTCODE_PROCESS_SUCCESSFULL = 100;
-        //public const string RESULT_PROCESS_SUCCESSFULL = "Commande traitée avec succès DEPRECATED MSG";
-
         public const int EVENTCODE_INIT_SUCCESSFULL = 110;
-        //public const string RESULT_INIT_SUCCESSFULL = "Interprète de commande initialisé avec succès";
-
         public const int EVENTCODE_CMD_HANDOVER = 20;
-
         public const int EVENTCODE_EXIT_REQUESTED = 10;
-        //public const string RESULT_EXIT_REQUESTED = "Fermeture de AeroCalc2017...";
 
-        //
         public const int EVENTCODE_INITIAL = 0; // Valeur d'initialisation
-        //
 
         public const int EVENTCODE_INIT_UNSUCCESSFULL = -1;
-        //public const string RESULT_ERROR_INIT_UNSUCCESSFULL = "Echec de l'intialisation";
-        //public const string COMMENT_ERROR_INIT_UNSUCCESSFULL = "Une erreur s'est produite durant l'initialisation du processeur";
-
         public const int EVENTCODE_REINIT_NOT_ALLOWED = -2;
-        //public const string RESULT_ERROR_REINIT_NOT_ALLOWED = "Impossible d'initialiser l'interprète une seconde fois";
-        //public const string COMMENT_ERROR_REINIT_NOT_ALLOWED = "Pour ré-initialiser l'interprète, il est nécessaire de quitter et de relancer le programme";
         public const int EVENTCODE_ERROR_INIT_CONFIGFILE_PATH = -3;
-        //public const string RESULT_ERROR_INIT_ERROR_CONFIGFILE_PATH = "Echec de l'initialisation";
-        //public const string COMMENT_ERROR_INIT_CONFIGFILE_PATH = "Le chemin du fichier de configuration n'est pas valide";
         public const int EVENTCODE_ERROR_INIT_IO_ERROR = -4;
-        //public const string RESULT_ERROR_INIT_IO_ERROR = "Echec de l'initialisation";
-        //public const string COMMENT_ERROR_INIT_IO_ERROR = "Erreur lors de la lecture du fichier de configuration du processeur";
-
         public const int EVENTCODE_ERROR_INIT_UKN_FILE_ERROR = -5;
-        //public const string RESULT_ERROR_INIT_UKN_FILE_ERROR = "Echec de l'initialisation";
-        //public const string COMMENT_ERROR_INIT_UKN_FILE_ERROR = "Erreur non reconnue lors de la lecture du fichier de configuration du processeur";
         public const int EVENTCODE_ERROR_INIT_UKN_ERROR = -6;
-
-        public const int EVENTCODE_ERROR_INIT_UNITS_FILE=-7;
+        public const int EVENTCODE_ERROR_INIT_UNITS_FILE = -7;
         public const int EVENTCODE_ERROR_INIT_LANGUAGE_FILE = -8;
-
-
-
-
         public const int EVENTCODE_COMMAND_UNPROCESSED = -10;
         public const string RESULT_ERROR_COMMAND_UNPROCESSED = "La commande n'a pas pu être traitée";
 
@@ -162,25 +126,14 @@ namespace AeroCalcCore {
         public const string RESULT_ERROR_COMMAND_VOID = "La commande traitée est vide";
 
         public const int EVENTCODE_UNKNOWN_COMMAND_WORD = -22;
-        public const string RESULT_ERROR_UNKNOWN_COMMAND_WORD = "La commande traitée n'est pas reconnue";
-
         public const int EVENTCODE_UNSUPPORTED_COMMAND = -23;
-        public const string RESULT_ERROR_UNSUPPORTED_COMMAND = "La commande n'a pas pu être traitée";
-        public const string COMMENT_ERROR_UNSUPPORTED_COMMAND = "Cette commande n'est pas supportée par cette version du logiciel";
-
+        public const int EVENTCODE_NO_UNIT_DATA_AVAILABLE=-30;
         public const int EVENTCODE_UNABLE_VERBOSE_MODIFICATION = -50;
-        public const string RESULT_UNABLE_VERBOSE_MODIFICATION = "La modification du mode VERBOSE n'est pas autorisée";
 
-        public const int EVENTCODE_PROCESSOR_ERROR = -100;
-        public const string RESULT_ERROR_PROCESSOR_ERROR = "Le traitement de la commande a échoué";
-        public const string COMMENT_ERROR_PROCESSOR_ERROR = "Une erreur majeure s'est produite dans le processeur";
-
-        public const int EVENTCODE_MISSING_FACTOR = -101;
-        public const string RESULT_ERROR_MISSING_FACTOR = "Un facteur est manquant pour réaliser le calcul";
-
-        public const int EVENTCODE_MISSING_DATA = -102;
-        public const string RESULT_ERROR_MISSING_DATA = "Donnée(s) numérique(s) manquante(s) pour réaliser le calcul";
-
+        public const int EVENTCODE_PROCESSOR_FAILURE = -100;
+        public const int EVENTCODE_CALC_PROCESS_ERROR = -110;
+        public const int EVENTCODE_CALC_PROCESSOR_MISSING_FACTOR = -111;
+        public const int EVENTCODE_CALC_PROCESSOR_MISSING_MODEL = -112;
         public const int EVENTCODE_NO_MODEL_LOADED = -500;
         public const string RESULT_ERROR_NO_MODEL_LOADED = "Aucun modèle chargé en mémoire";
         public const string COMMENT_ERROR_NO_MODEL_LOADED = "Le(s) modèle(s) demandé(s) n'ont pas été trouvé dans le répertoire des modèles";
@@ -198,8 +151,10 @@ namespace AeroCalcCore {
         /// <summary>
         /// Durée du traitement, au moment de l'appel à la propriété
         /// </summary>
-        public long durationMilliSecond {
-            get {
+        public long durationMilliSecond
+        {
+            get
+            {
                 return (DateTimeOffset.Now.Ticks - startOfProcess.Ticks) / TimeSpan.TicksPerMillisecond;
             }
         }
@@ -288,77 +243,52 @@ namespace AeroCalcCore {
         /// <param name="txtCommand">string contenant la commande en mode texte, sans traitement préalable.
         /// </param>
         /// 
-        public AeroCalcCommand(string txtCommand, DataModelContainer DMContainer, EnvironmentContext EC) {
+        public AeroCalcCommand(string txtCommand, DataModelContainer DMContainer, EnvironmentContext EC)
+        {
             //
             // Initialisation des propriétés
             //
             startOfProcess = new DateTime(DateTime.Now.Ticks, DateTimeKind.Utc);
             action = ACTION_INIT_VALUE;
-            txtComment = RESULT_ERROR_COMMAND_UNPROCESSED;
+            txtComment = "";
             directory = "";
             inputFileName = "";
             outputFileName = "";
             eventCode = EVENTCODE_INITIAL;
             numericResult = Double.NaN;
             subs = null;
-            txtResult = RESULT_ERROR_COMMAND_UNPROCESSED;
             Container = DMContainer;
             Factors = new List<CommandFactor>();
             EnvContext = EC;
 
-            if (string.IsNullOrEmpty(txtCommand)) {
+            if (string.IsNullOrEmpty(txtCommand))
+            {
                 // Cas particulier de la chaine nulle
                 rawTxtCommand = "";
                 action = ACTION_UNDETERMINED;
                 eventCode = EVENTCODE_COMMAND_VOID;
-                txtResult = RESULT_ERROR_COMMAND_VOID;
-                txtComment = "";
             }
-            else {
+            else
+            {
                 // La chaine de texte n'est pas vide, traitement de la commande
                 rawTxtCommand = txtCommand;
-                if (!execute()) {
+                if (!execute())
+                {
                     // Un problème majeur s'est produit dans le traitement de la commande
-                    eventCode = EVENTCODE_PROCESSOR_ERROR;
-                    txtResult = RESULT_ERROR_PROCESSOR_ERROR;
-                    txtComment = COMMENT_ERROR_PROCESSOR_ERROR;
+                    eventCode = EVENTCODE_PROCESSOR_FAILURE;
                     verboseMe();
                 }
-                else {
+                else
+                {
                     // Commande traitée
-                    if (EC.verbose) {
+                    if (EC.verbose)
+                    {
                         verboseMe();
                     }
                 }
             }
 
         }
-
-
-
-        /*
-        /// <summary>
-        /// Constructeur
-        /// 
-        /// Construit un objet commande, en utilisant les arguments fournis, sans aucun traitement.
-        /// </summary>
-        /// <param name="commandTxt">Commande initiale au format texte, sans traitement.</param>
-        /// <param name="commentTxt">Commentaire de traitement de la commande.</param>
-        /// <param name="processCodeValue">Code numérique généré par le traitement de la commande.</param>
-        /// <param name="resultValue">Valeur numérique calculée, si un calcul a été réalisé.</param>
-        /// <param name="resultText">Chaine de caractère contenant la réponse en mode texte.</param>
-        /// 
-        public AeroCalcCommand(string commandTxt, string commentTxt, int processCodeValue,
-                              double resultValue, string resultText) {
-            // Simple copie des champs
-            rawTxtCommand = commandTxt;
-            txtComment = commentTxt;
-            eventCode = processCodeValue;
-            numericResult = resultValue;
-            txtResult = resultText;
-            Factors = new List<CommandFactor>();
-        }
-        */
 
 
 
@@ -375,13 +305,16 @@ namespace AeroCalcCore {
         /// <returns></returns>
         /// 
         // TODO, Pas normal de renvoyer true is le factorName est invalide !!! 
-        public bool factor(string factorName, out double value) {
-            if (string.IsNullOrEmpty(factorName)) {
+        public bool factor(string factorName, out double value)
+        {
+            if (string.IsNullOrEmpty(factorName))
+            {
                 value = AeroCalc.MODEL_DIMENSION_DEFAULT_VALUE;
                 return true;
             }
             int index = this.Factors.FindIndex(x => x.name == factorName);
-            if (index < 0) {
+            if (index < 0)
+            {
                 // Pas de facteur trouvé
                 value = double.NaN;
                 return false;
@@ -397,7 +330,8 @@ namespace AeroCalcCore {
         /// </summary>
         /// <param name="eventCode"></param>
         /// 
-        public void setEventCode(int eventCode) {
+        public void setEventCode(int eventCode)
+        {
             this.eventCode = eventCode;
         }
 
@@ -408,7 +342,8 @@ namespace AeroCalcCore {
         /// </summary>
         /// <param name="result">
         /// Double, valeur numérique résultat du calcul demandé</param>
-        public void setNumericResult(double result) {
+        public void setNumericResult(double result)
+        {
             this.numericResult = result;
         }
 
@@ -420,7 +355,8 @@ namespace AeroCalcCore {
         /// <param name="txtResult">
         /// Résultat au format texte qui sera communiqué à un utilisateur utilisant la console texte
         /// </param>
-        public void setResultText(string txtResult) {
+        public void setResultText(string txtResult)
+        {
             this.txtResult = txtResult;
         }
 
@@ -432,7 +368,8 @@ namespace AeroCalcCore {
         /// <param name="comment">
         /// Texte de commentaire sur la  commande qui sera communiqué à un utilisateur utilisant la console texte
         /// </param>
-        public void setCommentText(string comment) {
+        public void setCommentText(string comment)
+        {
             this.txtComment = comment;
         }
 
@@ -447,37 +384,44 @@ namespace AeroCalcCore {
         /// 
         /// TODO: Traitement de la chaine de caractère pour localisation.
         /// </remarks>
-        private bool execute() {
+        private bool execute()
+        {
 
             StringComparison StrCompOpt = StringComparison.CurrentCultureIgnoreCase;
             action = ACTION_UNDETERMINED;
             subs = rawTxtCommand.Split(commandSeparators, StringSplitOptions.RemoveEmptyEntries);
-            
-            // Commandes à mot unique
-            if (subs.Length == 1) {
 
-                if (subs[0].Equals(CMD_WORD_EXIT, StrCompOpt)) {
+            // Commandes à mot unique
+            if (subs.Length == 1)
+            {
+
+                if (subs[0].Equals(CMD_WORD_EXIT, StrCompOpt))
+                {
                     action = ACTION_EXIT;
                     cmd_EXIT();
                 }
 
-                if (subs[0].Equals(CMD_WORD_CONVERT, StrCompOpt)) {
+                if (subs[0].Equals(CMD_WORD_CONVERT, StrCompOpt))
+                {
                     action = ACTION_CONVERT;
                     cmd_CONVERT();
                 }
 
-                if (subs[0].Equals(CMD_WORD_VERBOSE, StrCompOpt)) {
+                if (subs[0].Equals(CMD_WORD_VERBOSE, StrCompOpt))
+                {
                     action = ACTION_VERBOSE;
                     eventCode = EVENTCODE_CMD_HANDOVER;
                     //cmd_VERBOSE(true);
                 }
 
-                if (subs[0].Equals(CMD_WORD_CATALOG, StrCompOpt)) {
+                if (subs[0].Equals(CMD_WORD_CATALOG, StrCompOpt))
+                {
                     action = ACTION_CATALOG;
                     cmd_LOAD_CATALOG();
                 }
 
-                if (subs[0].Equals(CMD_WORD_LIST, StrCompOpt)) {
+                if (subs[0].Equals(CMD_WORD_LIST, StrCompOpt))
+                {
                     action = ACTION_LIST_MODELS;
                     // TODO: S'arranger pour que la commande à mot unique LIST soit équivalente à LIST *
                     // Traitement des ALIAS potentiels
@@ -485,7 +429,8 @@ namespace AeroCalcCore {
                     cmd_LIST_MODELS();
                 }
 
-                if (subs[0].Equals(CMD_WORD_LOAD, StrCompOpt)) {
+                if (subs[0].Equals(CMD_WORD_LOAD, StrCompOpt))
+                {
                     action = ACTION_LOAD_MODELS;
                     // TODO: S'arranger pour que la commande à mot unique LOAD soit équivalente à LOAD *
                     // Traitement des ALIAS potentiels
@@ -493,7 +438,8 @@ namespace AeroCalcCore {
                     cmd_LOAD_MODELS();
                 }
 
-                if (subs[0].Equals(CMD_WORD_HELP, StrCompOpt)) {
+                if (subs[0].Equals(CMD_WORD_HELP, StrCompOpt))
+                {
                     // Action laissée au processeur
                     action = ACTION_HELP;
                     cmd_HELP();
@@ -502,7 +448,8 @@ namespace AeroCalcCore {
             }
 
             // Commandes à mots multiples
-            if (subs.Length >= 2) {
+            if (subs.Length >= 2)
+            {
 
                 if (subs[0].Equals(CMD_WORD_INIT_INTERPRETER, StrCompOpt))
                 {
@@ -511,43 +458,44 @@ namespace AeroCalcCore {
                     cmd_INIT();
                 }
 
-                if (subs[0].Equals(CMD_WORD_LOAD, StrCompOpt)) {
-                    if (subs[1].Equals(CMD_WORD_MODEL, StrCompOpt)) {
+                if (subs[0].Equals(CMD_WORD_LOAD, StrCompOpt))
+                {
+                    if (subs[1].Equals(CMD_WORD_MODEL, StrCompOpt))
+                    {
                         action = ACTION_LOAD_MODELS;
                         cmd_LOAD_MODELS();
                     }
-                    else if (subs[1].Equals(CMD_WORD_UNIT, StrCompOpt)) {
+                    else if (subs[1].Equals(CMD_WORD_UNIT, StrCompOpt))
+                    {
                         action = ACTION_LOAD_UNITS;
                         // TODO: Define cmd_LOAD_UNITS()
                     }
                 }
 
-                if (subs[0].Equals(CMD_WORD_LIST, StrCompOpt)) {
-                    if (subs[1].Equals(CMD_WORD_MODEL, StrCompOpt)) {
+                if (subs[0].Equals(CMD_WORD_LIST, StrCompOpt))
+                {
+                    if (subs[1].Equals(CMD_WORD_MODEL, StrCompOpt))
+                    {
                         action = ACTION_LIST_MODELS;
                         cmd_LIST_MODELS();
                     }
-                    else if (subs[1].Equals(CMD_WORD_UNIT, StrCompOpt)) {
+                    else if (subs[1].Equals(CMD_WORD_UNIT, StrCompOpt))
+                    {
                         action = ACTION_LIST_UNITS;
                         cmd_LIST_UNITS();
                     }
                 }
 
-                /*
-                if (subs[0].Equals(CMD_WORD_PRINT, StrCompOpt)) {
-                    // Commande PRINT MODEL
-                    action = ACTION_PRINT;
-                    cmd_PRINT(subs[1]);
-                } */
-
                 if (subs[0].Equals(CMD_WORD_STOP, StrCompOpt) &&
-                    subs[1].Equals(CMD_WORD_VERBOSE, StrCompOpt)) {
+                    subs[1].Equals(CMD_WORD_VERBOSE, StrCompOpt))
+                {
                     // Action laissée au processeur
                     action = ACTION_STOP_VERBOSE;
                     //cmd_VERBOSE(false);
                 }
 
-                if (subs[0].Equals(CMD_WORD_SCRIPTFILE, StrCompOpt)) {
+                if (subs[0].Equals(CMD_WORD_SCRIPTFILE, StrCompOpt))
+                {
                     // Chargement et exécution d'un fichier de script, on repasse la main au processeur
                     // Action laissée au processeur
                     action = ACTION_SCRIPTFILE;
@@ -555,7 +503,8 @@ namespace AeroCalcCore {
                 }
 
                 // En dernier ressort, on considère une commande de calcul
-                if (action == ACTION_UNDETERMINED) {
+                if (action == ACTION_UNDETERMINED)
+                {
                     // Commande à mots multiples et non reconnues précédement
                     action = ACTION_CALCULATE;
                     eventCode = EVENTCODE_COMMAND_UNPROCESSED;
@@ -565,7 +514,7 @@ namespace AeroCalcCore {
             }
             return true;
         }
-        
+
 
 
         /// <summary>
@@ -579,62 +528,54 @@ namespace AeroCalcCore {
         /// NEW PROCESSOR STRUCTURE
         ///</remarks>
         /// 
-        private bool cmd_CALCULATE() {
+        private bool cmd_CALCULATE()
+        {
 
             // Initialisation
             double numResult = double.NaN;
             // constitution de la Liste des facteurs communiqués dans la commande
             List<CommandFactor> factorList = new List<CommandFactor>();
-            for (int count = 1; count < this.subs.Length; count++) {
+            for (int count = 1; count < this.subs.Length; count++)
+            {
                 factorList.Add(getFactor(subs[count]));
             }
 
-            try {
+            try
+            {
                 numResult = Container.compute(subs[0], factorList);
             }
-            catch (ModelException e) {
-                // La commande a échouée pendant le calcul
-                setEventCode(AeroCalcCommand.EVENTCODE_PROCESSOR_ERROR);
+            catch (ModelException e)
+            {
+                // La commande a échouée pendant le calcul 
+                setEventCode(EVENTCODE_CALC_PROCESS_ERROR);
                 // TODO, revoir le formatage du message d'erreur, en utilisant aussi la nature de l'exception
-                setCommentText("Erreur lors du calcul de " + e.modelName + " : " + e.factor);
+                //setCommentText("Erreur lors du calcul de " + e.modelName + " : " + e.factor);
             }
 
-            if (!double.IsNaN(numResult)) {
+            if (!double.IsNaN(numResult))
+            {
                 // Réussite du calcul
-                setEventCode(AeroCalcCommand.EVENTCODE_CALCULATE_SUCCESSFULL);
-                setCommentText(AeroCalcCommand.RESULT_CALCULATE_SUCCESSFULL);
+                setEventCode(EVENTCODE_CALCULATE_SUCCESSFULL);
                 setNumericResult(numResult);
-                setResultText(rawTxtCommand + " = " + numericResult);
             }
-            /*
-             * else {
-                // La commande a échouée
-                // DEBUG revoir les cas ou on peut avoir un résultat NaN sans exception générée
-                Cmd.eventCode = AeroCalcCommand.EVENTCODE_UNKNOWN_COMMAND_WORD;
-                Cmd.txtComment = AeroCalcCommand.RESULT_ERROR_UNKNOWN_COMMAND_WORD;
-            }
-            */
             return true;
         }
 
 
 
-        private bool cmd_CONVERT() {
+        private bool cmd_CONVERT()
+        {
             // COMMANDE NON SUPPORTEE
-            //eventCode = eventCode;
-            //txtResult = COMMENT_ERROR_UNSUPPORTED_COMMAND;
-            //txtComment = "";
             numericResult = Double.NaN;
-            eventCode=EVENTCODE_UNSUPPORTED_COMMAND;
+            eventCode = EVENTCODE_UNSUPPORTED_COMMAND;
             return true;
         }
 
 
 
-        private bool cmd_EXIT() {
+        private bool cmd_EXIT()
+        {
             // Commande traitée par le processeur
-            //txtResult = RESULT_EXIT_REQUESTED;
-            //txtComment = "";
             // TODO eventCode à générer ds le processeur
             eventCode = EVENTCODE_EXIT_REQUESTED;
             return true;
@@ -642,10 +583,10 @@ namespace AeroCalcCore {
 
 
 
-        private bool cmd_HELP() {
+        private bool cmd_HELP()
+        {
             // Commande traitée par le processeur
             numericResult = double.NaN;
-            //txtComment = "";
             // TODO eventCode à générer ds le processeur
             eventCode = EVENTCODE_HELP_REQUESTED;
             return true;
@@ -653,13 +594,10 @@ namespace AeroCalcCore {
 
 
 
-        private bool cmd_INIT() {
+        private bool cmd_INIT()
+        {
             // Commande traitée par le processeur
             numericResult = double.NaN;
-            //txtResult="";
-            //txtComment = "";
-            //eventCode = EVENTCODE_CMD_HANDOVER;
-
             return true;
         }
 
@@ -672,19 +610,11 @@ namespace AeroCalcCore {
         /// <returns>Bool résultat du traitement</returns>
         /// <remarks></remarks>
         /// TODO Objectif non atteint, on doit pouvoir lister les modèles avec filtrage
-        private bool cmd_LIST_MODELS() {
-            /*
-            if (Cmd.subs.Length != 2) {
-                // Commande inexploitable, il faut transformer cette commande en LIST *
-                return false;
-            }
-            */
+        private bool cmd_LIST_MODELS()
+        {
             // Recherche des noms de modèles de performance qui match
             setResultText(Container.dataModelSignatures());
             eventCode = AeroCalcCommand.EVENTCODE_PROCESS_SUCCESSFULL;
-            // No change to txtResult, may contain output
-            //txtComment = AeroCalcCommand.RESULT_PROCESS_SUCCESSFULL;
-            // No change to numericResult, may contain output
             numericResult = Double.NaN;
             return true;
         }
@@ -699,19 +629,26 @@ namespace AeroCalcCore {
         /// <returns>True si le traitement n'a pas généré d'erreur</returns>
         /// <remarks></remarks>
         /// TODO: Objectif non atteint, on doit pouvoir lister les unités avec filtrage
-        private bool cmd_LIST_UNITS() {
+        private bool cmd_LIST_UNITS()
+        {
             // Liste des unités enregitrées
-            setResultText("");
             string msg = "";
-            foreach (Unit item in Container.dataUnits.getUnits()) {
-                msg += item.ToString() + "\n";
-                setResultText(msg);
+            //! BUG A corriger ici ! Object Reference null
+            List<Unit> lu = Container.dataUnits.getUnits();
+            if (lu != null)
+            {
+                foreach (Unit item in lu)
+                {
+                    msg += item.ToString() + "\n";
+                    setResultText(msg);
+                    eventCode = EVENTCODE_PROCESS_SUCCESSFULL;
+                }
             }
-            //postProcess(AeroCalcCommand.EVENTCODE_PROCESS_SUCCESSFULL);
-            eventCode = EVENTCODE_PROCESS_SUCCESSFULL;
-            // No change to txtResult, may contain output
-            //txtComment = RESULT_PROCESS_SUCCESSFULL;
-            // No change to numericResult, may contain output
+            else
+            {
+                // No units available!
+                eventCode = EVENTCODE_NO_UNIT_DATA_AVAILABLE;
+            }
             return true;
         }
 
@@ -722,11 +659,10 @@ namespace AeroCalcCore {
         /// </summary>
         /// <param name="Cmd">Commande active</param>
         /// <returns></returns>
-        private bool cmd_LOAD_CATALOG() {
+        private bool cmd_LOAD_CATALOG()
+        {
             // COMMANDE NON SUPPORTEE
             eventCode = EVENTCODE_UNSUPPORTED_COMMAND;
-            //txtResult = RESULT_ERROR_UNSUPPORTED_COMMAND;
-            //txtComment = COMMENT_ERROR_UNSUPPORTED_COMMAND;
             numericResult = Double.NaN;
             return true;
         }
@@ -740,83 +676,30 @@ namespace AeroCalcCore {
         /// <returns>Code du traitement de l'opération</returns>
         /// <remarks>TO BE DEVELOPPED</remarks>
         /// 
-        private bool cmd_LOAD_MODELS() {
+        private bool cmd_LOAD_MODELS()
+        {
 
             int counter = 0;
 
-            foreach (String filter in subs) {
-                // subs[0] = "LOAD" est traité, mais un mot réservé ne doit pas être utilisé comme identificateur
+            foreach (String filter in subs)
+            {
                 counter += Container.loadDataModels(filter);
             }
-            if (counter > 0) {
+            if (counter > 0)
+            {
                 eventCode = EVENTCODE_LOAD_MODELS_SUCCESSFULL;
+                // TODO Ce résultat doit être maintenu à travers le post process
                 txtResult = String.Format("{0} modèle(s) ont été chargés en mémoire.", counter);
-                //txtComment = "";
                 numericResult = Double.NaN;
             }
-            else {
+            else
+            {
                 eventCode = EVENTCODE_NO_MODEL_LOADED;
-                txtResult = RESULT_ERROR_NO_MODEL_LOADED;
-                //txtComment = COMMENT_ERROR_NO_MODEL_LOADED;
                 numericResult = Double.NaN;
             }
             return true;
         }
 
-
-
-        /// <summary>
-        /// Traite la commande d'impression des performances
-        /// </summary>
-        /// <param name="Cmd">Commande active</param>
-        /// <returns></returns>
-        /*
-        private bool cmd_PRINT(string modelNameFilter) {
-            // COMMANDE NON SUPPORTEE
-            eventCode = eventCode;
-            txtResult = COMMENT_ERROR_UNSUPPORTED_COMMAND;
-            txtComment = "";
-            numericResult = Double.NaN;
-            return true;
-        } */
-
-
-
-        /*
-        private bool cmd_VERBOSE(bool verboseMode) {
-            // Commande traitée par le processeur
-            
-            numericResult = double.NaN;
-            if (!Processor.verboseAllowed) {
-                eventCode = EVENTCODE_UNABLE_VERBOSE_MODIFICATION;
-                txtResult = RESULT_UNABLE_VERBOSE_MODIFICATION;
-            }
-            else {
-                if (verboseMode) {
-                    // Commande VERBOSE
-                    if (Processor.setVerboseMode(true)) {
-                        eventCode = EVENTCODE_VERBOSE_ACTIVE;
-                        txtResult = RESULT_VERBOSE_ACTIVE;
-                    }
-                    else {
-                        txtResult = RESULT_UNABLE_VERBOSE_MODIFICATION;
-                    }
-                }
-                else {
-                    // Commande STOP VERBOSE
-                    if (Processor.setVerboseMode(false)) {
-                        eventCode = EVENTCODE_VERBOSE_INACTIVE;
-                        txtResult = RESULT_VERBOSE_INACTIVE;
-                    }
-                    else {
-                        txtResult = RESULT_UNABLE_VERBOSE_MODIFICATION;
-                    }
-                }
-            }
-            
-            return true;
-        }
-        */
 
 
         /// <summary>
@@ -828,37 +711,39 @@ namespace AeroCalcCore {
         /// DEBUG: OLD doit être remplacé par un constructeur d'objet commandFactor
         /// </remarks>
         /// 
-        private CommandFactor getFactor(string subString) {
+        private CommandFactor getFactor(string subString)
+        {
 
             string name = "";
             int unitDictionaryIndex = 0;
             double val = double.NaN;
             // TODO les séparateurs ne doit pas être locaux
-            char[] separators = { '=', ':' };
+            char[] separators = { CMD_OPERATOR_AFFECT, CMD_OPERATOR_UNIT };
             string[] words = subString.Split(separators);
 
-            if (words.Length == 2) {
+            if (words.Length == 2)
+            {
                 // Facteur sans unité
-                if (double.TryParse(words[1], out val)) {
+                if (double.TryParse(words[1], out val))
+                {
                     name = words[0];
                     unitDictionaryIndex = AeroCalc.UNIT_UNDETERMINED;
                 }
             }
-            else if (words.Length == 3) {
+            else if (words.Length == 3)
+            {
                 // Facteur avec unité
-                if (double.TryParse(words[1], out val)) {
+                if (double.TryParse(words[1], out val))
+                {
                     unitDictionaryIndex = Container.dataUnits.getIndexByAlias(words[2]);
-                    if (unitDictionaryIndex != AeroCalc.UNIT_UNDETERMINED) {
+                    if (unitDictionaryIndex != AeroCalc.UNIT_UNDETERMINED)
+                    {
                         name = words[0];
                     }
                 }
             }
             return new CommandFactor(name, val, unitDictionaryIndex);
         }
-
-
-
-
 
 
 
@@ -871,29 +756,30 @@ namespace AeroCalcCore {
         /// A remplacer par un traitement plus automatisé, en utilisant une List<> ou 
         /// </remarks>
         /// 
-        private void useAlias() {
+        private void useAlias()
+        {
 
             bool aliasUsed = false;
             string aliasCmd = "";
 
-            if (subs.Length == 1 && this.action == ACTION_LIST_MODELS) {
+            if (subs.Length == 1 && this.action == ACTION_LIST_MODELS)
+            {
                 // LIST  ->  LIST *
                 aliasCmd = "LIST *";
                 aliasUsed = true;
             }
-            if(subs.Length == 1 && this.action == ACTION_LOAD_MODELS) {
+            if (subs.Length == 1 && this.action == ACTION_LOAD_MODELS)
+            {
                 // LOAD  ->  LOAD *
                 aliasCmd = "LOAD *";
                 aliasUsed = true;
             }
             // Si remplacement, nouveau séquençage en mots
-            if (aliasUsed) {
+            if (aliasUsed)
+            {
                 subs = aliasCmd.Split(commandSeparators, StringSplitOptions.RemoveEmptyEntries);
             }
         }
-
-
-
 
 
 
@@ -905,8 +791,9 @@ namespace AeroCalcCore {
         /// <remarks>
         /// Doit être appelée en tout dernier, afin que les champs de l'objet soient prêt à être utilisés
         /// </remarks>
-        /// 
-        private bool verboseMe() {
+        // TODO Doit disparaitre à terme
+        private bool verboseMe()
+        {
 
             string msg = "";
 
