@@ -80,13 +80,17 @@ namespace AeroCalcCore
 
         private EventMessage getEventMessage(int eventCode)
         {
+            int messageID;
             // eventCode to messageID, les codes d'événement négatifs (erreurs) sont changés en ajoutant 10000 à leur valeur absolue
             if (eventCode < 0)
             {
-                int messageID = 10000 + Math.Abs(eventCode);
+                messageID = 10000 + Math.Abs(eventCode);
             }
-
-            return eMsgList.Find(em => em.msgID == eventCode);
+            else
+            {
+                messageID = eventCode;
+            }
+            return eMsgList.Find(em => em.msgID == messageID);
         }
 
     }

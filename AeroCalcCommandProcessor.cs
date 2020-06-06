@@ -88,7 +88,6 @@ namespace AeroCalcCore
         /// 
         public AeroCalcCommand process(string txtCommand)
         {
-
             // Construction d'un objet AeroCalcCommand et exécution de la commande simple
             // Une commande complexe (nécessitant l'exécution de plus d'une commande simple) doit
             // d'abord être décomposée
@@ -97,7 +96,6 @@ namespace AeroCalcCore
             // Certaines commandes rendent la main pour être traitées ici, dans le processeur
             switch (Cmd.action)
             {
-
                 case AeroCalcCommand.ACTION_INIT_INTERPRETER:
                     // Initialisation
                     initProcessor(Cmd);
@@ -111,7 +109,6 @@ namespace AeroCalcCore
                     Cmd.setEventCode(AeroCalcCommand.EVENTCODE_HELP_REQUESTED);
                     break;
             }
-
             // Post process
             PostProc.postProcess(Cmd);
             return Cmd;
@@ -165,6 +162,9 @@ namespace AeroCalcCore
                         if (EnvContext.unitsEnabled)
                         {
                             UnitLib = unitsFile.getUnitsFromXML(EnvContext.unitsFileName);
+                            ModelLib.setUnitsLibrary(UnitLib);
+                            // TODO Remove
+                            Console.WriteLine("Units loaded : " + UnitLib.units.Count);
                         }
                         // Chargement de la librairie des messages
                         PostProc = new PostProcessor(EnvContext);
@@ -172,22 +172,26 @@ namespace AeroCalcCore
 
                     case FileIO.FILEOP_INVALID_PATH:
                         Cmd.setEventCode(AeroCalcCommand.EVENTCODE_ERROR_INIT_CONFIGFILE_PATH);
+                        Cmd.setExit();
                         break;
 
                     case FileIO.FILEOP_IO_ERROR:
                         Cmd.setEventCode(AeroCalcCommand.EVENTCODE_ERROR_INIT_IO_ERROR);
+                        Cmd.setExit();
                         break;
 
                     case FileIO.FILEOP_UNKNOWN_ERROR:
                         Cmd.setEventCode(AeroCalcCommand.EVENTCODE_ERROR_INIT_UKN_FILE_ERROR);
+                        Cmd.setExit();
                         break;
 
                     default:
                         Cmd.setEventCode(AeroCalcCommand.EVENTCODE_ERROR_INIT_UKN_ERROR);
+                        Cmd.setExit();
                         break;
                 }
                 // TODO remove after use
-                Console.WriteLine(EnvContext.ToString());
+                // Console.WriteLine(EnvContext.ToString());
                 // Fin du processus d'initialisation
                 initialized = true;
                 return true;

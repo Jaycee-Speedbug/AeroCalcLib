@@ -120,14 +120,12 @@ namespace AeroCalcCore
         public const int EVENTCODE_ERROR_INIT_UNITS_FILE = -7;
         public const int EVENTCODE_ERROR_INIT_LANGUAGE_FILE = -8;
         public const int EVENTCODE_COMMAND_UNPROCESSED = -10;
-        public const string RESULT_ERROR_COMMAND_UNPROCESSED = "La commande n'a pas pu être traitée";
 
         public const int EVENTCODE_COMMAND_VOID = -21;
-        public const string RESULT_ERROR_COMMAND_VOID = "La commande traitée est vide";
 
         public const int EVENTCODE_UNKNOWN_COMMAND_WORD = -22;
         public const int EVENTCODE_UNSUPPORTED_COMMAND = -23;
-        public const int EVENTCODE_NO_UNIT_DATA_AVAILABLE=-30;
+        public const int EVENTCODE_NO_UNIT_DATA_AVAILABLE = -30;
         public const int EVENTCODE_UNABLE_VERBOSE_MODIFICATION = -50;
 
         public const int EVENTCODE_PROCESSOR_FAILURE = -100;
@@ -135,8 +133,6 @@ namespace AeroCalcCore
         public const int EVENTCODE_CALC_PROCESSOR_MISSING_FACTOR = -111;
         public const int EVENTCODE_CALC_PROCESSOR_MISSING_MODEL = -112;
         public const int EVENTCODE_NO_MODEL_LOADED = -500;
-        public const string RESULT_ERROR_NO_MODEL_LOADED = "Aucun modèle chargé en mémoire";
-        public const string COMMENT_ERROR_NO_MODEL_LOADED = "Le(s) modèle(s) demandé(s) n'ont pas été trouvé dans le répertoire des modèles";
 
 
         /*
@@ -362,18 +358,32 @@ namespace AeroCalcCore
 
 
 
+        public void setExit()
+        {
+            action = ACTION_EXIT;
+        }
+
         /// <summary>
         /// Enregistre le texte passé en argument comme commentaire au format texte
         /// </summary>
         /// <param name="comment">
         /// Texte de commentaire sur la  commande qui sera communiqué à un utilisateur utilisant la console texte
         /// </param>
+        /*
         public void setCommentText(string comment)
         {
             this.txtComment = comment;
-        }
+        } */
 
 
+
+        public bool isExit() { return action == ACTION_EXIT ? true : false; }
+
+
+
+        /*
+         * METHODES
+         */
 
         /// <summary>
         /// Analyse la requête texte pour définir l'action à réaliser, puis lance l'action
@@ -394,7 +404,6 @@ namespace AeroCalcCore
             // Commandes à mot unique
             if (subs.Length == 1)
             {
-
                 if (subs[0].Equals(CMD_WORD_EXIT, StrCompOpt))
                 {
                     action = ACTION_EXIT;
@@ -448,7 +457,7 @@ namespace AeroCalcCore
             }
 
             // Commandes à mots multiples
-            if (subs.Length >= 2)
+            if (subs.Length > 1)
             {
 
                 if (subs[0].Equals(CMD_WORD_INIT_INTERPRETER, StrCompOpt))
@@ -500,6 +509,12 @@ namespace AeroCalcCore
                     // Action laissée au processeur
                     action = ACTION_SCRIPTFILE;
                     // TODO: Define cmd_SCRIPTFILE();
+                }
+
+                if (subs[0].Equals(CMD_WORD_CONVERT, StrCompOpt))
+                {
+                    action = ACTION_CONVERT;
+                    cmd_CONVERT();
                 }
 
                 // En dernier ressort, on considère une commande de calcul
@@ -634,7 +649,7 @@ namespace AeroCalcCore
             // Liste des unités enregitrées
             string msg = "";
             //! BUG A corriger ici ! Object Reference null
-            List<Unit> lu = Container.dataUnits.getUnits();
+            List<Unit> lu = Container.UnitsLib.getUnits();
             if (lu != null)
             {
                 foreach (Unit item in lu)
@@ -735,7 +750,7 @@ namespace AeroCalcCore
                 // Facteur avec unité
                 if (double.TryParse(words[1], out val))
                 {
-                    unitDictionaryIndex = Container.dataUnits.getIndexByAlias(words[2]);
+                    unitDictionaryIndex = Container.UnitsLib.getIndexByAlias(words[2]);
                     if (unitDictionaryIndex != AeroCalc.UNIT_UNDETERMINED)
                     {
                         name = words[0];

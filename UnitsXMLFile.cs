@@ -70,12 +70,8 @@ namespace AeroCalcCore
         public Units getUnitsFromXML(string xmlFileAbsolutePath)
         {
             // Introducing a new file
-            if (!string.IsNullOrEmpty(xmlFileAbsolutePath))
+            if (setInputFileAbsolutePath(xmlFileAbsolutePath))
             {
-                if (!setInputFileAbsolutePath(xmlFileAbsolutePath))
-                {
-                    return null;
-                }
                 // This new file seems fine !
                 readXmlFile();
             }
@@ -110,7 +106,7 @@ namespace AeroCalcCore
                                 // Not a valid unit
                                 break;
                             }
-                            units.add(new Unit(xe.Value, unitName, alias, isRef, factor, constant));
+                            units.add(new Unit(dimension, unitName, alias, isRef, factor, constant));
                         }
                     }
                 }

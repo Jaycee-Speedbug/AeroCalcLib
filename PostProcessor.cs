@@ -84,7 +84,7 @@ namespace AeroCalcCore
                     {
                         if (string.IsNullOrEmpty(msg))
                         {
-                            msg = "[" + Cmd.eventCode + "]" + " POSTPROC:ERROR MSG NOT IMPLEMENTED";
+                            msg = "[" + Cmd.eventCode + "]" + " POSTPROC:RESULT MSG NOT IMPLEMENTED";
                         }
                         Cmd.setResultText(msg);
                     }
@@ -96,6 +96,7 @@ namespace AeroCalcCore
                 string msg = EMsgLib.getMessageWith(Cmd.eventCode);
                 if (string.IsNullOrEmpty(msg))
                 {
+                    // Nothing returned
                     msg = "[" + Cmd.eventCode + "]" + " POSTPROC:ERROR MSG NOT IMPLEMENTED";
                 }
                 Cmd.setResultText(msg);
