@@ -51,11 +51,9 @@ namespace AeroCalcCore
         /// 
         public DataModelContainer()
         {
-
             dataModels = new List<PerfPile>();
             xmlConnector = new XMLFile();
             csvConnector = new ModelCSVFile();
-
         }
 
 
@@ -573,11 +571,10 @@ namespace AeroCalcCore
             {
                 if (!pp.hidden)
                 {
-                    msg += modelSignature(pp.outputName) + "\n";
+                    msg += modelSignature(pp.outputName) + Environment.NewLine;
                     counter++;
                 }
             }
-            msg += String.Format("{0} modèles chargés en mémoire\n", counter);
             return msg;
         }
 

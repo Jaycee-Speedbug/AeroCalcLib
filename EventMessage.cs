@@ -48,7 +48,12 @@ namespace AeroCalcCore
 
         public override string ToString()
         {
-            return string.Format("[{0:D5}]", this.msgID) + this.msgStr;
+            if (msgID > 10000)
+            {
+                // Error code should be returned
+                return string.Format("[{0:D5}]  ", this.msgID) + this.msgStr;
+            }
+            return msgStr;
         }
 
     }

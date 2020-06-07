@@ -102,6 +102,7 @@ namespace AeroCalcCore
         public const int EVENTCODE_VERBOSE_ACTIVE = 910;
         public const int EVENTCODE_VERBOSE_INACTIVE = 911;
         public const int EVENTCODE_HELP_REQUESTED = 900;
+        public const int EVENTCODE_LIST_UNITS_SUCCESSFULL = 550;
         public const int EVENTCODE_LOAD_MODELS_SUCCESSFULL = 500;
         public const int EVENTCODE_CALCULATE_SUCCESSFULL = 200;
         public const int EVENTCODE_PROCESS_SUCCESSFULL = 100;
@@ -199,12 +200,17 @@ namespace AeroCalcCore
         /// <summary>
         /// Commentaire texte sur le traitement de la commande
         /// </summary>
-        public string txtComment { get; private set; }
+        // public string txtComment { get; private set; }
 
         /// <summary>
         /// Code de l'évènement rencontré pendant le traitement de la commande
         /// </summary>
         public int eventCode { get; private set; }
+
+        /// <summary>
+        /// Data texte, à disposition du PostProcessor pour préparer le message à renvoyer à l'utilisateur
+        /// </summary>
+        public string[] info { get; private set; }
 
         /// <summary>
         /// Tableau des caractères utilisés comme séparateur de mots dans une commande en mode texte
@@ -246,7 +252,7 @@ namespace AeroCalcCore
             //
             startOfProcess = new DateTime(DateTime.Now.Ticks, DateTimeKind.Utc);
             action = ACTION_INIT_VALUE;
-            txtComment = "";
+            //txtComment = "";
             directory = "";
             inputFileName = "";
             outputFileName = "";
@@ -358,25 +364,20 @@ namespace AeroCalcCore
 
 
 
+        /// <summary>
+        /// Enregistre EXIT comme action à mener pour cette commande
+        /// Permet de demander à Command Line Tool de fermer, en cas d'erreur majeure à l'initialisation par exemple
+        /// </summary>
         public void setExit()
         {
             action = ACTION_EXIT;
         }
 
+
+
         /// <summary>
-        /// Enregistre le texte passé en argument comme commentaire au format texte
+        /// Renvoie True si l'action de la commande est EXIT, False sinon
         /// </summary>
-        /// <param name="comment">
-        /// Texte de commentaire sur la  commande qui sera communiqué à un utilisateur utilisant la console texte
-        /// </param>
-        /*
-        public void setCommentText(string comment)
-        {
-            this.txtComment = comment;
-        } */
-
-
-
         public bool isExit() { return action == ACTION_EXIT ? true : false; }
 
 
@@ -532,6 +533,20 @@ namespace AeroCalcCore
 
 
 
+        /*
+        private bool addInfo(string information)
+        {
+            string[] msgTable;
+            // info.Length;
+            info.Append(information);
+
+
+            return true;
+        }
+        */
+
+
+
         /// <summary>
         /// Traitement d'une commande de calcul de performance.
         /// Retourne True si le traitement de la commande est complet.
@@ -563,8 +578,6 @@ namespace AeroCalcCore
             {
                 // La commande a échouée pendant le calcul 
                 setEventCode(EVENTCODE_CALC_PROCESS_ERROR);
-                // TODO, revoir le formatage du message d'erreur, en utilisant aussi la nature de l'exception
-                //setCommentText("Erreur lors du calcul de " + e.modelName + " : " + e.factor);
             }
 
             if (!double.IsNaN(numResult))
@@ -628,8 +641,17 @@ namespace AeroCalcCore
         private bool cmd_LIST_MODELS()
         {
             // Recherche des noms de modèles de performance qui match
-            setResultText(Container.dataModelSignatures());
-            eventCode = AeroCalcCommand.EVENTCODE_PROCESS_SUCCESSFULL;
+            string models;
+            models = Container.dataModelSignatures();
+            if (string.IsNullOrEmpty(models))
+            {
+                eventCode = AeroCalcCommand.EVENTCODE_NO_MODEL_LOADED;
+            }
+            else
+            {
+                eventCode = AeroCalcCommand.EVENTCODE_PROCESS_SUCCESSFULL;
+                setResultText(models);
+            }
             numericResult = Double.NaN;
             return true;
         }
@@ -646,18 +668,19 @@ namespace AeroCalcCore
         /// TODO: Objectif non atteint, on doit pouvoir lister les unités avec filtrage
         private bool cmd_LIST_UNITS()
         {
-            // Liste des unités enregitrées
+            // Liste des unités de la bibliothèque
             string msg = "";
-            //! BUG A corriger ici ! Object Reference null
             List<Unit> lu = Container.UnitsLib.getUnits();
             if (lu != null)
             {
                 foreach (Unit item in lu)
                 {
-                    msg += item.ToString() + "\n";
-                    setResultText(msg);
-                    eventCode = EVENTCODE_PROCESS_SUCCESSFULL;
+                    msg += item.ToString() + Environment.NewLine;
                 }
+                setResultText(msg);
+                // TODO To be implemented
+                addInfo(lu.Count.ToString());
+                eventCode = EVENTCODE_LIST_UNITS_SUCCESSFULL;
             }
             else
             {
@@ -704,7 +727,8 @@ namespace AeroCalcCore
             {
                 eventCode = EVENTCODE_LOAD_MODELS_SUCCESSFULL;
                 // TODO Ce résultat doit être maintenu à travers le post process
-                txtResult = String.Format("{0} modèle(s) ont été chargés en mémoire.", counter);
+                //txtResult = String.Format("{0} modèle(s) ont été chargés en mémoire.", counter);
+                addInfo(counter.ToString());
                 numericResult = Double.NaN;
             }
             else
@@ -713,6 +737,32 @@ namespace AeroCalcCore
                 numericResult = Double.NaN;
             }
             return true;
+        }
+
+
+
+        private void addInfo(string information)
+        {
+            if (!string.IsNullOrEmpty(information))
+            {
+                if (info != null)
+                {
+                    string[] newArray = new string[info.Length];
+                    for (int index = 0; index < info.Length; index++)
+                    {
+                        // Copie de l'ancienne table
+                        newArray[index] = info[index];
+                    }
+                    // Copie du nouvel élément
+                    newArray[newArray.Length - 1] = information;
+                    info = newArray;
+                }
+                else
+                {
+                    info = new string[1];
+                    info[0] = information;
+                }
+            }
         }
 
 
@@ -812,19 +862,17 @@ namespace AeroCalcCore
 
             string msg = "";
 
-            msg += "\n---------------- VERBOSE ----------------\n";
-            msg += "\nRaw command  : " + rawTxtCommand;
-            msg += "\nAction code  : " + action;
-            msg += "\nDirectory    : " + directory;
-            msg += "\nFile name    : " + inputFileName;
-            msg += "\nOutput name  : " + outputFileName;
-            msg += "\nEvent code   : " + eventCode;
-            msg += "\nNum result   : " + numericResult;
-            msg += "\nTxt result   : " + txtResult;
-            msg += "\nComment      : " + txtComment;
-            msg += "\nDuration     : " + durationMilliSecond + " ms\n\n";
+            msg += Environment.NewLine + "---------------- VERBOSE ----------------" + Environment.NewLine;
+            msg += Environment.NewLine + "Raw command  : " + rawTxtCommand;
+            msg += Environment.NewLine + "Action code  : " + action;
+            msg += Environment.NewLine + "Directory    : " + directory;
+            msg += Environment.NewLine + "File name    : " + inputFileName;
+            msg += Environment.NewLine + "Output name  : " + outputFileName;
+            msg += Environment.NewLine + "Event code   : " + eventCode;
+            msg += Environment.NewLine + "Num result   : " + numericResult;
+            msg += Environment.NewLine + "Txt result   : " + txtResult;
+            msg += Environment.NewLine + "Duration     : " + durationMilliSecond + " ms" + Environment.NewLine;
             txtResult = msg;
-            txtComment = txtResult;
             return true;
         }
 
