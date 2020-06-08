@@ -4,10 +4,8 @@ using System.Linq;
 
 
 
-
 namespace AeroCalcCore
 {
-
 
 
 
@@ -17,12 +15,11 @@ namespace AeroCalcCore
     /// dans le traitement de cette commande
     ///
     /// Il ne doit pas y avoir de manipulation de messages utilisateurs ici, ces
-    /// post traitements sont à réaliser par le processeur
+    /// post traitements sont à réaliser par PostProcessor
     /// 
     /// </summary>
     public class AeroCalcCommand
     {
-
         /*
          * CONSTANTES
          */
@@ -101,6 +98,7 @@ namespace AeroCalcCore
         ///
         public const int EVENTCODE_VERBOSE_ACTIVE = 910;
         public const int EVENTCODE_VERBOSE_INACTIVE = 911;
+        public const int EVENTCODE_VERBOSE_ALREADY = 912;
         public const int EVENTCODE_HELP_REQUESTED = 900;
         public const int EVENTCODE_LIST_UNITS_SUCCESSFULL = 550;
         public const int EVENTCODE_LOAD_MODELS_SUCCESSFULL = 500;
@@ -110,7 +108,7 @@ namespace AeroCalcCore
         public const int EVENTCODE_CMD_HANDOVER = 20;
         public const int EVENTCODE_EXIT_REQUESTED = 10;
 
-        public const int EVENTCODE_INITIAL = 0; // Valeur d'initialisation
+        public const int EVENTCODE_INITIAL_VALUE = 0; // Valeur d'initialisation
 
         public const int EVENTCODE_INIT_UNSUCCESSFULL = -1;
         public const int EVENTCODE_REINIT_NOT_ALLOWED = -2;
@@ -159,7 +157,7 @@ namespace AeroCalcCore
         /// <summary>
         /// Nom du dossier de travail, si un tel dossier est nécessaire
         /// </summary>
-        public string directory { get; private set; }
+        public string workDirectory { get; private set; }
 
         /// <summary>
         /// Nom du fichier source, si un tel fichier est utilisé
@@ -198,11 +196,6 @@ namespace AeroCalcCore
         public string txtResult { get; private set; }
 
         /// <summary>
-        /// Commentaire texte sur le traitement de la commande
-        /// </summary>
-        // public string txtComment { get; private set; }
-
-        /// <summary>
         /// Code de l'évènement rencontré pendant le traitement de la commande
         /// </summary>
         public int eventCode { get; private set; }
@@ -210,16 +203,21 @@ namespace AeroCalcCore
         /// <summary>
         /// Data texte, à disposition du PostProcessor pour préparer le message à renvoyer à l'utilisateur
         /// </summary>
+        // TODO DRAFT of a report system
         public string[] info { get; private set; }
 
-        /// <summary>
-        /// Tableau des caractères utilisés comme séparateur de mots dans une commande en mode texte
-        /// </summary>
-        private char[] commandSeparators = { CMD_SEPARATOR, CMD_SEPARATOR_2, CMD_SEPARATOR_3 };
+        public bool verbosed { get; private set; }
+
+
 
         /*
          * MEMBRES
          */
+
+        /// <summary>
+        /// Tableau des caractères utilisés comme séparateur de mots dans une commande en mode texte
+        /// </summary>
+        private char[] commandSeparators = { CMD_SEPARATOR, CMD_SEPARATOR_3 };
 
         /// <summary>
         /// Heure du début de traitement de la commande
@@ -242,28 +240,26 @@ namespace AeroCalcCore
         /// Constructeur d'objet Commande
         /// 
         /// </summary>
-        /// <param name="txtCommand">string contenant la commande en mode texte, sans traitement préalable.
+        /// <param name="inputText">string contenant la commande en mode texte, sans traitement préalable.
         /// </param>
         /// 
-        public AeroCalcCommand(string txtCommand, DataModelContainer DMContainer, EnvironmentContext EC)
+        public AeroCalcCommand(string inputText, DataModelContainer DMContainer, EnvironmentContext EC)
         {
-            //
             // Initialisation des propriétés
-            //
             startOfProcess = new DateTime(DateTime.Now.Ticks, DateTimeKind.Utc);
             action = ACTION_INITIAL_VALUE;
-            //txtComment = "";
-            directory = "";
+            workDirectory = "";
             inputFileName = "";
             outputFileName = "";
-            eventCode = EVENTCODE_INITIAL;
+            eventCode = EVENTCODE_INITIAL_VALUE;
             numericResult = Double.NaN;
             subs = null;
             Container = DMContainer;
             Factors = new List<CommandFactor>();
             EnvContext = EC;
+            if (EnvContext.verbose) verbosed = true;
 
-            if (string.IsNullOrEmpty(txtCommand))
+            if (string.IsNullOrEmpty(inputText))
             {
                 // Cas particulier de la chaine nulle
                 rawTxtCommand = "";
@@ -273,19 +269,19 @@ namespace AeroCalcCore
             else
             {
                 // La chaine de texte n'est pas vide, traitement de la commande
-                rawTxtCommand = txtCommand;
+                rawTxtCommand = inputText;
                 if (!execute())
                 {
                     // Un problème majeur s'est produit dans le traitement de la commande
                     eventCode = EVENTCODE_PROCESSOR_FAILURE;
-                    verboseMe();
+                    verbosed = true;
                 }
                 else
                 {
                     // Commande traitée
                     if (EC.verbose)
                     {
-                        verboseMe();
+                        verbosed = true;
                     }
                 }
             }
@@ -397,7 +393,6 @@ namespace AeroCalcCore
         /// </remarks>
         private bool execute()
         {
-
             StringComparison StrCompOpt = StringComparison.CurrentCultureIgnoreCase;
             subs = rawTxtCommand.Split(commandSeparators, StringSplitOptions.RemoveEmptyEntries);
 
@@ -419,9 +414,7 @@ namespace AeroCalcCore
                 if (subs[0].Equals(CMD_WORD_VERBOSE, StrCompOpt))
                 {
                     action = ACTION_VERBOSE;
-                    // TODO To be reworked, no eventCode to be issued here
-                    eventCode = EVENTCODE_CMD_HANDOVER;
-                    //cmd_VERBOSE(true);
+                    cmd_VERBOSE();
                 }
 
                 if (subs[0].Equals(CMD_WORD_CATALOG, StrCompOpt))
@@ -509,7 +502,7 @@ namespace AeroCalcCore
                 {
                     // Action laissée au processeur
                     action = ACTION_STOP_VERBOSE;
-                    //cmd_VERBOSE(false);
+                    cmd_VERBOSE();
                 }
 
                 if (subs[0].Equals(CMD_WORD_SCRIPTFILE, StrCompOpt))
@@ -536,22 +529,9 @@ namespace AeroCalcCore
                 }
 
             }
+            if (EnvContext.verbose) verbosed=true;
             return true;
         }
-
-
-
-        /*
-        private bool addInfo(string information)
-        {
-            string[] msgTable;
-            // info.Length;
-            info.Append(information);
-
-
-            return true;
-        }
-        */
 
 
 
@@ -568,7 +548,6 @@ namespace AeroCalcCore
         /// 
         private bool cmd_CALCULATE()
         {
-
             // Initialisation
             double numResult = double.NaN;
             // constitution de la Liste des facteurs communiqués dans la commande
@@ -577,7 +556,7 @@ namespace AeroCalcCore
             {
                 factorList.Add(getFactor(subs[count]));
             }
-
+            // Exécution du calcul
             try
             {
                 numResult = Container.compute(subs[0], factorList);
@@ -588,7 +567,7 @@ namespace AeroCalcCore
                 eventCode = EVENTCODE_CALC_PROCESS_ERROR;
                 addInfo(new string[] { e.modelName, e.factorName, e.factorValue.ToString() });
             }
-
+            // Tratement post calcul
             if (!double.IsNaN(numResult))
             {
                 // Réussite du calcul
@@ -664,7 +643,6 @@ namespace AeroCalcCore
                 eventCode = AeroCalcCommand.EVENTCODE_PROCESS_SUCCESSFULL;
                 txtResult = models;
             }
-            numericResult = Double.NaN;
             return true;
         }
 
@@ -677,7 +655,7 @@ namespace AeroCalcCore
         /// <param name="Cmd">Commande active</param>
         /// <returns>True si le traitement n'a pas généré d'erreur</returns>
         /// <remarks></remarks>
-        /// TODO: Objectif non atteint, on doit pouvoir lister les unités avec filtrage
+        /// TODO: Objectif non encore atteint, on doit pouvoir lister les unités avec filtrage
         private bool cmd_LIST_UNITS()
         {
             // Liste des unités de la bibliothèque
@@ -689,10 +667,9 @@ namespace AeroCalcCore
                 {
                     msg += item.ToString() + Environment.NewLine;
                 }
-                eventCode = EVENTCODE_LIST_UNITS_SUCCESSFULL;
                 txtResult = msg;
-                // TODO To be implemented
                 addInfo(lu.Count.ToString());
+                eventCode = EVENTCODE_LIST_UNITS_SUCCESSFULL;
             }
             else
             {
@@ -707,7 +684,6 @@ namespace AeroCalcCore
         /// <summary>
         /// Traite la commande de chargement du catalogue
         /// </summary>
-        /// <param name="Cmd">Commande active</param>
         /// <returns></returns>
         private bool cmd_LOAD_CATALOG()
         {
@@ -721,13 +697,11 @@ namespace AeroCalcCore
         /// <summary>
         /// Traite la commande de chargement d'un ou plusieurs modèles de données
         /// </summary>
-        /// <param name="Cmd">Commande active</param>
         /// <returns>Code du traitement de l'opération</returns>
         /// <remarks>TO BE DEVELOPPED</remarks>
         /// 
         private bool cmd_LOAD_MODELS()
         {
-
             int counter = 0;
 
             foreach (string filter in subs)
@@ -736,10 +710,8 @@ namespace AeroCalcCore
             }
             if (counter > 0)
             {
-                eventCode = EVENTCODE_LOAD_MODELS_SUCCESSFULL;
-                // TODO Ce résultat doit être maintenu à travers le post process
-                //txtResult = String.Format("{0} modèle(s) ont été chargés en mémoire.", counter);
                 addInfo(counter.ToString());
+                eventCode = EVENTCODE_LOAD_MODELS_SUCCESSFULL;
             }
             else
             {
@@ -750,6 +722,62 @@ namespace AeroCalcCore
 
 
 
+        /// <summary>
+        /// Traite la commande de changement de mode VERBOSE
+        /// </summary>
+        /// <param name="Cmd">Commande active</param>
+        /// <returns>Code du traitement de l'opération</returns>
+        /// <remarks>TO BE DEVELOPPED</remarks>
+        private void cmd_VERBOSE()
+        {
+            if (action == ACTION_VERBOSE)
+            {
+                // VERBOSE
+                if (EnvContext.verboseAllowed)
+                {
+                    if (EnvContext.verbose)
+                    {
+                        // VERBOSE is already set
+                        eventCode = EVENTCODE_VERBOSE_ALREADY;
+                    }
+                    else
+                    {
+                        // VERBOSE to be set
+                        EnvContext.setVerbose(true);
+                        verbosed = true;
+                        eventCode = EVENTCODE_VERBOSE_ACTIVE;
+                    }
+                }
+                else
+                {
+                    // Not allowed !
+                    eventCode = EVENTCODE_UNABLE_VERBOSE_MODIFICATION;
+                }
+            }
+            else
+            {
+                // STOP VERBOSE
+                if (EnvContext.verboseAllowed)
+                {
+                    EnvContext.setVerbose(false);
+                    verbosed = false;
+                    eventCode = EVENTCODE_VERBOSE_INACTIVE;
+                }
+                else
+                {
+                    // Not allowed !
+                    eventCode = EVENTCODE_UNABLE_VERBOSE_MODIFICATION;
+                }
+            }
+        }
+
+
+
+        /// <summary>
+        /// Ajoute une information qui sera utilisée pour remplacer un marqueur dans le message
+        /// à destination de l'utilisateur
+        /// </summary>
+        /// <param name="information">Information à communiquer</param>
         private void addInfo(string information)
         {
             if (!string.IsNullOrEmpty(information))
@@ -776,6 +804,11 @@ namespace AeroCalcCore
 
 
 
+        /// <summary>
+        /// Ajoute une série d'informations qui seront utilisées pour remplacer un marqueur dans le message
+        /// à destination de l'utilisateur
+        /// </summary>
+        /// <param name="information">Informations à communiquer</param>
         private void addInfo(string[] informations)
         {
             if (informations != null)
@@ -800,11 +833,9 @@ namespace AeroCalcCore
         /// 
         private CommandFactor getFactor(string subString)
         {
-
             string name = "";
             int unitDictionaryIndex = 0;
             double val = double.NaN;
-            // TODO les séparateurs ne doit pas être locaux
             char[] separators = { CMD_OPERATOR_AFFECT, CMD_OPERATOR_UNIT };
             string[] words = subString.Split(separators);
 
@@ -845,7 +876,6 @@ namespace AeroCalcCore
         /// TODO To be replaced by a formating function
         private void useAlias()
         {
-
             bool aliasUsed = false;
             string aliasCmd = "";
 
@@ -866,36 +896,6 @@ namespace AeroCalcCore
             {
                 subs = aliasCmd.Split(commandSeparators, StringSplitOptions.RemoveEmptyEntries);
             }
-        }
-
-
-
-        /// <summary>
-        /// Transforme le comment de la commande ainsi que txtResult en version étendue, 
-        /// comprenant tous les champs de l'objet commande.
-        /// </summary>
-        /// <returns>Etat de l'opération</returns>
-        /// <remarks>
-        /// Doit être appelée en tout dernier, afin que les champs de l'objet soient prêt à être utilisés
-        /// </remarks>
-        // TODO Doit disparaitre à terme
-        private bool verboseMe()
-        {
-
-            string msg = "";
-
-            msg += Environment.NewLine + "---------------- VERBOSE ----------------" + Environment.NewLine;
-            msg += Environment.NewLine + "Raw command  : " + rawTxtCommand;
-            msg += Environment.NewLine + "Action code  : " + action;
-            msg += Environment.NewLine + "Directory    : " + directory;
-            msg += Environment.NewLine + "File name    : " + inputFileName;
-            msg += Environment.NewLine + "Output name  : " + outputFileName;
-            msg += Environment.NewLine + "Event code   : " + eventCode;
-            msg += Environment.NewLine + "Num result   : " + numericResult;
-            msg += Environment.NewLine + "Txt result   : " + txtResult;
-            msg += Environment.NewLine + "Duration     : " + durationMilliSecond + " ms" + Environment.NewLine;
-            txtResult = msg;
-            return true;
         }
 
     }

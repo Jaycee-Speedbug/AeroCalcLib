@@ -80,18 +80,12 @@ namespace AeroCalcCore
         /// de script</param>
         /// <returns>retourne une commande traitée, sous forme d'un objet AeroCalcCommand</returns>
         /// <remarks>
-        /// Fonction assurant le routage des commandes, éviter tout traitement et privilégier un appel à une
-        /// fonction privée respectant le nommage suivant:
-        /// cmd_XXXX()
+        /// Seules quelques commandes sont traitées ici, l'essentiel est fait via le constructeur AeroCalcCommand
         /// </remarks>
-        /// 
         public AeroCalcCommand process(string txtCommand)
         {
-            // Construction d'un objet AeroCalcCommand et exécution de la commande simple
-            // Une commande complexe (nécessitant l'exécution de plus d'une commande simple) doit
-            // d'abord être décomposée
-
             AeroCalcCommand Cmd = new AeroCalcCommand(txtCommand, ModelLib, EnvContext);
+
             // Certaines commandes rendent la main pour être traitées ici, dans le processeur
             switch (Cmd.action)
             {
@@ -106,14 +100,16 @@ namespace AeroCalcCore
                     break;
 
                 case AeroCalcCommand.ACTION_SCRIPTFILE:
+                    // Lecture de fichier de script
                     readScriptFile(Cmd);
                     break;
 
                 case AeroCalcCommand.ACTION_HELP:
+                    // Aide
                     Cmd.setEventCode(AeroCalcCommand.EVENTCODE_HELP_REQUESTED);
                     break;
             }
-            // Post process
+            // Post process: Génération de tous les messages vers l'utilisateur
             PostProc.postProcess(Cmd);
             return Cmd;
         }
@@ -204,43 +200,6 @@ namespace AeroCalcCore
                 Cmd.setEventCode(AeroCalcCommand.EVENTCODE_REINIT_NOT_ALLOWED);
             }
             return false;
-        }
-
-
-
-        /// <summary>
-        /// Set Verbose mode
-        /// </summary>
-        /// <param name="Cmd">Commande active</param>
-        /// <param name="verboseModeRequested">Verbose mode status requested by user</param>
-        /// <returns>
-        /// True, when mode is set according user's request
-        /// </returns>
-        private bool setVerboseMode(AeroCalcCommand Cmd, bool verboseModeRequested)
-        {
-
-            Cmd.setNumericResult(double.NaN);
-
-            if (!EnvContext.verboseAllowed)
-            {
-                Cmd.setEventCode(AeroCalcCommand.EVENTCODE_UNABLE_VERBOSE_MODIFICATION);
-            }
-            else
-            {
-                if (verboseModeRequested)
-                {
-                    // Commande VERBOSE
-                    EnvContext.setVerbose(true);
-                    Cmd.setEventCode(AeroCalcCommand.EVENTCODE_VERBOSE_ACTIVE);
-                }
-                else
-                {
-                    // Commande STOP VERBOSE
-                    EnvContext.setVerbose(false);
-                    Cmd.setEventCode(AeroCalcCommand.EVENTCODE_VERBOSE_INACTIVE);
-                }
-            }
-            return true;
         }
 
     }

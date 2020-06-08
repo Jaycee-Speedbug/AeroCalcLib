@@ -36,6 +36,8 @@ namespace AeroCalcCore
          */
         private EventMessages EMsgLib;
 
+        //private bool verbose;
+
 
 
         /*
@@ -51,7 +53,7 @@ namespace AeroCalcCore
 
             EMsgLib = xmlFile.getEventMessagesFromXML();
 
-
+            //verbose = EC.verbose;
 
         }
 
@@ -62,8 +64,7 @@ namespace AeroCalcCore
          */
         public void postProcess(AeroCalcCommand Cmd)
         {
-
-            if (Cmd.eventCode == AeroCalcCommand.EVENTCODE_INITIAL)
+            if (Cmd.eventCode == AeroCalcCommand.EVENTCODE_INITIAL_VALUE)
             {
                 // Command totally unprocessed, not a normal situation
                 string msg = "[" + Cmd.eventCode + "]" + " POSTPROC:UNPROCESSED COMMAND";
@@ -115,7 +116,11 @@ namespace AeroCalcCore
                 }
                 Cmd.setResultText(msg);
             }
-
+            // Verbose
+            if (Cmd.verbosed)
+            {
+                verboseCommand(Cmd);
+            }
         }
 
 
@@ -123,22 +128,30 @@ namespace AeroCalcCore
         /*
          * METHODES
          */
+        private void verboseCommand(AeroCalcCommand Cmd)
+        {
+            string msg = "";
+            msg += Environment.NewLine + "raw command  { " + Cmd.rawTxtCommand;
+            msg += " }  action code { " + Cmd.action;
+            if (!string.IsNullOrEmpty(Cmd.workDirectory)) { msg += " }  work directory { " + Cmd.workDirectory; }
+            if (!string.IsNullOrEmpty(Cmd.inputFileName)) { msg += " }  input file { " + Cmd.inputFileName; }
+            if (!string.IsNullOrEmpty(Cmd.outputFileName)) { msg += " }  output file { " + Cmd.outputFileName; }
+            msg += " }  event code { " + Cmd.eventCode;
+            msg += " }  result { " + Cmd.numericResult;
+            msg += " }  duration { " + Cmd.durationMilliSecond + " ms }" + Environment.NewLine;
+            Cmd.setResultText(Cmd.txtResult + Environment.NewLine + msg);
+        }
+
+
 
         private string swapFields(string message, string[] info)
         {
-            if (info != null)
+            if (info != null && message.Contains("$0"))
             {
-                if (message.Contains("$0"))
+                // Un code à remplacer est identifié
+                for (int index = 0; index < info.Length; index++)
                 {
-                    // Un code à remplacer est identifié
-                    for (int index = 0; index < info.Length; index++)
-                    {
-                        // System.Console.WriteLine("Looking for : " + string.Concat("$", index.ToString()));
-                        message = message.Replace(string.Concat("$", index.ToString()), info[index]);
-                        //message.Replace("$", info[index]);
-                        // /!\ BUG
-                    }
-
+                    message = message.Replace(string.Concat("$", index.ToString()), info[index]);
                 }
             }
             return message;
