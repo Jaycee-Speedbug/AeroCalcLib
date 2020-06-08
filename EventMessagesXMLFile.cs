@@ -45,7 +45,15 @@ namespace AeroCalcCore
                 int codeNb = getIntOrMinValue(item.Attribute(ATTRIB_ID).Value);
                 if (codeNb != int.MinValue)
                 {
-                    EMLib.Add(new EventMessage(codeNb, msg));
+                    // Triming the leading spaces
+                    string msgTrimmed = "";
+                    string[] table = msg.Split(Environment.NewLine);
+                    for (int i = 0; i < table.Length; i++)
+                    {
+                        msgTrimmed += table[i].TrimStart(' ') + Environment.NewLine;
+                    }
+                    // Addition to library
+                    EMLib.Add(new EventMessage(codeNb, msgTrimmed));
                 }
             }
             return EMLib;

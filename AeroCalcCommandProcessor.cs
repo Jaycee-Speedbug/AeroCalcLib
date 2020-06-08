@@ -83,7 +83,6 @@ namespace AeroCalcCore
         /// Fonction assurant le routage des commandes, éviter tout traitement et privilégier un appel à une
         /// fonction privée respectant le nommage suivant:
         /// cmd_XXXX()
-        // TODO Un constructeur ne devrait pas réaliser de traitements: A transplanter dans une fonction
         /// </remarks>
         /// 
         public AeroCalcCommand process(string txtCommand)
@@ -99,6 +98,11 @@ namespace AeroCalcCore
                 case AeroCalcCommand.ACTION_INIT_INTERPRETER:
                     // Initialisation
                     initProcessor(Cmd);
+                    break;
+
+                case AeroCalcCommand.ACTION_EXIT:
+                    // Exit
+                    Cmd.setEventCode(AeroCalcCommand.EVENTCODE_EXIT_REQUESTED);
                     break;
 
                 case AeroCalcCommand.ACTION_SCRIPTFILE:
@@ -157,17 +161,17 @@ namespace AeroCalcCore
                 switch (loadStatus)
                 {
                     case FileIO.FILEOP_SUCCESSFUL:
-                        Cmd.setEventCode(AeroCalcCommand.EVENTCODE_INIT_SUCCESSFULL);
                         // Chargement du dictionnaire des unités
                         if (EnvContext.unitsEnabled)
                         {
                             UnitLib = unitsFile.getUnitsFromXML(EnvContext.unitsFileName);
                             ModelLib.setUnitsLibrary(UnitLib);
-                            // TODO Remove
-                            Console.WriteLine("Units loaded : " + UnitLib.units.Count);
                         }
-                        // Chargement de la librairie des messages
+                        ModelLib.setDataModelsDirectory(EnvContext.modelsDirPath);
+                        // TODO Traiter le false de setDataModelsDirectory
+                        // Construction de PostProcessor et de la librairie des messages
                         PostProc = new PostProcessor(EnvContext);
+                        Cmd.setEventCode(AeroCalcCommand.EVENTCODE_INIT_SUCCESSFULL);
                         break;
 
                     case FileIO.FILEOP_INVALID_PATH:
@@ -190,8 +194,6 @@ namespace AeroCalcCore
                         Cmd.setExit();
                         break;
                 }
-                // TODO remove after use
-                // Console.WriteLine(EnvContext.ToString());
                 // Fin du processus d'initialisation
                 initialized = true;
                 return true;

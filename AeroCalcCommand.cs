@@ -67,7 +67,7 @@ namespace AeroCalcCore
         /// Constantes d'identification de l'action à mener
         /// -> action
         /// </summary>
-        public const int ACTION_INIT_VALUE = 0;
+        public const int ACTION_INITIAL_VALUE = 0;
         public const int ACTION_UNDETERMINED = -1;
         public const int ACTION_INIT_INTERPRETER = 2;
         public const int ACTION_FILE_OPERATION = 10;
@@ -251,7 +251,7 @@ namespace AeroCalcCore
             // Initialisation des propriétés
             //
             startOfProcess = new DateTime(DateTime.Now.Ticks, DateTimeKind.Utc);
-            action = ACTION_INIT_VALUE;
+            action = ACTION_INITIAL_VALUE;
             //txtComment = "";
             directory = "";
             inputFileName = "";
@@ -399,7 +399,6 @@ namespace AeroCalcCore
         {
 
             StringComparison StrCompOpt = StringComparison.CurrentCultureIgnoreCase;
-            action = ACTION_UNDETERMINED;
             subs = rawTxtCommand.Split(commandSeparators, StringSplitOptions.RemoveEmptyEntries);
 
             // Commandes à mot unique
@@ -420,6 +419,7 @@ namespace AeroCalcCore
                 if (subs[0].Equals(CMD_WORD_VERBOSE, StrCompOpt))
                 {
                     action = ACTION_VERBOSE;
+                    // TODO To be reworked, no eventCode to be issued here
                     eventCode = EVENTCODE_CMD_HANDOVER;
                     //cmd_VERBOSE(true);
                 }
@@ -453,6 +453,14 @@ namespace AeroCalcCore
                     // Action laissée au processeur
                     action = ACTION_HELP;
                     cmd_HELP();
+                }
+
+                // Default
+                if (action == ACTION_INITIAL_VALUE)
+                {
+                    // Pas une action à un seul keyword n'a été identifiée
+                    action = ACTION_UNDETERMINED;
+                    eventCode = EVENTCODE_UNKNOWN_COMMAND_WORD;
                 }
 
             }
@@ -519,7 +527,7 @@ namespace AeroCalcCore
                 }
 
                 // En dernier ressort, on considère une commande de calcul
-                if (action == ACTION_UNDETERMINED)
+                if (action == ACTION_INITIAL_VALUE)
                 {
                     // Commande à mots multiples et non reconnues précédement
                     action = ACTION_CALCULATE;
@@ -576,15 +584,21 @@ namespace AeroCalcCore
             }
             catch (ModelException e)
             {
-                // La commande a échouée pendant le calcul 
-                setEventCode(EVENTCODE_CALC_PROCESS_ERROR);
+                // La commande a échoué pendant le calcul 
+                eventCode = EVENTCODE_CALC_PROCESS_ERROR;
+                addInfo(new string[] { e.modelName, e.factorName, e.factorValue.ToString() });
             }
 
             if (!double.IsNaN(numResult))
             {
                 // Réussite du calcul
-                setEventCode(EVENTCODE_CALCULATE_SUCCESSFULL);
-                setNumericResult(numResult);
+                eventCode = EVENTCODE_CALCULATE_SUCCESSFULL;
+                numericResult = numResult;
+            }
+            else
+            {
+                // Echec du calcul, sans génération d'exception...
+                eventCode = EVENTCODE_UNKNOWN_COMMAND_WORD;
             }
             return true;
         }
@@ -594,7 +608,6 @@ namespace AeroCalcCore
         private bool cmd_CONVERT()
         {
             // COMMANDE NON SUPPORTEE
-            numericResult = Double.NaN;
             eventCode = EVENTCODE_UNSUPPORTED_COMMAND;
             return true;
         }
@@ -605,7 +618,7 @@ namespace AeroCalcCore
         {
             // Commande traitée par le processeur
             // TODO eventCode à générer ds le processeur
-            eventCode = EVENTCODE_EXIT_REQUESTED;
+            eventCode = EVENTCODE_CMD_HANDOVER;
             return true;
         }
 
@@ -614,9 +627,8 @@ namespace AeroCalcCore
         private bool cmd_HELP()
         {
             // Commande traitée par le processeur
-            numericResult = double.NaN;
             // TODO eventCode à générer ds le processeur
-            eventCode = EVENTCODE_HELP_REQUESTED;
+            eventCode = EVENTCODE_CMD_HANDOVER;
             return true;
         }
 
@@ -625,7 +637,7 @@ namespace AeroCalcCore
         private bool cmd_INIT()
         {
             // Commande traitée par le processeur
-            numericResult = double.NaN;
+            eventCode = EVENTCODE_CMD_HANDOVER;
             return true;
         }
 
@@ -650,7 +662,7 @@ namespace AeroCalcCore
             else
             {
                 eventCode = AeroCalcCommand.EVENTCODE_PROCESS_SUCCESSFULL;
-                setResultText(models);
+                txtResult = models;
             }
             numericResult = Double.NaN;
             return true;
@@ -677,10 +689,10 @@ namespace AeroCalcCore
                 {
                     msg += item.ToString() + Environment.NewLine;
                 }
-                setResultText(msg);
+                eventCode = EVENTCODE_LIST_UNITS_SUCCESSFULL;
+                txtResult = msg;
                 // TODO To be implemented
                 addInfo(lu.Count.ToString());
-                eventCode = EVENTCODE_LIST_UNITS_SUCCESSFULL;
             }
             else
             {
@@ -701,7 +713,6 @@ namespace AeroCalcCore
         {
             // COMMANDE NON SUPPORTEE
             eventCode = EVENTCODE_UNSUPPORTED_COMMAND;
-            numericResult = Double.NaN;
             return true;
         }
 
@@ -719,9 +730,9 @@ namespace AeroCalcCore
 
             int counter = 0;
 
-            foreach (String filter in subs)
+            foreach (string filter in subs)
             {
-                counter += Container.loadDataModels(filter);
+                counter += Container.loadDataModels("", filter);
             }
             if (counter > 0)
             {
@@ -729,12 +740,10 @@ namespace AeroCalcCore
                 // TODO Ce résultat doit être maintenu à travers le post process
                 //txtResult = String.Format("{0} modèle(s) ont été chargés en mémoire.", counter);
                 addInfo(counter.ToString());
-                numericResult = Double.NaN;
             }
             else
             {
                 eventCode = EVENTCODE_NO_MODEL_LOADED;
-                numericResult = Double.NaN;
             }
             return true;
         }
@@ -761,6 +770,19 @@ namespace AeroCalcCore
                 {
                     info = new string[1];
                     info[0] = information;
+                }
+            }
+        }
+
+
+
+        private void addInfo(string[] informations)
+        {
+            if (informations != null)
+            {
+                foreach (string item in informations)
+                {
+                    addInfo(item);
                 }
             }
         }
@@ -820,7 +842,7 @@ namespace AeroCalcCore
         /// <remarks>
         /// A remplacer par un traitement plus automatisé, en utilisant une List<> ou 
         /// </remarks>
-        /// 
+        /// TODO To be replaced by a formating function
         private void useAlias()
         {
 

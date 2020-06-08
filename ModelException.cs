@@ -2,29 +2,20 @@ using System;
 
 
 
-namespace AeroCalcCore {
+namespace AeroCalcCore
+{
 
 
 
     /// <summary>
     /// Classe Exception du calculateur AeroCalc
     /// </summary>
-    public class ModelException : Exception {
+    public class ModelException : Exception
+    {
 
         /*
          * CONSTANTES
          */
-
-         /*
-
-        public const int DISCRET_VALUE_OUT_OF_RANGE = 1;
-        public const int PILE_VALUE_OUT_OF_RANGE = 2;
-        public const int LAYER_VALUE_OUT_OF_RANGE = 3;
-        public const int SERIE_VALUE_OUT_OF_RANGE = 4;
-        public const int POINT_VALUE_OUT_OF_RANGE = 5;
-        public const int VOID_SYSTEM = 100;
-        public const string UNKNOWN_FACTOR_VALUE_MSG = " : Valeur inconnue.";
-        */
 
 
 
@@ -36,10 +27,13 @@ namespace AeroCalcCore {
 
         public string modelName { get; private set; }
 
-        public string factor {
-            get { return formatFactor();}
+        /*
+        public string factor
+        {
+            get { return formatFactor(); }
             private set { }
         }
+        */
 
         public string factorName { get; private set; }
 
@@ -61,9 +55,11 @@ namespace AeroCalcCore {
         /// TODO, non implémenté pour l'instant
         /// </remarks>
         public ModelException(String message)
-            : base(message) {
+            : base(message)
+        {
             // Rien d'autre
         }
+
 
 
         /// <summary>
@@ -74,7 +70,8 @@ namespace AeroCalcCore {
         /// <param name="factorName">Nom du facteur en cause, et sa valeur</param>
         /// <remarks>
         /// </remarks>
-        public ModelException(int nature, string modelName, string factorName, double factorValue) {
+        public ModelException(int nature, string modelName, string factorName, double factorValue)
+        {
             this.nature = nature;
             this.modelName = modelName;
             this.factorName = factorName;
@@ -91,7 +88,8 @@ namespace AeroCalcCore {
 
         public void setFactorName(string factorName) { this.factorName = factorName; }
 
-        public void setFactor(string factorName, double factorValue) {
+        public void setFactor(string factorName, double factorValue)
+        {
             this.factorName = factorName;
             this.factorValue = factorValue;
         }
@@ -101,18 +99,24 @@ namespace AeroCalcCore {
          * METHODES
          */
 
-        private string formatFactor() {
-            if (string.IsNullOrEmpty(factorName)) {
+        /*
+        private string formatFactor()
+        {
+            if (string.IsNullOrEmpty(factorName))
+            {
                 return string.Empty;
             }
-            else if (double.IsNaN(factorValue)) {
+            else if (double.IsNaN(factorValue))
+            {
                 return string.Concat(factorName, AeroCalc.E_UNKNOWN_FACTOR_VALUE_MSG);
             }
-            else {
+            else
+            {
                 return string.Concat(factorName, string.Format("= {0:F3}", factorValue));
             }
 
         }
+        */
 
     }
 

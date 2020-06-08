@@ -62,12 +62,16 @@ namespace AeroCalcCore
 
 
 
+        /// <summary>
+        /// Retourne la string contenant le message correspondant à l'eventCode passé en argument
+        /// </summary>
         public string getMessageWith(int eventCode)
         {
-            EventMessage EM = getEventMessage(eventCode);
-            if (EM != null)
+            EventMessage EMList = getEventMessage(eventCode);
+
+            if (EMList != null)
             {
-                return EM.ToString();
+                return EMList.ToString();
             }
             else return "";
         }
@@ -78,6 +82,9 @@ namespace AeroCalcCore
          * METHODES
          */
 
+        /// <summary>
+        /// Retourne un objet EventMessage correspondant à l'eventCode passé en argument
+        /// </summary>
         private EventMessage getEventMessage(int eventCode)
         {
             int messageID;

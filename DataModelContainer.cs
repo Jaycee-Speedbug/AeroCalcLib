@@ -37,8 +37,6 @@ namespace AeroCalcCore
         XMLFile xmlConnector;
         ModelCSVFile csvConnector;
 
-        private char[] commandSeparator = { ' ' };
-
 
 
         /*
@@ -78,7 +76,7 @@ namespace AeroCalcCore
 
 
         /// <summary>
-        /// Retourne un tableau de string contenant les Directories des différents Connectors du Container
+        /// Retourne un tableau de string contenant les répertoires des différents Connectors du Container
         /// </summary>
         /// <returns></returns>
         public string[] getDataModelsDirectory()
@@ -522,15 +520,15 @@ namespace AeroCalcCore
         /// </summary>
         /// <param name="dataModelNameFilter">Filtre des noms de modèles de performances à sélectionner</param>
         /// <returns>int, nombre de modèles chargés</returns>
-        /// 
-        public int loadDataModels(string dataModelNameFilter)
+        /// TODO Utiliser EnvironmentContext pourr le path du directory
+        public int loadDataModels(string directoryPath, string dataModelNameFilter)
         {
 
             PerfPile pp;
             int counter = 0;
 
             // Recherche des fichiers à analyser dans le dossier des modèles (par défaut {App}/data )
-            foreach (string fileName in csvConnector.filesList("", string.Concat(dataModelNameFilter, ".csv")))
+            foreach (string fileName in csvConnector.filesList(directoryPath, string.Concat(dataModelNameFilter, ".csv")))
             {
                 pp = csvConnector.readFile(fileName);
                 if (pp != null)
@@ -617,7 +615,7 @@ namespace AeroCalcCore
             {
                 List<String> factorList = new List<string>();
                 string factors = "";
-                foreach (string word in factorsSignature(outputName).Split(commandSeparator))
+                foreach (string word in factorsSignature(outputName).Split(AeroCalcCommand.CMD_SEPARATOR))
                 {
                     if (!string.IsNullOrEmpty(word) && factorList.Find(x => x.Equals(word)) == null)
                     {

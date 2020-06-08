@@ -217,29 +217,36 @@ namespace AeroCalcCore
         /// répertoire de travail</param>
         /// <param name="fileNameFilter">Filtre des noms de fichiers</param>
         /// <returns></returns>
-        /// 
+        /// TODO Améliorer le traitement des exceptions
         public List<string> filesList(string directoryAbsolutePath, string fileNameFilter)
         {
+            List<string> files = new List<string>();
+
             if (string.IsNullOrEmpty(directoryAbsolutePath))
             {
+                // No new Models directory, using the preset
                 directoryAbsolutePath = this.directoryAbsolutePath;
             }
             if (Directory.Exists(directoryAbsolutePath))
             {
                 try
                 {
-                    List<string> l = (List<string>)Directory.EnumerateFiles(directoryAbsolutePath,
-                                                                            fileNameFilter,
-                                                                            SearchOption.AllDirectories);
+                    // BUG cast impossible
+                    var l = Directory.EnumerateFiles(directoryAbsolutePath,
+                                                     fileNameFilter,
+                                                     SearchOption.AllDirectories);
                     IOStatus = FILEOP_SUCCESSFUL;
-                    return l;
+                    foreach (string item in l)
+                    {
+                        files.Add(item);
+                    }
                 }
                 catch (Exception e)
                 {
                     setIOStatus(e);
                 }
             }
-            return new List<string>();
+            return files;
         }
 
 

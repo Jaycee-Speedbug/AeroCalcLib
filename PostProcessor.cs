@@ -27,7 +27,7 @@ namespace AeroCalcCore
         /*
          * PROPRIETES
          */
-        readonly string[] fields = { FIELD_RAW_TXT_CMD, FIELD_MODEL_NAME, FIELD_MODEL_FACTOR, FIELD_MODELS_IN_MEM };
+        //readonly string[] fields = { FIELD_RAW_TXT_CMD, FIELD_MODEL_NAME, FIELD_MODEL_FACTOR, FIELD_MODELS_IN_MEM };
 
 
 
@@ -68,7 +68,7 @@ namespace AeroCalcCore
                 // Command totally unprocessed, not a normal situation
                 string msg = "[" + Cmd.eventCode + "]" + " POSTPROC:UNPROCESSED COMMAND";
                 Cmd.setResultText(msg);
-                // TODO Faut-il autoriser la demande EXIT par le PostProcessor ?
+                // TODO Faut-il autoriser la demande EXIT par PostProcessor ?
                 Cmd.isExit();
             }
             if (Cmd.eventCode > 0)
@@ -82,7 +82,7 @@ namespace AeroCalcCore
                 else
                 {
                     // No numeric value to expose
-                    string msg = formatMsg(EMsgLib.getMessageWith(Cmd.eventCode), Cmd.info);
+                    string msg = swapFields(EMsgLib.getMessageWith(Cmd.eventCode), Cmd.info);
                     if (!string.IsNullOrEmpty(Cmd.txtResult))
                     {
                         // A message has been prepared, message from library is added, if it exists
@@ -107,7 +107,7 @@ namespace AeroCalcCore
             if (Cmd.eventCode < 0)
             {
                 // Error
-                string msg = formatMsg(EMsgLib.getMessageWith(Cmd.eventCode), Cmd.info);
+                string msg = swapFields(EMsgLib.getMessageWith(Cmd.eventCode), Cmd.info);
                 if (string.IsNullOrEmpty(msg))
                 {
                     // Nothing returned
@@ -115,7 +115,6 @@ namespace AeroCalcCore
                 }
                 Cmd.setResultText(msg);
             }
-
 
         }
 
@@ -125,7 +124,7 @@ namespace AeroCalcCore
          * METHODES
          */
 
-        private string formatMsg(string message, string[] info)
+        private string swapFields(string message, string[] info)
         {
             if (info != null)
             {
@@ -149,7 +148,7 @@ namespace AeroCalcCore
         /// </summary>
         public string _T_formatMsg(string message, string[] info)
         {
-            return formatMsg(message, info);
+            return swapFields(message, info);
         }
 
     }

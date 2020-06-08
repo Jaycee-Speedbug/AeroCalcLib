@@ -18,6 +18,7 @@ namespace AeroCalcCore
         /// <summary>Chemin absolu vers le fichier de définition du language</summary>
         public string fileAbsolutePath { get; private set; }
 
+        /// <summary>Flag d'activation du language</summary>
         public bool enabled { get; private set; }
 
 
@@ -55,6 +56,7 @@ namespace AeroCalcCore
         /*
          * INTERFACE
          */
+         
         // IEquatable
         public bool Equals(Language lang)
         {
@@ -73,6 +75,9 @@ namespace AeroCalcCore
 
         }
 
+
+
+        // IEquatable
         public override bool Equals(object obj)
         {
             //
@@ -92,16 +97,26 @@ namespace AeroCalcCore
                 return (shortName == lang.shortName);
             }
         }
-        
 
-        // override object.GetHashCode
-        /*
+
+
+        // IEquatable
         public override int GetHashCode()
         {
             // TODO: write your implementation of GetHashCode() here
-            throw new System.NotImplementedException();
-            return base.GetHashCode();
+            // throw new System.NotImplementedException();
+
+            string fullName = this.shortName + this.name;
+            int hashCode=0;
+
+            foreach (char c in fullName)
+            {
+                hashCode += (int)c;
+                if (hashCode > int.MaxValue - 256) break;
+            }
+            return hashCode;
         }
-        */
+
     }
+
 }
