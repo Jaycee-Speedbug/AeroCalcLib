@@ -129,8 +129,51 @@ namespace AeroCalcCore
         /// </returns>
         private bool readScriptFile(AeroCalcCommand Cmd)
         {
+
+            if (Cmd.subs.Length >= 2)
+            {
+                // Constitution du path
+                ScriptConnect.setWorkDirectory(EnvContext.scriptsDirPath);
+                ScriptConnect.setInputFileWithRelPath(Cmd.subs[1]);
+                ScriptConnect.readFile();
+                switch (ScriptConnect.IOStatus)
+                {
+                    case FileIO.FILEOP_SUCCESSFUL:
+                        // Le fichier de script a été lu avec succès
+
+                        Cmd.setEventCode(AeroCalcCommand.EVENTCODE_SCRIPTFILE_SUCCESSFULL);
+                        break;
+
+                    case FileIO.FILEOP_FILE_DOES_NOT_EXIST:
+                        Cmd.setEventCode(AeroCalcCommand.EVENTCODE_ERROR_SCRIPTFILE_DOES_NOT_EXIST);
+                        break;
+
+                    case FileIO.FILEOP_INVALID_PATH:
+                        Cmd.setEventCode(AeroCalcCommand.EVENTCODE_ERROR_SCRIPT_PATH);
+                        break;
+
+                    case FileIO.FILEOP_IO_ERROR:
+                        Cmd.setEventCode(AeroCalcCommand.EVENTCODE_ERROR_SCRIPT_IO_ERROR);
+                        break;
+
+                    case FileIO.FILEOP_UNKNOWN_ERROR:
+                        Cmd.setEventCode(AeroCalcCommand.EVENTCODE_ERROR_SCRIPT_UKN_ERROR);
+                        break;
+
+                    case FileIO.FILEOP_INPUT_FILE_IS_LOCKED:
+                        Cmd.setEventCode(AeroCalcCommand.EVENTCODE_ERROR_SCRIPT_SECURITY);
+                        break;
+
+                    default:
+                        Cmd.setEventCode(AeroCalcCommand.EVENTCODE_ERROR_SCRIPT_GENERIC);
+                        break;
+                }
+            }
+
+
+
             // COMMANDE NON SUPPORTEE
-            Cmd.setEventCode(AeroCalcCommand.EVENTCODE_UNSUPPORTED_COMMAND);
+            //Cmd.setEventCode(AeroCalcCommand.EVENTCODE_UNSUPPORTED_COMMAND);
             return true;
         }
 

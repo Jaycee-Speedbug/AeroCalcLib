@@ -102,6 +102,7 @@ namespace AeroCalcCore
         public const int EVENTCODE_HELP_REQUESTED = 900;
         public const int EVENTCODE_LIST_UNITS_SUCCESSFULL = 550;
         public const int EVENTCODE_LOAD_MODELS_SUCCESSFULL = 500;
+        public const int EVENTCODE_SCRIPTFILE_SUCCESSFULL = 400;
         public const int EVENTCODE_CALCULATE_SUCCESSFULL = 200;
         public const int EVENTCODE_PROCESS_SUCCESSFULL = 100;
         public const int EVENTCODE_INIT_SUCCESSFULL = 110;
@@ -119,6 +120,14 @@ namespace AeroCalcCore
         public const int EVENTCODE_ERROR_INIT_UNITS_FILE = -7;
         public const int EVENTCODE_ERROR_INIT_LANGUAGE_FILE = -8;
         public const int EVENTCODE_COMMAND_UNPROCESSED = -10;
+
+        public const int EVENTCODE_ERROR_SCRIPTFILE_DOES_NOT_EXIST = -12;
+        public const int EVENTCODE_ERROR_SCRIPT_PATH = -13;
+        public const int EVENTCODE_ERROR_SCRIPT_IO_ERROR = -14;
+        public const int EVENTCODE_ERROR_SCRIPT_UKN_FILE_ERROR = -15;
+        public const int EVENTCODE_ERROR_SCRIPT_UKN_ERROR = -16;
+        public const int EVENTCODE_ERROR_SCRIPT_SECURITY = -17;
+        public const int EVENTCODE_ERROR_SCRIPT_GENERIC = -18;
 
         public const int EVENTCODE_COMMAND_VOID = -21;
 

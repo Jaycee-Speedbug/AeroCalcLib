@@ -99,7 +99,7 @@ namespace AeroCalcCore
         /// <summary>
         /// Tableau contenant les lignes du fichier texte
         /// </summary>
-        protected string[] rawFileLines;
+        private string[] rawFileLines;
 
         /// <summary>
         /// List des lignes du fichier texte, après traitement
@@ -294,12 +294,33 @@ namespace AeroCalcCore
                     // Le fichier proposé existe, on l'enregistre en temps que fichier d'entrée
                     inputFileAbsolutePath = absolutePath;
                     // On réinitialise le status
-                    IOStatus=FILEOP_SUCCESSFUL;
+                    IOStatus = FILEOP_SUCCESSFUL;
                     return true;
                 }
             }
             inputFileAbsolutePath = "";
             return false;
+        }
+
+
+
+        /// <summary>
+        /// Constitue le chemin absolu du fichier d'entrée sur la base du répertoire de travail, fixé au préalable,
+        ///  et du nom de fichier transmis en argument.
+        /// </summary>
+        /// <param name="relativePath">Chemin relatif du fichier, par rapport au répertoire de travail</param>
+        /// <returns>True en cas de succès, False sinon.</returns>
+        /// <remarks>
+        /// No Exception to handle
+        /// </remarks>
+        /// 
+        public bool setInputFileWithRelPath(string relativePath)
+        {
+            if (workDirExists())
+            {
+                return setInputFileAbsolutePath(directoryAbsolutePath + Path.DirectorySeparatorChar + relativePath);
+            }
+            else return false;
         }
 
 
