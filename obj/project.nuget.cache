@@ -1,10 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "ezhey+K/icTu0RM3ghttdJ3NS6h9Gx7mf54RsfquGvnbRFzAQSc401H6aEq1pT77iK5q5WVacP2mXvSYjH4r2w==",
+  "dgSpecHash": "Jy3uYHXW/3hbr/fP+fYgcsmRSxcPAHCM4ig6hJ3BMW9ilfHb2Ie3yWdVOysrTATlO3rMfmJaNwkB77dEivtMnQ==",
   "success": true,
-  "projectFilePath": "/home/jean-christophe/Dev/AeroCalcCore/AeroCalcCore.csproj",
-  "expectedPackageFiles": [
-    "/home/jean-christophe/.nuget/packages/microsoft.aspnetcore.app.ref/3.1.2/microsoft.aspnetcore.app.ref.3.1.2.nupkg.sha512"
-  ],
+  "projectFilePath": "C:\\Users\\ZenBookDeLu\\Documents\\ITDevelopment\\Projects\\AeroCalc\\AeroCalcCore\\AeroCalcCore.csproj",
+  "expectedPackageFiles": [],
   "logs": []
 }

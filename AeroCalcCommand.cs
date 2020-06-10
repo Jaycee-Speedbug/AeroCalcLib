@@ -72,6 +72,7 @@ namespace AeroCalcCore
         public const int ACTION_PRINT = 20;
         public const int ACTION_CONVERT = 30;
         public const int ACTION_CALCULATE = 40;
+        public const int ACTION_DECLARE = 45;
         public const int ACTION_LOAD_MODELS = 50;
         public const int ACTION_LOAD_UNITS = 51;
         public const int ACTION_CATALOG = 52;
@@ -101,11 +102,12 @@ namespace AeroCalcCore
         public const int EVENTCODE_VERBOSE_ALREADY = 912;
         public const int EVENTCODE_HELP_REQUESTED = 900;
         public const int EVENTCODE_LIST_UNITS_SUCCESSFULL = 550;
-        public const int EVENTCODE_LOAD_MODELS_SUCCESSFULL = 500;
-        public const int EVENTCODE_SCRIPTFILE_SUCCESSFULL = 400;
+        public const int EVENTCODE_SCRIPTFILE_SUCCESSFULL = 500;
+        public const int EVENTCODE_LOAD_MODELS_SUCCESSFULL = 400;
+        public const int EVENTCODE_MEM_SUCCESSFULL = 210;
         public const int EVENTCODE_CALCULATE_SUCCESSFULL = 200;
-        public const int EVENTCODE_PROCESS_SUCCESSFULL = 100;
         public const int EVENTCODE_INIT_SUCCESSFULL = 110;
+        public const int EVENTCODE_PROCESS_SUCCESSFULL = 100;
         public const int EVENTCODE_CMD_HANDOVER = 20;
         public const int EVENTCODE_EXIT_REQUESTED = 10;
 
@@ -140,6 +142,7 @@ namespace AeroCalcCore
         public const int EVENTCODE_CALC_PROCESS_ERROR = -110;
         public const int EVENTCODE_CALC_PROCESSOR_MISSING_FACTOR = -111;
         public const int EVENTCODE_CALC_PROCESSOR_MISSING_MODEL = -112;
+        public const int EVENTCODE_MEM_DECLARATION_ERROR = -115;
         public const int EVENTCODE_NO_MODEL_LOADED = -500;
 
 
@@ -187,6 +190,11 @@ namespace AeroCalcCore
         /// Liste des facteurs de la commande
         /// </summary>
         public List<CommandFactor> Factors { get; private set; }
+
+        /// <summary>
+        /// Pile mémoire
+        /// </summary>
+        public MemoryStack MemStack { get; private set; }
 
         /// <summary>
         /// 
@@ -252,7 +260,7 @@ namespace AeroCalcCore
         /// <param name="inputText">string contenant la commande en mode texte, sans traitement préalable.
         /// </param>
         /// 
-        public AeroCalcCommand(string inputText, DataModelContainer DMContainer, EnvironmentContext EC)
+        public AeroCalcCommand(string inputText, DataModelContainer DMC, EnvironmentContext EC, MemoryStack MS)
         {
             // Initialisation des propriétés
             startOfProcess = new DateTime(DateTime.Now.Ticks, DateTimeKind.Utc);
@@ -263,9 +271,11 @@ namespace AeroCalcCore
             eventCode = EVENTCODE_INITIAL_VALUE;
             numericResult = Double.NaN;
             subs = null;
-            Container = DMContainer;
             Factors = new List<CommandFactor>();
+            Container = DMC;
             EnvContext = EC;
+            MemStack = MS;
+
             if (EnvContext.verbose) verbosed = true;
 
             if (string.IsNullOrEmpty(inputText))
@@ -414,6 +424,11 @@ namespace AeroCalcCore
                     cmd_EXIT();
                 }
 
+                if (subs[0].Contains(CMD_OPERATOR_AFFECT)) {
+                    action = ACTION_DECLARE;
+                    cmd_DECLARE();
+                }
+
                 if (subs[0].Equals(CMD_WORD_CONVERT, StrCompOpt))
                 {
                     action = ACTION_CONVERT;
@@ -470,7 +485,6 @@ namespace AeroCalcCore
             // Commandes à mots multiples
             if (subs.Length > 1)
             {
-
                 if (subs[0].Equals(CMD_WORD_INIT_INTERPRETER, StrCompOpt))
                 {
                     // Action laissée au processeur
@@ -589,6 +603,38 @@ namespace AeroCalcCore
                 eventCode = EVENTCODE_UNKNOWN_COMMAND_WORD;
             }
             return true;
+        }
+
+
+
+        /// <summary>
+        /// DRAFT Mise en mémoire de valeurs
+        /// </summary>
+        /// <returns></returns>
+        private bool cmd_DECLARE() {
+            // Initialisation
+            bool success;
+            CommandFactor factor;
+            factor = new CommandFactor(subs[0]);
+            success = MemStack.addFactor(factor);
+
+            if (success) {
+                addInfo(new string[] { factor.name, factor.value.ToString() });
+                eventCode = EVENTCODE_MEM_SUCCESSFULL;
+                /*
+                setResultText(MemStack.findFactor(factor.name).name +
+                              CMD_OPERATOR_AFFECT +
+                              MemStack.findFactor(factor.name).value);
+                */
+                return true;
+            }
+            else {
+                eventCode = EVENTCODE_MEM_DECLARATION_ERROR;
+                /*
+                setResultText("Le facteur n'a pas pu être enregistré dans le registre mémoire.");
+                */
+                return false;
+            }
         }
 
 
@@ -793,7 +839,7 @@ namespace AeroCalcCore
             {
                 if (info != null)
                 {
-                    string[] newArray = new string[info.Length];
+                    string[] newArray = new string[info.Length+1];
                     for (int index = 0; index < info.Length; index++)
                     {
                         // Copie de l'ancienne table

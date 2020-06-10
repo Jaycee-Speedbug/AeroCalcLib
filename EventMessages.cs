@@ -48,7 +48,7 @@ namespace AeroCalcCore
         public bool addItem(int eventCode, string eventMessage)
         {
             EventMessage eMsg = new EventMessage(eventCode, eventMessage);
-            if (eMsgList.Exists(eMsg => eMsg.msgID == eventCode))
+            if (eMsgList.Exists(elem => elem.msgID == eventCode))
             {
                 /// No two EventMessage with the same id
                 return false;
@@ -99,6 +99,7 @@ namespace AeroCalcCore
             }
             return eMsgList.Find(em => em.msgID == messageID);
         }
+        public EventMessage _T_getEventMessage(int eventCode) { return getEventMessage(eventCode); }
 
     }
 

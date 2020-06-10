@@ -7,3 +7,12 @@
 /home/jean-christophe/Dev/AeroCalcCore/obj/Debug/netcoreapp3.1/AeroCalcCore.csproj.CoreCompileInputs.cache
 /home/jean-christophe/Dev/AeroCalcCore/obj/Debug/netcoreapp3.1/AeroCalcCore.dll
 /home/jean-christophe/Dev/AeroCalcCore/obj/Debug/netcoreapp3.1/AeroCalcCore.pdb
+C:\Users\ZenBookDeLu\Documents\ITDevelopment\Projects\AeroCalc\AeroCalcCore\bin\Debug\netcoreapp3.1\AeroCalcCore.deps.json
+C:\Users\ZenBookDeLu\Documents\ITDevelopment\Projects\AeroCalc\AeroCalcCore\bin\Debug\netcoreapp3.1\AeroCalcCore.dll
+C:\Users\ZenBookDeLu\Documents\ITDevelopment\Projects\AeroCalc\AeroCalcCore\bin\Debug\netcoreapp3.1\AeroCalcCore.pdb
+C:\Users\ZenBookDeLu\Documents\ITDevelopment\Projects\AeroCalc\AeroCalcCore\obj\Debug\netcoreapp3.1\AeroCalcCore.csprojAssemblyReference.cache
+C:\Users\ZenBookDeLu\Documents\ITDevelopment\Projects\AeroCalc\AeroCalcCore\obj\Debug\netcoreapp3.1\AeroCalcCore.AssemblyInfoInputs.cache
+C:\Users\ZenBookDeLu\Documents\ITDevelopment\Projects\AeroCalc\AeroCalcCore\obj\Debug\netcoreapp3.1\AeroCalcCore.AssemblyInfo.cs
+C:\Users\ZenBookDeLu\Documents\ITDevelopment\Projects\AeroCalc\AeroCalcCore\obj\Debug\netcoreapp3.1\AeroCalcCore.csproj.CoreCompileInputs.cache
+C:\Users\ZenBookDeLu\Documents\ITDevelopment\Projects\AeroCalc\AeroCalcCore\obj\Debug\netcoreapp3.1\AeroCalcCore.dll
+C:\Users\ZenBookDeLu\Documents\ITDevelopment\Projects\AeroCalc\AeroCalcCore\obj\Debug\netcoreapp3.1\AeroCalcCore.pdb

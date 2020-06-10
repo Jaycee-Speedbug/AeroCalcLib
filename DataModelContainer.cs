@@ -203,7 +203,7 @@ namespace AeroCalcCore
                 {
                     // On récupère d'une exception ou un paramètre est hors du range ou il peut être utilisé
                     // TODO les infos de l'exception sont générées directement dans predict()
-                    throw;
+                    throw e;
                 }
             }
             return result;

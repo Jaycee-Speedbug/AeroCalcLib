@@ -37,6 +37,8 @@ namespace AeroCalcCore
 
         public Units UnitLib { get; private set; }
 
+        public MemoryStack MemStack { get; private set; }
+
 
 
         /*
@@ -62,6 +64,8 @@ namespace AeroCalcCore
             ScriptConnect = new ScriptFile();
             // Construction de l'objet d'environnement
             EnvContext = new EnvironmentContext();
+            // Construction de la pile mémoire
+            MemStack = new MemoryStack();
             // Reglage intial du flag initialized
             initialized = false;
         }
@@ -84,7 +88,7 @@ namespace AeroCalcCore
         /// </remarks>
         public AeroCalcCommand process(string txtCommand)
         {
-            AeroCalcCommand Cmd = new AeroCalcCommand(txtCommand, ModelLib, EnvContext);
+            AeroCalcCommand Cmd = new AeroCalcCommand(txtCommand, ModelLib, EnvContext, MemStack);
 
             // Certaines commandes rendent la main pour être traitées ici, dans le processeur
             switch (Cmd.action)
@@ -169,8 +173,6 @@ namespace AeroCalcCore
                         break;
                 }
             }
-
-
 
             // COMMANDE NON SUPPORTEE
             //Cmd.setEventCode(AeroCalcCommand.EVENTCODE_UNSUPPORTED_COMMAND);

@@ -8,28 +8,30 @@
     ".NETCoreApp,Version=v3.1": []
   },
   "packageFolders": {
-    "/home/jean-christophe/.nuget/packages/": {},
-    "/usr/share/dotnet/sdk/NuGetFallbackFolder": {}
+    "C:\\Users\\ZenBookDeLu\\.nuget\\packages\\": {},
+    "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/home/jean-christophe/Dev/AeroCalcCore/AeroCalcCore.csproj",
+      "projectUniqueName": "C:\\Users\\ZenBookDeLu\\Documents\\ITDevelopment\\Projects\\AeroCalc\\AeroCalcCore\\AeroCalcCore.csproj",
       "projectName": "AeroCalcCore",
-      "projectPath": "/home/jean-christophe/Dev/AeroCalcCore/AeroCalcCore.csproj",
-      "packagesPath": "/home/jean-christophe/.nuget/packages/",
-      "outputPath": "/home/jean-christophe/Dev/AeroCalcCore/obj/",
+      "projectPath": "C:\\Users\\ZenBookDeLu\\Documents\\ITDevelopment\\Projects\\AeroCalc\\AeroCalcCore\\AeroCalcCore.csproj",
+      "packagesPath": "C:\\Users\\ZenBookDeLu\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\ZenBookDeLu\\Documents\\ITDevelopment\\Projects\\AeroCalc\\AeroCalcCore\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
-        "/usr/share/dotnet/sdk/NuGetFallbackFolder"
+        "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
       ],
       "configFilePaths": [
-        "/home/jean-christophe/.nuget/NuGet/NuGet.Config"
+        "C:\\Users\\ZenBookDeLu\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "netcoreapp3.1"
       ],
       "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -55,18 +57,12 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
-        "downloadDependencies": [
-          {
-            "name": "Microsoft.AspNetCore.App.Ref",
-            "version": "[3.1.2, 3.1.2]"
-          }
-        ],
         "frameworkReferences": {
           "Microsoft.NETCore.App": {
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/3.1.300/RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.301\\RuntimeIdentifierGraph.json"
       }
     }
   }
