@@ -131,7 +131,7 @@ namespace AeroCalcCore
         private void verboseCommand(AeroCalcCommand Cmd)
         {
             string msg = "";
-            msg += Environment.NewLine + "raw command  { " + Cmd.rawTxtCommand;
+            msg += "raw command  { " + Cmd.rawTxtCommand;
             msg += " }  action code { " + Cmd.action;
             if (!string.IsNullOrEmpty(Cmd.workDirectory)) { msg += " }  work directory { " + Cmd.workDirectory; }
             if (!string.IsNullOrEmpty(Cmd.inputFileName)) { msg += " }  input file { " + Cmd.inputFileName; }
@@ -139,7 +139,7 @@ namespace AeroCalcCore
             msg += " }  event code { " + Cmd.eventCode;
             msg += " }  result { " + Cmd.numericResult;
             msg += " }  duration { " + Cmd.durationMilliSecond + " ms }" + Environment.NewLine;
-            Cmd.setResultText(Cmd.txtResult + Environment.NewLine + msg);
+            Cmd.setResultText(Cmd.txtResult + msg);
         }
 
 

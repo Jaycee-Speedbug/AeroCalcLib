@@ -31,7 +31,7 @@ namespace AeroCalcCore
 
         public EnvironmentContext EnvContext { get; private set; }
 
-        public ScriptFile ScriptConnect { get; private set; }
+        //public ScriptFile ScriptConnect { get; private set; }
 
         public DataModelContainer ModelLib { get; private set; }
 
@@ -56,12 +56,11 @@ namespace AeroCalcCore
         /// Construit un objet de traitement des commandes
         /// </summary>
         /// 
-        public AeroCalcCommandProcessor()
-        {
+        public AeroCalcCommandProcessor() {
             // Construction du container de données de performances
             ModelLib = new DataModelContainer();
             // Construction de l'objet de connexion aux fichiers de Script
-            ScriptConnect = new ScriptFile();
+            //ScriptConnect = new ScriptFile();
             // Construction de l'objet d'environnement
             EnvContext = new EnvironmentContext();
             // Construction de la pile mémoire
@@ -86,13 +85,11 @@ namespace AeroCalcCore
         /// <remarks>
         /// Seules quelques commandes sont traitées ici, l'essentiel est fait via le constructeur AeroCalcCommand
         /// </remarks>
-        public AeroCalcCommand process(string txtCommand)
-        {
+        public AeroCalcCommand process(string txtCommand) {
             AeroCalcCommand Cmd = new AeroCalcCommand(txtCommand, ModelLib, EnvContext, MemStack);
 
             // Certaines commandes rendent la main pour être traitées ici, dans le processeur
-            switch (Cmd.action)
-            {
+            switch (Cmd.action) {
                 case AeroCalcCommand.ACTION_INIT_INTERPRETER:
                     // Initialisation
                     initProcessor(Cmd);
@@ -126,26 +123,39 @@ namespace AeroCalcCore
 
         /// <summary>
         /// Traitement de la commande de lecture et d'exécution d'un fichier de script
+        /// Les instructions réservées du AeroCalcCommandProcessor ne peuvent pas être executées 
         /// </summary>
         /// <param name="Cmd">Commande active</param>
         /// <returns>
         /// True, si la commande a été traitée sans erreur
         /// </returns>
-        private bool readScriptFile(AeroCalcCommand Cmd)
-        {
+        private bool readScriptFile(AeroCalcCommand Cmd) {
+            if (Cmd.subs.Length >= 2) {
 
-            if (Cmd.subs.Length >= 2)
-            {
+                // TODO Pourquoi ne pas utiliser un objet local ScriptFile, plutot qu'un membre de AeroCalcProcessor ??
+                ScriptFile SF = new ScriptFile();
+
                 // Constitution du path
-                ScriptConnect.setWorkDirectory(EnvContext.scriptsDirPath);
-                ScriptConnect.setInputFileWithRelPath(Cmd.subs[1]);
-                ScriptConnect.readFile();
-                switch (ScriptConnect.IOStatus)
-                {
+                SF.setWorkDirectory(EnvContext.scriptsDirPath);
+                SF.setInputFileWithRelPath(Cmd.subs[1]);
+                switch (SF.readFile()) {
+
                     case FileIO.FILEOP_SUCCESSFUL:
                         // Le fichier de script a été lu avec succès
-
-                        Cmd.setEventCode(AeroCalcCommand.EVENTCODE_SCRIPTFILE_SUCCESSFULL);
+                        if (SF.Count > 0) {
+                            string outputLn = "";
+                            for (int index = 0; index < SF.Count; index++) {
+                                string ln = SF.readNextLine();
+                                outputLn += ln + Environment.NewLine;
+                                AeroCalcCommand ScriptCmd = process(ln);
+                                outputLn += ScriptCmd.txtResult + Environment.NewLine;
+                            }
+                            Cmd.setResultText(outputLn);
+                            Cmd.setEventCode(AeroCalcCommand.EVENTCODE_SCRIPTFILE_SUCCESSFULL);
+                        }
+                        else {
+                            Cmd.setEventCode(AeroCalcCommand.EVENTCODE_SCRIPTFILE_VOID);
+                        }
                         break;
 
                     case FileIO.FILEOP_FILE_DOES_NOT_EXIST:
@@ -187,24 +197,20 @@ namespace AeroCalcCore
         /// </summary>
         /// <param name="Cmd">Commande active</param>
         /// <returns>Etat de réussite de la commande</returns>
-        private bool initProcessor(AeroCalcCommand Cmd)
-        {
+        private bool initProcessor(AeroCalcCommand Cmd) {
             int loadStatus;
             UnitsXMLFile unitsFile = new UnitsXMLFile("");
 
-            if (!initialized)
-            {
+            if (!initialized) {
                 //
                 // TODO: Ici, coder l'initialisation
                 // eventCode à inscrire ici
                 //
                 loadStatus = EnvContext.loadConfigFile(Cmd.subs[1]);
-                switch (loadStatus)
-                {
+                switch (loadStatus) {
                     case FileIO.FILEOP_SUCCESSFUL:
                         // Chargement du dictionnaire des unités
-                        if (EnvContext.unitsEnabled)
-                        {
+                        if (EnvContext.unitsEnabled) {
                             UnitLib = unitsFile.getUnitsFromXML(EnvContext.unitsFileName);
                             ModelLib.setUnitsLibrary(UnitLib);
                         }
@@ -239,8 +245,7 @@ namespace AeroCalcCore
                 initialized = true;
                 return true;
             }
-            else
-            {
+            else {
                 // Already initialized
                 Cmd.setEventCode(AeroCalcCommand.EVENTCODE_REINIT_NOT_ALLOWED);
             }

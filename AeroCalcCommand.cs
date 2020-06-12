@@ -130,6 +130,7 @@ namespace AeroCalcCore
         public const int EVENTCODE_ERROR_SCRIPT_UKN_ERROR = -16;
         public const int EVENTCODE_ERROR_SCRIPT_SECURITY = -17;
         public const int EVENTCODE_ERROR_SCRIPT_GENERIC = -18;
+        public const int EVENTCODE_SCRIPTFILE_VOID = -19;
 
         public const int EVENTCODE_COMMAND_VOID = -21;
 
@@ -531,9 +532,8 @@ namespace AeroCalcCore
                 if (subs[0].Equals(CMD_WORD_SCRIPTFILE, StrCompOpt))
                 {
                     // Chargement et exécution d'un fichier de script, on repasse la main au processeur
-                    // Action laissée au processeur
                     action = ACTION_SCRIPTFILE;
-                    // TODO: Define cmd_SCRIPTFILE();
+                    cmd_SCRIPTFILE();
                 }
 
                 if (subs[0].Equals(CMD_WORD_CONVERT, StrCompOpt))
@@ -621,18 +621,10 @@ namespace AeroCalcCore
             if (success) {
                 addInfo(new string[] { factor.name, factor.value.ToString() });
                 eventCode = EVENTCODE_MEM_SUCCESSFULL;
-                /*
-                setResultText(MemStack.findFactor(factor.name).name +
-                              CMD_OPERATOR_AFFECT +
-                              MemStack.findFactor(factor.name).value);
-                */
                 return true;
             }
             else {
                 eventCode = EVENTCODE_MEM_DECLARATION_ERROR;
-                /*
-                setResultText("Le facteur n'a pas pu être enregistré dans le registre mémoire.");
-                */
                 return false;
             }
         }
@@ -643,6 +635,14 @@ namespace AeroCalcCore
         {
             // COMMANDE NON SUPPORTEE
             eventCode = EVENTCODE_UNSUPPORTED_COMMAND;
+            return true;
+        }
+
+
+
+        private bool cmd_SCRIPTFILE() {
+            // Commande traitée par le processeur
+            addInfo(subs[1]);
             return true;
         }
 

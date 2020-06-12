@@ -84,8 +84,8 @@ namespace AeroCalcCore
                 cursor = getLineIndex(KWD_START_TABLE_1) + 1;
 
                 // Lecture de la table et insertions des items au dictionnaire
-                while (!fileLines[cursor].Contains(KWD_END_TABLE_1)) {
-                    string[] subs = fileLines[cursor].Split(cellSeparator);
+                while (!FileLines[cursor].Contains(KWD_END_TABLE_1)) {
+                    string[] subs = FileLines[cursor].Split(cellSeparator);
                     if (subs.Length >= 2) {
 
                         if (parseABoolean(subs[unitIsRefColumn], out unitIsRef)) {

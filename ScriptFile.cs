@@ -25,8 +25,7 @@ namespace AeroCalcCore
         /*
          * CONSTRUCTEURS
          */
-        public ScriptFile() : base()
-        {
+        public ScriptFile() : base() {
             cursor = -1;
         }
 
@@ -36,37 +35,37 @@ namespace AeroCalcCore
          * SERVICES
          */
         // TODO Une meilleure conception de la classe FileIO devrait prendre en charge readFile !!!
-        public int readFile()
-        {
-            return readTextFile(inputFileAbsolutePath, true);
+        /// <summary>
+        /// Déclenche la lecture du fichier 'inputFile' et retourne un int indiquant le status de l'opération
+        /// aussi stocké dans le membre IOStatus
+        /// </summary>
+        /// <returns>int</returns>
+        public int readFile() {
+            int status = readTextFile(inputFileAbsolutePath, true);
+            if (status == FILEOP_SUCCESSFUL) { resetCursor(); }
+            return status;
         }
 
 
 
-        public void resetCursor()
-        {
-            if (fileLines != null)
-            {
+        public void resetCursor() {
+            if (FileLines != null) {
                 cursor = 0;
             }
-            else
-            {
+            else {
                 cursor = -1;
             }
         }
 
 
 
-        public string readNextLine()
-        {
-            if (fileLines != null && cursor > -1 && cursor < fileLines.Count)
-            {
-                string l = fileLines[cursor];
+        public string readNextLine() {
+            if (FileLines != null && cursor > -1 && cursor < FileLines.Count) {
+                string l = FileLines[cursor];
                 cursor++;
                 return l;
             }
-            else
-            {
+            else {
                 return null;
             }
         }

@@ -74,7 +74,7 @@ namespace AeroCalcCore
             // Défini le tableau de char contenant les séparateurs acceptés
             cellSeparator = new char[] { CELL_SEPARATOR_SEMICOLON, CELL_SEPARATOR_TAB };
             // Défini un tableau de String destiné à contenir les lignes du fichier CSV
-            fileLines = new List<String>();
+            FileLines = new List<String>();
         }
 
 
@@ -127,10 +127,10 @@ namespace AeroCalcCore
         /// <returns>String, à la position définie en arguments</returns>
         protected string valueAtPosition(int line, int column)
         {
-            if (line < fileLines.Count)
+            if (line < FileLines.Count)
             {
                 string[] subs;
-                subs = fileLines[line].Split(cellSeparator, StringSplitOptions.None);
+                subs = FileLines[line].Split(cellSeparator, StringSplitOptions.None);
                 if (column < subs.Length)
                 {
                     return subs[column];
@@ -159,7 +159,7 @@ namespace AeroCalcCore
             int lineOfInterest = getLineIndex(keyword);
             if (lineOfInterest >= 0)
             {
-                string[] subs = fileLines[lineOfInterest].Split(cellSeparator, StringSplitOptions.None);
+                string[] subs = FileLines[lineOfInterest].Split(cellSeparator, StringSplitOptions.None);
                 for (int counter = 0; counter < subs.Length; counter++)
                 {
                     if (subs[counter].Contains(keyword))
@@ -174,10 +174,10 @@ namespace AeroCalcCore
             /*
             string[] subs;
 
-            for (int count = 0; count < fileLines.Count; count++) {
+            for (int count = 0; count < FileLines.Count; count++) {
 
-                if (fileLines[count].Contains(keyword)) {
-                    subs = fileLines[count].Split(cellSeparator, StringSplitOptions.None);
+                if (FileLines[count].Contains(keyword)) {
+                    subs = FileLines[count].Split(cellSeparator, StringSplitOptions.None);
                     for (int counter = 0; counter < subs.Length; counter++) {
                         if (subs[counter].Contains(keyword)) {
                             return counter;
@@ -200,22 +200,22 @@ namespace AeroCalcCore
         protected int getLineIndex(string keyword)
         {
 
-            return fileLines.FindIndex(line => line.Contains(keyword));
+            return FileLines.FindIndex(line => line.Contains(keyword));
 
 
             /*
-            foreach (string str in fileLines)
+            foreach (string str in FileLines)
             {
                 if (str.Contains(keyword)){
-                    return fileLines.IndexOf(str);
+                    return FileLines.IndexOf(str);
                 }
             }
             */
 
             /*
-            for (int index = 0; index < fileLines.Count; index++) {
+            for (int index = 0; index < FileLines.Count; index++) {
                 try {
-                    if (fileLines[index].Contains(keyword)) {
+                    if (FileLines[index].Contains(keyword)) {
                         return index;
                     }
                 } catch (ArgumentNullException e) {
