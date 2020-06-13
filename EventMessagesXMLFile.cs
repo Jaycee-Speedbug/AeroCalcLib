@@ -37,23 +37,21 @@ namespace AeroCalcCore
             EventMessages EMLib = new EventMessages();
 
             // TODO load the file here
-
-            foreach (XElement item in xDoc.Descendants(NODE_MESSAGE))
-            {
-                // This is a Message node, let's get the data
-                string msg = item.Value;
-                int codeNb = getIntOrMinValue(item.Attribute(ATTRIB_ID).Value);
-                if (codeNb != int.MinValue)
-                {
-                    // Triming the leading spaces
-                    string msgTrimmed = "";
-                    string[] table = msg.Split(Environment.NewLine);
-                    for (int i = 0; i < table.Length; i++)
-                    {
-                        msgTrimmed += table[i].TrimStart(' ') + Environment.NewLine;
+            if (xDoc != null) {
+                foreach (XElement item in xDoc.Descendants(NODE_MESSAGE)) {
+                    // This is a Message node, let's get the data
+                    string msg = item.Value;
+                    int codeNb = getIntOrMinValue(item.Attribute(ATTRIB_ID).Value);
+                    if (codeNb != int.MinValue) {
+                        // Triming the leading spaces
+                        string msgTrimmed = "";
+                        string[] table = msg.Split(Environment.NewLine);
+                        for (int i = 0; i < table.Length; i++) {
+                            msgTrimmed += table[i].TrimStart(' ') + Environment.NewLine;
+                        }
+                        // Addition to library
+                        EMLib.Add(new EventMessage(codeNb, msgTrimmed));
                     }
-                    // Addition to library
-                    EMLib.Add(new EventMessage(codeNb, msgTrimmed));
                 }
             }
             return EMLib;

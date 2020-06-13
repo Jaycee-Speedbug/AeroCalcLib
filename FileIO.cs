@@ -28,6 +28,9 @@ namespace AeroCalcCore
         // Constantes liées aux opérations sur les fichiers
         public const int FILEOP_SUCCESSFUL = 1;
 
+        // Initial value, when no access nor any check has been done on file/directory
+        public const int FILEOP_INITIAL_VALUE = 0;
+
         //   T:System.NotSupportedException:
         //     path is in an invalid format.
         public const int FILEOP_UNKNOWN_ERROR = -1;
@@ -67,13 +70,13 @@ namespace AeroCalcCore
 
 
 
-
         // Constantes des types de fichiers gérés
         public const int FILE_TYPE_UNKNOWN = 0;
         public const int FILE_TYPE_XML = 1;
         public const int FILE_TYPE_CSV = 2;
         public const int FILE_TYPE_TXT = 3;
         public const int FILE_TYPE_JSON = 4;
+
         // Constantes de nature des fichiers gérés
         public const int FILE_TYPE_CONFIG = 100;
         public const int FILE_TYPE_DATA_MODEL = 200;
@@ -104,6 +107,7 @@ namespace AeroCalcCore
         /// List<string> des lignes du fichier texte, après traitement
         /// </summary>
         protected List<string> FileLines;
+
 
 
         /*
@@ -146,6 +150,7 @@ namespace AeroCalcCore
             directoryAbsolutePath = "";
             inputFileAbsolutePath = "";
             outputFileAbsolutePath = "";
+            IOStatus = FILEOP_INITIAL_VALUE;
         }
 
         /// <summary>
@@ -215,29 +220,32 @@ namespace AeroCalcCore
         /// répertoire de travail</param>
         /// <param name="fileNameFilter">Filtre des noms de fichiers</param>
         /// <returns></returns>
-        /// TODO Améliorer le traitement des exceptions
-        public List<string> filesList(string directoryAbsolutePath, string fileNameFilter) {
+        public List<string> filesInDirectory(string directoryAbsolutePath, string fileNameFilter) {
+
             List<string> files = new List<string>();
 
             if (string.IsNullOrEmpty(directoryAbsolutePath)) {
-                // No new Models directory, using the preset
+                // No directory introduced, then using the preset
                 directoryAbsolutePath = this.directoryAbsolutePath;
             }
-            if (Directory.Exists(directoryAbsolutePath)) {
-                try {
-                    // BUG cast impossible
-                    var l = Directory.EnumerateFiles(directoryAbsolutePath,
-                                                     fileNameFilter,
-                                                     SearchOption.AllDirectories);
-                    IOStatus = FILEOP_SUCCESSFUL;
-                    foreach (string item in l) {
-                        files.Add(item);
-                    }
-                }
-                catch (Exception e) {
-                    setIOStatus(e);
+            try {
+                var l = Directory.EnumerateFiles(directoryAbsolutePath,
+                                                 fileNameFilter,
+                                                 SearchOption.AllDirectories);
+                IOStatus = FILEOP_SUCCESSFUL;
+                foreach (string item in l) {
+                    files.Add(item);
                 }
             }
+            catch (Exception e) {
+                setIOStatus(e);
+            }
+            /*
+            if (Directory.Exists(directoryAbsolutePath)) {
+            }
+            else {
+                IOStatus = FILEOP_INVALID_PATH;
+            }*/
             return files;
         }
 
@@ -260,6 +268,7 @@ namespace AeroCalcCore
                 }
             }
             directoryAbsolutePath = "";
+            IOStatus = FILEOP_INITIAL_VALUE;
             return false;
         }
 

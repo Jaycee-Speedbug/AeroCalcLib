@@ -41,7 +41,7 @@ namespace AeroCalcCore
 
 
 
-        public void Add(EventMessage em) => eMsgList.Add(em);
+        public void Add(EventMessage em) => addItem(em.msgID,em.msgStr);
 
 
 
@@ -99,7 +99,7 @@ namespace AeroCalcCore
             }
             return eMsgList.Find(em => em.msgID == messageID);
         }
-        public EventMessage _T_getEventMessage(int eventCode) { return getEventMessage(eventCode); }
+        public EventMessage _A_getEventMessage(int eventCode) { return getEventMessage(eventCode); }
 
     }
 

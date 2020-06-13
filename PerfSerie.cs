@@ -480,7 +480,7 @@ namespace AeroCalcCore {
             return sortedIndexes;
         }
         // Accesseur de test
-        public int[] testSortedClosestPoints(double x) {
+        public int[] _A_sortedClosestPoints(double x) {
             return sortedClosestPoints(x);
         }
 
@@ -542,7 +542,7 @@ namespace AeroCalcCore {
             }
         }
         // Accesseur pour la classe de test unitaire
-        public bool testSelectSubSerie(double x, int nb) {
+        public bool _A_selectPoints(double x, int nb) {
             return selectPoints(x, nb);
         }
 

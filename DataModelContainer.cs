@@ -445,6 +445,7 @@ namespace AeroCalcCore
                         // Le filtre comporte moins de mots que le nom de la fonction, mais au moins une WHITE_CARD
                         // Modification des mots du filtre grâce à la WHITE_CARD
                         filterSubs = expendFilter(originalFilterSubs, functionNameSubs.Length);
+                        // TODO Et si expendFilter renvoyait un null ??
                     }
                     else
                     {
@@ -518,6 +519,7 @@ namespace AeroCalcCore
         /// Charge les modèles de performances de vol en appliquant le filtre passé en argument et retourne
         /// le nombre de modèles chargés.
         /// </summary>
+        /// <param name="directoryPath"></param>
         /// <param name="dataModelNameFilter">Filtre des noms de modèles de performances à sélectionner</param>
         /// <returns>int, nombre de modèles chargés</returns>
         /// TODO Utiliser EnvironmentContext pourr le path du directory
@@ -528,7 +530,7 @@ namespace AeroCalcCore
             int counter = 0;
 
             // Recherche des fichiers à analyser dans le dossier des modèles (par défaut {App}/data )
-            foreach (string fileName in csvConnector.filesList(directoryPath, string.Concat(dataModelNameFilter, ".csv")))
+            foreach (string fileName in csvConnector.filesInDirectory(directoryPath, string.Concat(dataModelNameFilter, ".csv")))
             {
                 pp = csvConnector.readFile(fileName);
                 if (pp != null)
@@ -695,7 +697,7 @@ namespace AeroCalcCore
         /// 
         /// </summary>
         /// <param name="filterSubs">Table de mots composant le filtre</param>
-        /// <param name="length">Nombre de mots que doit comporter le filtre</param>
+        /// <param name="wordCount">Nombre de mots que doit comporter le filtre</param>
         /// <returns>
         /// Une nouvelle table de mots composant le nouveau filtre
         /// </returns>
@@ -764,7 +766,7 @@ namespace AeroCalcCore
             return expendedFilterSubs;
         }
         // Accesseurs de tests unitaires
-        public string[] accessor_expendFilter(string[] filterSubs, int wordCount)
+        public string[] _A_expendFilter(string[] filterSubs, int wordCount)
         {
             return expendFilter(filterSubs, wordCount);
         }

@@ -16,7 +16,6 @@ namespace AeroCalcCore
     /// </summary>
     public class AeroCalcCommandProcessor
     {
-
         /*
          * CONSTANTES
          */
@@ -29,22 +28,20 @@ namespace AeroCalcCore
         // ! Certaines propriétés devraient être reclassées private
         public bool initialized { get; private set; }
 
-        public EnvironmentContext EnvContext { get; private set; }
-
-        //public ScriptFile ScriptConnect { get; private set; }
-
-        public DataModelContainer ModelLib { get; private set; }
-
-        public Units UnitLib { get; private set; }
-
-        public MemoryStack MemStack { get; private set; }
-
 
 
         /*
          * MEMBRES
          */
         private PostProcessor PostProc;
+
+        private EnvironmentContext EnvContext;
+
+        private DataModelContainer ModelsLib;
+
+        private Units UnitsLib;
+
+        private MemoryStack MemStack;
 
 
 
@@ -58,9 +55,7 @@ namespace AeroCalcCore
         /// 
         public AeroCalcCommandProcessor() {
             // Construction du container de données de performances
-            ModelLib = new DataModelContainer();
-            // Construction de l'objet de connexion aux fichiers de Script
-            //ScriptConnect = new ScriptFile();
+            ModelsLib = new DataModelContainer();
             // Construction de l'objet d'environnement
             EnvContext = new EnvironmentContext();
             // Construction de la pile mémoire
@@ -86,7 +81,7 @@ namespace AeroCalcCore
         /// Seules quelques commandes sont traitées ici, l'essentiel est fait via le constructeur AeroCalcCommand
         /// </remarks>
         public AeroCalcCommand process(string txtCommand) {
-            AeroCalcCommand Cmd = new AeroCalcCommand(txtCommand, ModelLib, EnvContext, MemStack);
+            AeroCalcCommand Cmd = new AeroCalcCommand(txtCommand, ModelsLib, EnvContext, MemStack);
 
             // Certaines commandes rendent la main pour être traitées ici, dans le processeur
             switch (Cmd.action) {
@@ -123,7 +118,8 @@ namespace AeroCalcCore
 
         /// <summary>
         /// Traitement de la commande de lecture et d'exécution d'un fichier de script
-        /// Les instructions réservées du AeroCalcCommandProcessor ne peuvent pas être executées 
+        /// Les instructions exclusives d'AeroCalcCommandProcessor ne peuvent pas être executées
+        /// SCRIPTFILE, HELP, EXIT, INIT
         /// </summary>
         /// <param name="Cmd">Commande active</param>
         /// <returns>
@@ -132,7 +128,6 @@ namespace AeroCalcCore
         private bool readScriptFile(AeroCalcCommand Cmd) {
             if (Cmd.subs.Length >= 2) {
 
-                // TODO Pourquoi ne pas utiliser un objet local ScriptFile, plutot qu'un membre de AeroCalcProcessor ??
                 ScriptFile SF = new ScriptFile();
 
                 // Constitution du path
@@ -202,19 +197,15 @@ namespace AeroCalcCore
             UnitsXMLFile unitsFile = new UnitsXMLFile("");
 
             if (!initialized) {
-                //
-                // TODO: Ici, coder l'initialisation
-                // eventCode à inscrire ici
-                //
                 loadStatus = EnvContext.loadConfigFile(Cmd.subs[1]);
                 switch (loadStatus) {
                     case FileIO.FILEOP_SUCCESSFUL:
                         // Chargement du dictionnaire des unités
                         if (EnvContext.unitsEnabled) {
-                            UnitLib = unitsFile.getUnitsFromXML(EnvContext.unitsFileName);
-                            ModelLib.setUnitsLibrary(UnitLib);
+                            UnitsLib = unitsFile.getUnitsFromXML(EnvContext.unitsFileName);
+                            ModelsLib.setUnitsLibrary(UnitsLib);
                         }
-                        ModelLib.setDataModelsDirectory(EnvContext.modelsDirPath);
+                        ModelsLib.setDataModelsDirectory(EnvContext.modelsDirPath);
                         // TODO Traiter le false de setDataModelsDirectory
                         // Construction de PostProcessor et de la librairie des messages
                         PostProc = new PostProcessor(EnvContext);

@@ -170,17 +170,17 @@ namespace AeroCalcCore
         /// <summary>
         /// Nom du dossier de travail, si un tel dossier est nécessaire
         /// </summary>
-        public string workDirectory { get; private set; }
+        // public string workDirectory { get; private set; }
 
         /// <summary>
         /// Nom du fichier source, si un tel fichier est utilisé
         /// </summary>
-        public string inputFileName { get; private set; }
+        // public string inputFileName { get; private set; }
 
         /// <summary>
         /// Nom du fichier de sortie, si un tel fichier est créé
         /// </summary>
-        public string outputFileName { get; private set; }
+        // public string outputFileName { get; private set; }
 
         /// <summary>
         /// Table des mots de la commande au format texte
@@ -266,9 +266,9 @@ namespace AeroCalcCore
             // Initialisation des propriétés
             startOfProcess = new DateTime(DateTime.Now.Ticks, DateTimeKind.Utc);
             action = ACTION_INITIAL_VALUE;
-            workDirectory = "";
-            inputFileName = "";
-            outputFileName = "";
+            // workDirectory = "";
+            // inputFileName = "";
+            // outputFileName = "";
             eventCode = EVENTCODE_INITIAL_VALUE;
             numericResult = Double.NaN;
             subs = null;

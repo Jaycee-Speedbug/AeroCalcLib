@@ -69,8 +69,7 @@ namespace AeroCalcCore
         /// 
         /// </summary>
         /// 
-        public CSVFile()
-        {
+        public CSVFile() {
             // Défini le tableau de char contenant les séparateurs acceptés
             cellSeparator = new char[] { CELL_SEPARATOR_SEMICOLON, CELL_SEPARATOR_TAB };
             // Défini un tableau de String destiné à contenir les lignes du fichier CSV
@@ -92,17 +91,16 @@ namespace AeroCalcCore
         /// <param name="fieldName">Nom du champ au format texte</param>
         /// <param name="line">Numéro de ligne dans laquelle lire la chaine, ou -1.
         /// du nom de champ</param>
-        /// <returns>String présente dans la collone du champ, à la ligne désignée.</returns>
+        /// <returns>
+        /// String présente dans la collone du champ, à la ligne désignée.
+        /// </returns>
         /// 
-        protected string valueWithFieldName(string fieldName, int line)
-        {
+        protected string valueWithFieldName(string fieldName, int line) {
 
             int column = getColumnIndex(fieldName);
-            if (column > -1)
-            {
+            if (column > -1) {
                 // Le champ a été trouvé
-                if (line < 0)
-                {
+                if (line < 0) {
                     line = getLineIndex(fieldName);
                 }
                 return valueAtPosition(line + 1, column);
@@ -110,8 +108,7 @@ namespace AeroCalcCore
             return null;
         }
         // Accesseur de test
-        public string testValueWithFieldName(string fieldName, int line)
-        {
+        public string _T_ValueWithFieldName(string fieldName, int line) {
             return valueWithFieldName(fieldName, line);
         }
 
@@ -125,22 +122,18 @@ namespace AeroCalcCore
         /// <param name="line"></param>
         /// <param name="column"></param>
         /// <returns>String, à la position définie en arguments</returns>
-        protected string valueAtPosition(int line, int column)
-        {
-            if (line < FileLines.Count)
-            {
+        protected string valueAtPosition(int line, int column) {
+            if (line < FileLines.Count) {
                 string[] subs;
                 subs = FileLines[line].Split(cellSeparator, StringSplitOptions.None);
-                if (column < subs.Length)
-                {
+                if (column < subs.Length) {
                     return subs[column];
                 }
             }
             return null;
         }
         // Accesseur de test
-        public string testValueAtPosition(int line, int column)
-        {
+        public string _T_ValueAtPosition(int line, int column) {
             return valueAtPosition(line, column);
         }
 
@@ -153,40 +146,18 @@ namespace AeroCalcCore
         /// <param name="keyword">string, Keyword identifiant la colonne</param>
         /// <returns>index de la colonne, si le keyword est trouvé, sinon -1</returns>
         /// 
-        protected int getColumnIndex(string keyword)
-        {
+        protected int getColumnIndex(string keyword) {
 
             int lineOfInterest = getLineIndex(keyword);
-            if (lineOfInterest >= 0)
-            {
+            if (lineOfInterest >= 0) {
                 string[] subs = FileLines[lineOfInterest].Split(cellSeparator, StringSplitOptions.None);
-                for (int counter = 0; counter < subs.Length; counter++)
-                {
-                    if (subs[counter].Contains(keyword))
-                    {
+                for (int counter = 0; counter < subs.Length; counter++) {
+                    if (subs[counter].Contains(keyword)) {
                         return counter;
                     }
                 }
             }
             return -1;
-
-
-            /*
-            string[] subs;
-
-            for (int count = 0; count < FileLines.Count; count++) {
-
-                if (FileLines[count].Contains(keyword)) {
-                    subs = FileLines[count].Split(cellSeparator, StringSplitOptions.None);
-                    for (int counter = 0; counter < subs.Length; counter++) {
-                        if (subs[counter].Contains(keyword)) {
-                            return counter;
-                        }
-                    }
-                }
-            }
-            return -1;
-            */
         }
 
 
@@ -197,33 +168,11 @@ namespace AeroCalcCore
         /// <param name="keyword">string, keyword à identifier</param>
         /// <returns>index de la ligne du tableau contenant les lignes du fichier texte</returns>
         /// 
-        protected int getLineIndex(string keyword)
-        {
-
+        protected int getLineIndex(string keyword) {
             return FileLines.FindIndex(line => line.Contains(keyword));
-
-
-            /*
-            foreach (string str in FileLines)
-            {
-                if (str.Contains(keyword)){
-                    return FileLines.IndexOf(str);
-                }
-            }
-            */
-
-            /*
-            for (int index = 0; index < FileLines.Count; index++) {
-                try {
-                    if (FileLines[index].Contains(keyword)) {
-                        return index;
-                    }
-                } catch (ArgumentNullException e) {
-                    return -1;
-                }
-            }
-            return -1;
-            */
+        }
+        public int _A_getLineIndex(string keyword) {
+            return getLineIndex(keyword);
         }
 
     }

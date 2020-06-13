@@ -3,7 +3,8 @@ using System.Collections.Generic;
 
 
 
-namespace AeroCalcCore {
+namespace AeroCalcCore
+{
 
 
 
@@ -12,7 +13,8 @@ namespace AeroCalcCore {
     /// Enregistre les caractéristiques d'un point de performance de vol
     /// </summary>
     /// 
-    public class PerfPoint : IComparer<PerfPoint> {
+    public class PerfPoint : IComparer<PerfPoint>
+    {
 
         // FIELDS ////////////////////////////////////////////////////////////////////////////////////
 
@@ -23,7 +25,8 @@ namespace AeroCalcCore {
         /// Valeur du facteur (Abscisse) du point de performance
         /// </summary>
         /// <remarks>Dim x</remarks>
-        public double factorValue {
+        public double factorValue
+        {
             get;
             private set;
         }
@@ -32,7 +35,8 @@ namespace AeroCalcCore {
         /// 'Ordonnée' du point de performance. Image de factorValue par la fonction de performance décrite par la
         /// série contenant ce point
         /// </summary>
-        public double output {
+        public double output
+        {
             get;
             private set;
         }
@@ -40,7 +44,8 @@ namespace AeroCalcCore {
         /// <summary>
         /// Etat 'breakpoint' du point de performance (rupture de linéarité dans le modèle)
         /// </summary>
-        public bool isBreak {
+        public bool isBreak
+        {
             get;
             private set;
         }
@@ -48,7 +53,8 @@ namespace AeroCalcCore {
         /// <summary>
         /// Méthode de prédiction préférée pour calculer l'image d'un réel à proximité du point de performance
         /// </summary>
-        public int optimizedMethod {
+        public int optimizedMethod
+        {
             get;
             set;
         }
@@ -57,7 +63,8 @@ namespace AeroCalcCore {
         /// Etat de sélection du point de performance. La sélection permet de ne prendre en compte
         /// que certains points pour les calculs de prédiction
         /// </summary>
-        public bool selected {
+        public bool selected
+        {
             get;
             set;
         }
@@ -88,8 +95,7 @@ namespace AeroCalcCore {
         /// </summary>
         /// <param name="pp">Point de performance à copier</param>
         ///
-        public PerfPoint(PerfPoint pp)
-        {
+        public PerfPoint(PerfPoint pp) {
             this.factorValue = pp.factorValue;
             this.output = pp.output;
             this.isBreak = pp.isBreak;
@@ -111,7 +117,8 @@ namespace AeroCalcCore {
         public static bool areColocated(PerfPoint pp1, PerfPoint pp2) {
             if (pp1.factorValue == pp2.factorValue) {
                 return true;
-            } else {
+            }
+            else {
                 return false;
             }
         }
@@ -125,23 +132,25 @@ namespace AeroCalcCore {
         public override String ToString() {
             String msg = "";
 
-            msg =  "X= " + factorValue;
+            msg = "X= " + factorValue;
             msg += "\nY= " + output;
             if (isBreak) {
                 msg += "\nBreak point : YES\n";
-            } else {
+            }
+            else {
                 msg += "\nBreak point : NO\n";
             }
             msg += "Optimized method : " + optimizedMethod;
             if (selected) {
                 msg += "\nSelected : YES\n\n";
-            } else {
+            }
+            else {
                 msg += "\nSelected : NO\n\n";
             }
             return msg;
         }
 
-        
+
         // INTERFACE(S) /////////////////////////////////////////////////////////////////////////////////////
 
 

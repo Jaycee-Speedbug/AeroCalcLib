@@ -21,7 +21,8 @@ namespace AeroCalcCore {
         PerfSerie perfSerie;
 
 
-        // Constructor(s)
+
+        // CONSTRUCTEUR(S)
 
 
         /// <summary>
@@ -37,9 +38,8 @@ namespace AeroCalcCore {
 
 
         /*
-         * Services
+         * SERVICES
          */
-
 
         /// <summary>
         /// Interpolation polynomiale pour une abscisse de référence, sur la base d'une série de points de
@@ -113,7 +113,7 @@ namespace AeroCalcCore {
 
 
         /*
-         * Methods
+         * METHODES
          */
 
         /// <summary>

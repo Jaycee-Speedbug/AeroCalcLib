@@ -133,9 +133,9 @@ namespace AeroCalcCore
             string msg = "";
             msg += "raw command  { " + Cmd.rawTxtCommand;
             msg += " }  action code { " + Cmd.action;
-            if (!string.IsNullOrEmpty(Cmd.workDirectory)) { msg += " }  work directory { " + Cmd.workDirectory; }
-            if (!string.IsNullOrEmpty(Cmd.inputFileName)) { msg += " }  input file { " + Cmd.inputFileName; }
-            if (!string.IsNullOrEmpty(Cmd.outputFileName)) { msg += " }  output file { " + Cmd.outputFileName; }
+            // if (!string.IsNullOrEmpty(Cmd.workDirectory)) { msg += " }  work directory { " + Cmd.workDirectory; }
+            // if (!string.IsNullOrEmpty(Cmd.inputFileName)) { msg += " }  input file { " + Cmd.inputFileName; }
+            // if (!string.IsNullOrEmpty(Cmd.outputFileName)) { msg += " }  output file { " + Cmd.outputFileName; }
             msg += " }  event code { " + Cmd.eventCode;
             msg += " }  result { " + Cmd.numericResult;
             msg += " }  duration { " + Cmd.durationMilliSecond + " ms }" + Environment.NewLine;
@@ -159,7 +159,7 @@ namespace AeroCalcCore
         /// <summary>
         /// Accesseur de Test
         /// </summary>
-        public string _T_formatMsg(string message, string[] info)
+        public string _A_formatMsg(string message, string[] info)
         {
             return swapFields(message, info);
         }
