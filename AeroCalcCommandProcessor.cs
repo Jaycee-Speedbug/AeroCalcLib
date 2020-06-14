@@ -92,7 +92,7 @@ namespace AeroCalcCore
 
                 case AeroCalcCommand.ACTION_EXIT:
                     // Exit
-                    Cmd.setEventCode(AeroCalcCommand.EVENTCODE_EXIT_REQUESTED);
+                    Cmd.setEventCode(AeroCalcCommand.ECODE_EXIT_REQUESTED);
                     break;
 
                 case AeroCalcCommand.ACTION_SCRIPTFILE:
@@ -102,7 +102,7 @@ namespace AeroCalcCore
 
                 case AeroCalcCommand.ACTION_HELP:
                     // Aide
-                    Cmd.setEventCode(AeroCalcCommand.EVENTCODE_HELP_REQUESTED);
+                    Cmd.setEventCode(AeroCalcCommand.ECODE_HELP_REQUESTED);
                     break;
             }
             // Post process: Génération de tous les messages vers l'utilisateur
@@ -146,35 +146,35 @@ namespace AeroCalcCore
                                 outputLn += ScriptCmd.txtResult + Environment.NewLine;
                             }
                             Cmd.setResultText(outputLn);
-                            Cmd.setEventCode(AeroCalcCommand.EVENTCODE_SCRIPTFILE_SUCCESSFULL);
+                            Cmd.setEventCode(AeroCalcCommand.ECODE_SCRIPTFILE_SUCCESSFULL);
                         }
                         else {
-                            Cmd.setEventCode(AeroCalcCommand.EVENTCODE_SCRIPTFILE_VOID);
+                            Cmd.setEventCode(AeroCalcCommand.ECODE_ERR_SCRIPTFILE_VOID);
                         }
                         break;
 
                     case FileIO.FILEOP_FILE_DOES_NOT_EXIST:
-                        Cmd.setEventCode(AeroCalcCommand.EVENTCODE_ERROR_SCRIPTFILE_DOES_NOT_EXIST);
+                        Cmd.setEventCode(AeroCalcCommand.ECODE_ERR_SCRIPTFILE_DOES_NOT_EXIST);
                         break;
 
                     case FileIO.FILEOP_INVALID_PATH:
-                        Cmd.setEventCode(AeroCalcCommand.EVENTCODE_ERROR_SCRIPT_PATH);
+                        Cmd.setEventCode(AeroCalcCommand.ECODE_ERR_SCRIPT_PATH);
                         break;
 
                     case FileIO.FILEOP_IO_ERROR:
-                        Cmd.setEventCode(AeroCalcCommand.EVENTCODE_ERROR_SCRIPT_IO_ERROR);
+                        Cmd.setEventCode(AeroCalcCommand.ECODE_ERR_SCRIPT_IO_ERROR);
                         break;
 
                     case FileIO.FILEOP_UNKNOWN_ERROR:
-                        Cmd.setEventCode(AeroCalcCommand.EVENTCODE_ERROR_SCRIPT_UKN_ERROR);
+                        Cmd.setEventCode(AeroCalcCommand.ECODE_ERR_SCRIPT_UKN_ERROR);
                         break;
 
                     case FileIO.FILEOP_INPUT_FILE_IS_LOCKED:
-                        Cmd.setEventCode(AeroCalcCommand.EVENTCODE_ERROR_SCRIPT_SECURITY);
+                        Cmd.setEventCode(AeroCalcCommand.ECODE_ERR_SCRIPT_SECURITY);
                         break;
 
                     default:
-                        Cmd.setEventCode(AeroCalcCommand.EVENTCODE_ERROR_SCRIPT_GENERIC);
+                        Cmd.setEventCode(AeroCalcCommand.ECODE_ERR_SCRIPT_GENERIC);
                         break;
                 }
             }
@@ -209,26 +209,26 @@ namespace AeroCalcCore
                         // TODO Traiter le false de setDataModelsDirectory
                         // Construction de PostProcessor et de la librairie des messages
                         PostProc = new PostProcessor(EnvContext);
-                        Cmd.setEventCode(AeroCalcCommand.EVENTCODE_INIT_SUCCESSFULL);
+                        Cmd.setEventCode(AeroCalcCommand.ECODE_INIT_SUCCESSFULL);
                         break;
 
                     case FileIO.FILEOP_INVALID_PATH:
-                        Cmd.setEventCode(AeroCalcCommand.EVENTCODE_ERROR_INIT_CONFIGFILE_PATH);
+                        Cmd.setEventCode(AeroCalcCommand.ECODE_ERR_INIT_CONFIGFILE_PATH);
                         Cmd.setExit();
                         break;
 
                     case FileIO.FILEOP_IO_ERROR:
-                        Cmd.setEventCode(AeroCalcCommand.EVENTCODE_ERROR_INIT_IO_ERROR);
+                        Cmd.setEventCode(AeroCalcCommand.ECODE_ERR_INIT_IO_ERROR);
                         Cmd.setExit();
                         break;
 
                     case FileIO.FILEOP_UNKNOWN_ERROR:
-                        Cmd.setEventCode(AeroCalcCommand.EVENTCODE_ERROR_INIT_UKN_FILE_ERROR);
+                        Cmd.setEventCode(AeroCalcCommand.ECODE_ERR_INIT_UKN_FILE_ERROR);
                         Cmd.setExit();
                         break;
 
                     default:
-                        Cmd.setEventCode(AeroCalcCommand.EVENTCODE_ERROR_INIT_UKN_ERROR);
+                        Cmd.setEventCode(AeroCalcCommand.ECODE_ERR_INIT_UKN_ERROR);
                         Cmd.setExit();
                         break;
                 }
@@ -238,7 +238,7 @@ namespace AeroCalcCore
             }
             else {
                 // Already initialized
-                Cmd.setEventCode(AeroCalcCommand.EVENTCODE_REINIT_NOT_ALLOWED);
+                Cmd.setEventCode(AeroCalcCommand.ECODE_ERR_REINIT_NOT_ALLOWED);
             }
             return false;
         }

@@ -97,54 +97,54 @@ namespace AeroCalcCore
         /// N'existe qu'en cas de présence d'une erreur
         /// </summary>
         ///
-        public const int EVENTCODE_VERBOSE_ACTIVE = 910;
-        public const int EVENTCODE_VERBOSE_INACTIVE = 911;
-        public const int EVENTCODE_VERBOSE_ALREADY = 912;
-        public const int EVENTCODE_HELP_REQUESTED = 900;
-        public const int EVENTCODE_LIST_UNITS_SUCCESSFULL = 550;
-        public const int EVENTCODE_SCRIPTFILE_SUCCESSFULL = 500;
-        public const int EVENTCODE_LOAD_MODELS_SUCCESSFULL = 400;
-        public const int EVENTCODE_MEM_SUCCESSFULL = 210;
-        public const int EVENTCODE_CALCULATE_SUCCESSFULL = 200;
-        public const int EVENTCODE_INIT_SUCCESSFULL = 110;
-        public const int EVENTCODE_PROCESS_SUCCESSFULL = 100;
-        public const int EVENTCODE_CMD_HANDOVER = 20;
-        public const int EVENTCODE_EXIT_REQUESTED = 10;
+        public const int ECODE_VERBOSE_ACTIVE = 910;
+        public const int ECODE_VERBOSE_INACTIVE = 911;
+        public const int ECODE_VERBOSE_ALREADY = 912;
+        public const int ECODE_HELP_REQUESTED = 900;
+        public const int ECODE_LIST_UNITS_SUCCESSFULL = 550;
+        public const int ECODE_SCRIPTFILE_SUCCESSFULL = 500;
+        public const int ECODE_LOAD_MODELS_SUCCESSFULL = 400;
+        public const int ECODE_MEM_SUCCESSFULL = 210;
+        public const int ECODE_CALC_SUCCESSFULL = 200;
+        public const int ECODE_INIT_SUCCESSFULL = 110;
+        public const int ECODE_PROCESS_SUCCESSFULL = 100;
+        public const int ECODE_CMD_HANDOVER = 20;
+        public const int ECODE_EXIT_REQUESTED = 10;
 
-        public const int EVENTCODE_INITIAL_VALUE = 0; // Valeur d'initialisation
+        public const int ECODE_INITIAL_VALUE = 0; // Valeur d'initialisation
 
-        public const int EVENTCODE_INIT_UNSUCCESSFULL = -1;
-        public const int EVENTCODE_REINIT_NOT_ALLOWED = -2;
-        public const int EVENTCODE_ERROR_INIT_CONFIGFILE_PATH = -3;
-        public const int EVENTCODE_ERROR_INIT_IO_ERROR = -4;
-        public const int EVENTCODE_ERROR_INIT_UKN_FILE_ERROR = -5;
-        public const int EVENTCODE_ERROR_INIT_UKN_ERROR = -6;
-        public const int EVENTCODE_ERROR_INIT_UNITS_FILE = -7;
-        public const int EVENTCODE_ERROR_INIT_LANGUAGE_FILE = -8;
-        public const int EVENTCODE_COMMAND_UNPROCESSED = -10;
+        public const int ECODE_ERR_INIT_UNSUCCESSFULL = -1;
+        public const int ECODE_ERR_REINIT_NOT_ALLOWED = -2;
+        public const int ECODE_ERR_INIT_CONFIGFILE_PATH = -3;
+        public const int ECODE_ERR_INIT_IO_ERROR = -4;
+        public const int ECODE_ERR_INIT_UKN_FILE_ERROR = -5;
+        public const int ECODE_ERR_INIT_UKN_ERROR = -6;
+        public const int ECODE_ERR_INIT_UNITS_FILE = -7;
+        public const int ECODE_ERR_INIT_LANGUAGE_FILE = -8;
+        public const int ECODE_ERR_CMD_UNPROCESSED = -10;
 
-        public const int EVENTCODE_ERROR_SCRIPTFILE_DOES_NOT_EXIST = -12;
-        public const int EVENTCODE_ERROR_SCRIPT_PATH = -13;
-        public const int EVENTCODE_ERROR_SCRIPT_IO_ERROR = -14;
-        public const int EVENTCODE_ERROR_SCRIPT_UKN_FILE_ERROR = -15;
-        public const int EVENTCODE_ERROR_SCRIPT_UKN_ERROR = -16;
-        public const int EVENTCODE_ERROR_SCRIPT_SECURITY = -17;
-        public const int EVENTCODE_ERROR_SCRIPT_GENERIC = -18;
-        public const int EVENTCODE_SCRIPTFILE_VOID = -19;
+        public const int ECODE_ERR_SCRIPTFILE_DOES_NOT_EXIST = -12;
+        public const int ECODE_ERR_SCRIPT_PATH = -13;
+        public const int ECODE_ERR_SCRIPT_IO_ERROR = -14;
+        public const int ECODE_ERR_SCRIPT_UKN_FILE_ERROR = -15;
+        public const int ECODE_ERR_SCRIPT_UKN_ERROR = -16;
+        public const int ECODE_ERR_SCRIPT_SECURITY = -17;
+        public const int ECODE_ERR_SCRIPT_GENERIC = -18;
+        public const int ECODE_ERR_SCRIPTFILE_VOID = -19;
 
-        public const int EVENTCODE_COMMAND_VOID = -21;
+        public const int ECODE_ERR_CMD_VOID = -21;
 
-        public const int EVENTCODE_UNKNOWN_COMMAND_WORD = -22;
-        public const int EVENTCODE_UNSUPPORTED_COMMAND = -23;
-        public const int EVENTCODE_NO_UNIT_DATA_AVAILABLE = -30;
-        public const int EVENTCODE_UNABLE_VERBOSE_MODIFICATION = -50;
+        public const int ECODE_ERR_UKN_CMD_WORD = -22;
+        public const int ECODE_ERR_UNSUPPORTED_CMD = -23;
+        public const int ECODE_ERR_NO_UNIT_DATA_AVAILABLE = -30;
+        public const int ECODE_ERR_UNABLE_VERBOSE_MOD = -50;
 
-        public const int EVENTCODE_PROCESSOR_FAILURE = -100;
-        public const int EVENTCODE_CALC_PROCESS_ERROR = -110;
-        public const int EVENTCODE_CALC_PROCESSOR_MISSING_FACTOR = -111;
-        public const int EVENTCODE_CALC_PROCESSOR_MISSING_MODEL = -112;
-        public const int EVENTCODE_MEM_DECLARATION_ERROR = -115;
-        public const int EVENTCODE_NO_MODEL_LOADED = -500;
+        public const int ECODE_ERR_PROCESSOR_FAILURE = -100;
+        public const int ECODE_ERR_CALC_PROCESS = -110;
+        public const int ECODE_ERR_CALC_MISSING_FACTOR = -111;
+        public const int ECODE_ERR_CALC_MISSING_MODEL = -112;
+        public const int ECODE_ERR_MEM_DECLARATION = -115;
+        public const int ECODE_ERR_NO_MODEL_LOADED = -500;
 
 
         /*
@@ -269,7 +269,7 @@ namespace AeroCalcCore
             // workDirectory = "";
             // inputFileName = "";
             // outputFileName = "";
-            eventCode = EVENTCODE_INITIAL_VALUE;
+            eventCode = ECODE_INITIAL_VALUE;
             numericResult = Double.NaN;
             subs = null;
             Factors = new List<CommandFactor>();
@@ -284,7 +284,7 @@ namespace AeroCalcCore
                 // Cas particulier de la chaine nulle
                 rawTxtCommand = "";
                 action = ACTION_UNDETERMINED;
-                eventCode = EVENTCODE_COMMAND_VOID;
+                eventCode = ECODE_ERR_CMD_VOID;
             }
             else
             {
@@ -293,7 +293,7 @@ namespace AeroCalcCore
                 if (!execute())
                 {
                     // Un problème majeur s'est produit dans le traitement de la commande
-                    eventCode = EVENTCODE_PROCESSOR_FAILURE;
+                    eventCode = ECODE_ERR_PROCESSOR_FAILURE;
                     verbosed = true;
                 }
                 else
@@ -305,7 +305,6 @@ namespace AeroCalcCore
                     }
                 }
             }
-
         }
 
 
@@ -322,7 +321,7 @@ namespace AeroCalcCore
         /// <param name="value">Valeur du facteur</param>
         /// <returns></returns>
         /// 
-        // TODO, Pas normal de renvoyer true is le factorName est invalide !!! 
+        // TODO, Pas normal de renvoyer true si le factorName est invalide !!! 
         public bool factor(string factorName, out double value)
         {
             if (string.IsNullOrEmpty(factorName))
@@ -478,7 +477,7 @@ namespace AeroCalcCore
                 {
                     // Pas une action à un seul keyword n'a été identifiée
                     action = ACTION_UNDETERMINED;
-                    eventCode = EVENTCODE_UNKNOWN_COMMAND_WORD;
+                    eventCode = ECODE_ERR_UKN_CMD_WORD;
                 }
 
             }
@@ -547,7 +546,7 @@ namespace AeroCalcCore
                 {
                     // Commande à mots multiples et non reconnues précédement
                     action = ACTION_CALCULATE;
-                    eventCode = EVENTCODE_COMMAND_UNPROCESSED;
+                    eventCode = ECODE_ERR_CMD_UNPROCESSED;
                     cmd_CALCULATE();
                 }
 
@@ -587,20 +586,20 @@ namespace AeroCalcCore
             catch (ModelException e)
             {
                 // La commande a échoué pendant le calcul 
-                eventCode = EVENTCODE_CALC_PROCESS_ERROR;
+                eventCode = ECODE_ERR_CALC_PROCESS;
                 addInfo(new string[] { e.modelName, e.factorName, e.factorValue.ToString() });
             }
             // Tratement post calcul
             if (!double.IsNaN(numResult))
             {
                 // Réussite du calcul
-                eventCode = EVENTCODE_CALCULATE_SUCCESSFULL;
+                eventCode = ECODE_CALC_SUCCESSFULL;
                 numericResult = numResult;
             }
             else
             {
                 // Echec du calcul, sans génération d'exception...
-                eventCode = EVENTCODE_UNKNOWN_COMMAND_WORD;
+                eventCode = ECODE_ERR_UKN_CMD_WORD;
             }
             return true;
         }
@@ -620,11 +619,11 @@ namespace AeroCalcCore
 
             if (success) {
                 addInfo(new string[] { factor.name, factor.value.ToString() });
-                eventCode = EVENTCODE_MEM_SUCCESSFULL;
+                eventCode = ECODE_MEM_SUCCESSFULL;
                 return true;
             }
             else {
-                eventCode = EVENTCODE_MEM_DECLARATION_ERROR;
+                eventCode = ECODE_ERR_MEM_DECLARATION;
                 return false;
             }
         }
@@ -634,7 +633,7 @@ namespace AeroCalcCore
         private bool cmd_CONVERT()
         {
             // COMMANDE NON SUPPORTEE
-            eventCode = EVENTCODE_UNSUPPORTED_COMMAND;
+            eventCode = ECODE_ERR_UNSUPPORTED_CMD;
             return true;
         }
 
@@ -652,7 +651,7 @@ namespace AeroCalcCore
         {
             // Commande traitée par le processeur
             // TODO eventCode à générer ds le processeur
-            eventCode = EVENTCODE_CMD_HANDOVER;
+            eventCode = ECODE_CMD_HANDOVER;
             return true;
         }
 
@@ -662,7 +661,7 @@ namespace AeroCalcCore
         {
             // Commande traitée par le processeur
             // TODO eventCode à générer ds le processeur
-            eventCode = EVENTCODE_CMD_HANDOVER;
+            eventCode = ECODE_CMD_HANDOVER;
             return true;
         }
 
@@ -671,7 +670,7 @@ namespace AeroCalcCore
         private bool cmd_INIT()
         {
             // Commande traitée par le processeur
-            eventCode = EVENTCODE_CMD_HANDOVER;
+            eventCode = ECODE_CMD_HANDOVER;
             return true;
         }
 
@@ -691,11 +690,11 @@ namespace AeroCalcCore
             models = Container.dataModelSignatures();
             if (string.IsNullOrEmpty(models))
             {
-                eventCode = AeroCalcCommand.EVENTCODE_NO_MODEL_LOADED;
+                eventCode = AeroCalcCommand.ECODE_ERR_NO_MODEL_LOADED;
             }
             else
             {
-                eventCode = AeroCalcCommand.EVENTCODE_PROCESS_SUCCESSFULL;
+                eventCode = AeroCalcCommand.ECODE_PROCESS_SUCCESSFULL;
                 txtResult = models;
             }
             return true;
@@ -724,12 +723,12 @@ namespace AeroCalcCore
                 }
                 txtResult = msg;
                 addInfo(lu.Count.ToString());
-                eventCode = EVENTCODE_LIST_UNITS_SUCCESSFULL;
+                eventCode = ECODE_LIST_UNITS_SUCCESSFULL;
             }
             else
             {
                 // No units available!
-                eventCode = EVENTCODE_NO_UNIT_DATA_AVAILABLE;
+                eventCode = ECODE_ERR_NO_UNIT_DATA_AVAILABLE;
             }
             return true;
         }
@@ -743,7 +742,7 @@ namespace AeroCalcCore
         private bool cmd_LOAD_CATALOG()
         {
             // COMMANDE NON SUPPORTEE
-            eventCode = EVENTCODE_UNSUPPORTED_COMMAND;
+            eventCode = ECODE_ERR_UNSUPPORTED_CMD;
             return true;
         }
 
@@ -766,11 +765,11 @@ namespace AeroCalcCore
             if (counter > 0)
             {
                 addInfo(counter.ToString());
-                eventCode = EVENTCODE_LOAD_MODELS_SUCCESSFULL;
+                eventCode = ECODE_LOAD_MODELS_SUCCESSFULL;
             }
             else
             {
-                eventCode = EVENTCODE_NO_MODEL_LOADED;
+                eventCode = ECODE_ERR_NO_MODEL_LOADED;
             }
             return true;
         }
@@ -793,20 +792,20 @@ namespace AeroCalcCore
                     if (EnvContext.verbose)
                     {
                         // VERBOSE is already set
-                        eventCode = EVENTCODE_VERBOSE_ALREADY;
+                        eventCode = ECODE_VERBOSE_ALREADY;
                     }
                     else
                     {
                         // VERBOSE to be set
                         EnvContext.setVerbose(true);
                         verbosed = true;
-                        eventCode = EVENTCODE_VERBOSE_ACTIVE;
+                        eventCode = ECODE_VERBOSE_ACTIVE;
                     }
                 }
                 else
                 {
                     // Not allowed !
-                    eventCode = EVENTCODE_UNABLE_VERBOSE_MODIFICATION;
+                    eventCode = ECODE_ERR_UNABLE_VERBOSE_MOD;
                 }
             }
             else
@@ -816,12 +815,12 @@ namespace AeroCalcCore
                 {
                     EnvContext.setVerbose(false);
                     verbosed = false;
-                    eventCode = EVENTCODE_VERBOSE_INACTIVE;
+                    eventCode = ECODE_VERBOSE_INACTIVE;
                 }
                 else
                 {
                     // Not allowed !
-                    eventCode = EVENTCODE_UNABLE_VERBOSE_MODIFICATION;
+                    eventCode = ECODE_ERR_UNABLE_VERBOSE_MOD;
                 }
             }
         }

@@ -16,7 +16,7 @@ public static class AeroCalc {
         public const int E_SERIE_VALUE_OUT_OF_RANGE = 4;
         public const int E_POINT_VALUE_OUT_OF_RANGE = 5;
         public const int E_VOID_SYSTEM = 100;
-        public const string E_UNKNOWN_FACTOR_VALUE_MSG = " : Valeur inconnue.";
+        //public const string E_UNKNOWN_FACTOR_VALUE_MSG = " : Valeur inconnue.";
 
 
 
@@ -27,12 +27,14 @@ public static class AeroCalc {
 
 
         // Constantes et messages d'erreurs propres au calculateur
+        /*
         public const int ERROR_CALC_INPUT_VALUE_OUT_OF_RANGE = 10001;
         public const String ERROR_CALC_MSG_INPUT_VALUE_OUT_OF_RANGE = "Un facteur de la commande de calcul est en dehors du domaine autorisé";
         public const int ERROR_CALC_OUTPUT_OUT_OF_RANGE = 10002;
         public const String ERROR_CALC_MSG_OUTPUT_OUT_OF_RANGE = "Le résultat de la commande de calcul est en dehors du domaine autorisé";
         public const int ERROR_CALC_VOID_SYSTEM = 10003;
         public const String ERROR_CALC_MSG_VOID_SYSTEM = "Impossible de résoudre la commande numériquement";
+        */
 
 
         // Constantes du dictionnaire des unités

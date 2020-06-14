@@ -64,7 +64,7 @@ namespace AeroCalcCore
          */
         public void postProcess(AeroCalcCommand Cmd)
         {
-            if (Cmd.eventCode == AeroCalcCommand.EVENTCODE_INITIAL_VALUE)
+            if (Cmd.eventCode == AeroCalcCommand.ECODE_INITIAL_VALUE)
             {
                 // Command totally unprocessed, not a normal situation
                 string msg = "[" + Cmd.eventCode + "]" + " POSTPROC:UNPROCESSED COMMAND";
