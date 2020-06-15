@@ -31,7 +31,6 @@ namespace AeroCalcCore
         /// <summary>
         /// 
         /// </summary>
-        // TODO A transférer dans une classe chargée du traitement du fichier de configuration
         public Languages GetLanguagesFromXML()
         {
             Languages langs = new Languages();

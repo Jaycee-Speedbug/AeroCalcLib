@@ -14,9 +14,9 @@ namespace AeroCalcCore
          * PROPRIETES
          */
 
-        public List<Language> LanguageLibrary { get; private set; }
-        public int Count => LanguageLibrary.Count;
-        public int Capacity => LanguageLibrary.Capacity;
+        public List<Language> Library { get; private set; }
+        public int Count => Library.Count;
+        public int Capacity => Library.Capacity;
 
 
 
@@ -25,7 +25,7 @@ namespace AeroCalcCore
          */
         public Languages()
         {
-            LanguageLibrary = new List<Language>();
+            Library = new List<Language>();
         }
 
 
@@ -33,30 +33,30 @@ namespace AeroCalcCore
         /*
          * SERVICES
          */
-        public void Clear() => LanguageLibrary.Clear();
+        public void Clear() => Library.Clear();
 
         public void Add(Language lang)
         {
-            if (!LanguageLibrary.Exists(x => x.shortName == lang.shortName))
+            if (!Library.Exists(x => x.shortName == lang.shortName))
             {
-                LanguageLibrary.Add(lang);
+                Library.Add(lang);
             }
         }
 
 
         public Language Find(string langShortName)
         {
-            return (LanguageLibrary.Find(item => item.shortName == langShortName));
+            return (Library.Find(item => item.shortName == langShortName));
         }
 
         public int languageIndex(string langShortName)
         {
-            Language lang = LanguageLibrary.Find(item => item.shortName == langShortName);
+            Language lang = Library.Find(item => item.shortName == langShortName);
             if (lang is null)
             {
                 return -1;
             }
-            return LanguageLibrary.IndexOf(lang);
+            return Library.IndexOf(lang);
         }
     }
 }

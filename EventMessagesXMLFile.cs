@@ -35,17 +35,17 @@ namespace AeroCalcCore
         public EventMessages getEventMessagesFromXML()
         {
             EventMessages EMLib = new EventMessages();
+            string[] splitters = { "\r\n", "\n" };
 
-            // TODO load the file here
             if (xDoc != null) {
                 foreach (XElement item in xDoc.Descendants(NODE_MESSAGE)) {
                     // This is a Message node, let's get the data
                     string msg = item.Value;
                     int codeNb = getIntOrMinValue(item.Attribute(ATTRIB_ID).Value);
                     if (codeNb != int.MinValue) {
-                        // Triming the leading spaces
+                        // Triming the leading white spaces
                         string msgTrimmed = "";
-                        string[] table = msg.Split(Environment.NewLine);
+                        string[] table = msg.Split(splitters, StringSplitOptions.RemoveEmptyEntries);
                         for (int i = 0; i < table.Length; i++) {
                             msgTrimmed += table[i].TrimStart(' ') + Environment.NewLine;
                         }

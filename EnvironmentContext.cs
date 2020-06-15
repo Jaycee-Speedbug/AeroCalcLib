@@ -128,7 +128,7 @@ namespace AeroCalcCore
                 publicAppVersion = "";
                 // Dossier des scripts
                 scriptsDirPath = appDirPath +
-                                   configFile.getValue(XMLFile.NODE_DIR, XMLFile.ATTRIB_NAME, XMLFile.SCRIPTS);
+                                 configFile.getValue(XMLFile.NODE_DIR, XMLFile.ATTRIB_NAME, XMLFile.SCRIPTS);
                 // Mode UnitsEnabled
                 unitsEnabled = configFile.getBoolean(XMLFile.NODE_SETTING, XMLFile.ATTRIB_NAME, XMLFile.UNITS_ENABLED, true);
                 // Fichier des unités de calcul
@@ -190,7 +190,7 @@ namespace AeroCalcCore
             msg += "\n unitsEnabled          : " + unitsEnabled;
             msg += "\n logger                : " + logger;
             msg += "\n Languages             : ";
-            foreach (Language l in Langs.LanguageLibrary)
+            foreach (Language l in Langs.Library)
             {
                 msg += "\n     " + l.shortName + " " + l.name + " " + l.fileAbsolutePath;
             }

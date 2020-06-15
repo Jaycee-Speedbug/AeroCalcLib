@@ -36,10 +36,10 @@ namespace AeroCalcCore
         /// <summary>Construit un objet Language par copie</summary>
         public Language(Language lang)
         {
-            this.name = lang.name;
-            this.shortName = lang.shortName;
-            this.fileAbsolutePath = lang.fileAbsolutePath;
-            this.enabled = lang.enabled;
+            name = lang.name;
+            shortName = lang.shortName;
+            fileAbsolutePath = lang.fileAbsolutePath;
+            enabled = lang.enabled;
         }
 
 

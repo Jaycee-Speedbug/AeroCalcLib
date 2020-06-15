@@ -34,6 +34,11 @@ namespace AeroCalcCore
         /*
          * MEMBRES
          */
+        // TODO La bibliothèque doit être au minimum chargée avec le minimum de messages nécessaires pour indiquer
+        // TODO le problème à l'utilisateur, dans la 'langue de base', l'anglais.
+        // TODO Cette bibliothèque minimale est ensuite remplacée par celle chargée via un pack de langue.
+        // TODO Le remplacement d'une bibliothèque de messages ne se fait qu'après validation de la nouvelle
+        // TODO par num de version?, contrôle de la présence de certains messages clés ? A DEFINIR
         private EventMessages EMsgLib;
 
         //private bool verbose;
@@ -45,12 +50,12 @@ namespace AeroCalcCore
          */
         public PostProcessor(EnvironmentContext EC)
         {
-            // TODO A intégrer pleinement à l'object EnvironmentContext
+            // TODO A intégrer pleinement à l'object EnvironmentContext pour éviter le codage en dur du nom de fichier
             //! Remove when possible
             string fileName = EC.configDirPath + Path.AltDirectorySeparatorChar + "fr.xml";
 
+            // TODO Utiliser la fonction changeLanguage() pour charger la bibliothèque de messages
             EventMessagesXMLFile xmlFile = new EventMessagesXMLFile(fileName);
-
             EMsgLib = xmlFile.getEventMessagesFromXML();
 
             //verbose = EC.verbose;
@@ -121,6 +126,31 @@ namespace AeroCalcCore
             {
                 verboseCommand(Cmd);
             }
+        }
+
+
+
+        public int changeLanguage(string fileAbsolutePath) {
+
+            EventMessagesXMLFile xmlFile = new EventMessagesXMLFile(fileAbsolutePath);
+            if (xmlFile.IOStatus == FileIO.FILEOP_SUCCESSFUL) {
+                // Load it then !
+                EventMessages msgs = xmlFile.getEventMessagesFromXML();
+                if (msgs == null) {
+                    // Problem when forging messages library
+                    return AeroCalcCommand.ECODE_ERR_LANG_UNDETERMINED;
+                }
+                else {
+                    // This new lib is ok
+                    EMsgLib = msgs;
+                    return xmlFile.IOStatus;
+                }
+            }
+            else {
+
+            }
+
+            return 0;
         }
 
 
