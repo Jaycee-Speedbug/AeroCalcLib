@@ -1,8 +1,7 @@
 using System;
 using System.Xml.Linq;
 using System.Collections.Generic;
-
-
+using System.IO;
 
 namespace AeroCalcCore
 {
@@ -29,9 +28,9 @@ namespace AeroCalcCore
 
 
         /// <summary>
-        /// 
+        /// Charge les éléments de chaque pack de langue depuis le fichier de configuration
         /// </summary>
-        public Languages GetLanguagesFromXML()
+        public Languages GetLanguagesFromXML(string absoluteLangDir)
         {
             Languages langs = new Languages();
 
@@ -42,13 +41,16 @@ namespace AeroCalcCore
                 // This is a Language Node
                 string shortName = xe.Attribute(ATTRIB_SHORT_NAME).Value;
                 string name = xe.Attribute(ATTRIB_NAME).Value;
-                string filePath = xe.Value;
-                if (string.IsNullOrEmpty(shortName) || string.IsNullOrEmpty(name) || string.IsNullOrEmpty(filePath))
+                string filePath = absoluteLangDir + Path.DirectorySeparatorChar + xe.Value;
+                if (string.IsNullOrEmpty(shortName) || 
+                    string.IsNullOrEmpty(name) || 
+                    string.IsNullOrEmpty(filePath))
                 {
                     // Not a valid Language block
                     break;
                 }
-                langs.Add(new Language(name, shortName, filePath, true));
+                langs.Add(new Language(name, shortName, filePath,
+                                       checkFile(filePath) == FILEOP_SUCCESSFUL ? true : false));
             }
             return langs;
         }

@@ -108,6 +108,7 @@ namespace AeroCalcCore
         public const int ECODE_LIST_UNITS_SUCCESSFULL = 550;
         public const int ECODE_SCRIPTFILE_SUCCESSFULL = 500;
         public const int ECODE_LOAD_MODELS_SUCCESSFULL = 400;
+        public const int ECODE_LANG_CHANGED_SUCCESSFULL = 301;
         public const int ECODE_ACTIVE_LANG = 300;
         public const int ECODE_MEM_SUCCESSFULL = 210;
         public const int ECODE_CALC_SUCCESSFULL = 200;
@@ -126,7 +127,7 @@ namespace AeroCalcCore
         public const int ECODE_ERR_INIT_UKN_ERROR = -6;
         public const int ECODE_ERR_INIT_UNITS_FILE = -7;
         public const int ECODE_ERR_INIT_LANGUAGE_FILE = -8;
-        public const int ECODE_ERR_CMD_UNPROCESSED = -10;
+        public const int ECODE_ERR_CMD_UNPROCESSED = -10; // MINIMAL ERR MSG LIB
 
         public const int ECODE_ERR_SCRIPTFILE_DOES_NOT_EXIST = -12;
         public const int ECODE_ERR_SCRIPT_PATH = -13;
@@ -514,7 +515,7 @@ namespace AeroCalcCore
                     }
                     else if (subs[1].Equals(CMD_WORD_LANG, StrCompOpt)) {
                         action = ACTION_LIST_LANG;
-                        // cmd_LIST_LANG();
+                        cmd_LIST_LANG();
                     }
                 }
 
@@ -750,13 +751,14 @@ namespace AeroCalcCore
 
         private bool cmd_LIST_LANG() {
             // COMMANDE NON SUPPORTEE
-            eventCode = ECODE_ERR_UNSUPPORTED_CMD;
+            //eventCode = ECODE_ERR_UNSUPPORTED_CMD;
             string listMsg = "";
             foreach (Language lang in EnvContext.Langs.Library) {
                 listMsg += lang.ToString() + Environment.NewLine;
             }
             txtResult = listMsg;
             addInfo(EnvContext.Langs.Count.ToString());
+            eventCode = ECODE_LIST_LANG_SUCCESSFULL;
             return true;
         }
 

@@ -30,6 +30,8 @@ namespace AeroCalcCore
         public EventMessages()
         {
             eMsgList = new List<EventMessage>();
+            // Minimal Library to be implemented
+
         }
 
 

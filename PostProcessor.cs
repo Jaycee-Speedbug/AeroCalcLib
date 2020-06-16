@@ -39,6 +39,10 @@ namespace AeroCalcCore
         // TODO Cette bibliothèque minimale est ensuite remplacée par celle chargée via un pack de langue.
         // TODO Le remplacement d'une bibliothèque de messages ne se fait qu'après validation de la nouvelle
         // TODO par num de version?, contrôle de la présence de certains messages clés ? A DEFINIR
+        
+        /// <summary>
+        /// Library stockant les messages à l'utilisateur
+        /// </summary>
         private EventMessages EMsgLib;
 
         //private bool verbose;
@@ -52,11 +56,19 @@ namespace AeroCalcCore
         {
             // TODO A intégrer pleinement à l'object EnvironmentContext pour éviter le codage en dur du nom de fichier
             //! Remove when possible
-            string fileName = EC.configDirPath + Path.AltDirectorySeparatorChar + "fr.xml";
+            //string fileName = EC.configDirPath + Path.AltDirectorySeparatorChar + "fr.xml";
+            string fileName = EC.Langs.Library.Find(x => x.shortName.Equals(EC.activeLang)).fileAbsolutePath;
 
             // TODO Utiliser la fonction changeLanguage() pour charger la bibliothèque de messages
-            EventMessagesXMLFile xmlFile = new EventMessagesXMLFile(fileName);
-            EMsgLib = xmlFile.getEventMessagesFromXML();
+            //EventMessagesXMLFile xmlFile = new EventMessagesXMLFile(fileName);
+
+            changeLanguage(fileName);
+
+            /*
+            if (xmlFile.IOStatus == FileIO.FILEOP_SUCCESSFUL) {
+                EMsgLib = xmlFile.getEventMessagesFromXML();
+            }
+            */
 
             //verbose = EC.verbose;
 
@@ -143,14 +155,14 @@ namespace AeroCalcCore
                 else {
                     // This new lib is ok
                     EMsgLib = msgs;
-                    return xmlFile.IOStatus;
+                    return AeroCalcCommand.ECODE_LANG_CHANGED_SUCCESSFULL;
                 }
             }
             else {
-
+                // Error from file reading
+                // TODO Il faut renvoyer un int homogène !!! ECODE ou IOStatus ???
+                return xmlFile.IOStatus;
             }
-
-            return 0;
         }
 
 

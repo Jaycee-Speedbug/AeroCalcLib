@@ -21,6 +21,10 @@ namespace AeroCalcCore
          * CONSTRUCTEURS
          */
 
+        /// <summary>
+        /// Construit un objet EventMessages, librairie des messages à l'utilisateur
+        /// </summary>
+        /// <returns></returns>
         public EventMessagesXMLFile(string absoluteFilePath) : base("", absoluteFilePath)
         {
             // xDoc should be loaded with XML file content

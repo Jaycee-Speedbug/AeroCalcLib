@@ -114,14 +114,14 @@ namespace AeroCalcCore
                 configFileVersion = configFile.getAttribute(nodes, XMLFile.ATTRIB_VERSION);
 
                 // Packs de langue
-                Langs = configFile.GetLanguagesFromXML();
+                Langs = configFile.GetLanguagesFromXML(configDirPath);
                 // Dossiers des logs
                 logDirPath = appDirPath + configFile.getValue(XMLFile.NODE_DIR, XMLFile.ATTRIB_NAME, XMLFile.LOGS);
                 // Mode Logger
                 logger = configFile.getBoolean(XMLFile.NODE_SETTING, XMLFile.ATTRIB_NAME, XMLFile.LOGGER, true);
                 // Dossier des modèles de calcul
                 modelsDirPath = appDirPath +
-                                  configFile.getValue(XMLFile.NODE_DIR, XMLFile.ATTRIB_NAME, XMLFile.MODELS);
+                                configFile.getValue(XMLFile.NODE_DIR, XMLFile.ATTRIB_NAME, XMLFile.MODELS);
                 // Nom publique de l'app
                 publicAppVersion = "";
                 // N° publique de version

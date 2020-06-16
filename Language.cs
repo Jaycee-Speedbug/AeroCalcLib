@@ -12,7 +12,10 @@ namespace AeroCalcCore
         /// <summary>Nom complet du language</summary>
         public string name { get; private set; }
 
-        /// <summary>Nom abrégé en deux lettres, constitue l'ID qui doit être unique dans la liste</summary>
+        /// <summary>
+        /// Nom abrégé en deux lettres, constitue l'ID qui doit être unique dans la liste
+        /// Doit se conformer à ISO 639-1 Code
+        /// </summary>
         public string shortName { get; private set; }
 
         /// <summary>Chemin absolu vers le fichier de définition du language</summary>
@@ -51,6 +54,20 @@ namespace AeroCalcCore
 
         public void enableLanguage() { enabled = true; }
 
+
+
+        /// <summary>
+        /// Surcharge la fonction ToString et produit une string permettant l'utilisation dans un message à l'utilisateur
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString() {
+            string msg = "";
+            msg += shortName + " ";
+            msg += name + " ";
+            msg += enabled ? "ENABLED " : "DISABLED ";
+            msg += fileAbsolutePath + " ";
+            return msg;
+        }
 
 
         /*
