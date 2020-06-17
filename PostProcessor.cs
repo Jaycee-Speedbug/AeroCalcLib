@@ -79,6 +79,14 @@ namespace AeroCalcCore
         /*
          * SERVICES
          */
+        /// <summary>
+        /// Réalise le post traitement d'une commande AeroCalcCommand, pour implémenter les messages à l'utilisateur
+        /// </summary>
+        /// <param name="Cmd">AeroCalcCommand à traiter</param>
+        /// <remarks>
+        //  TODO L'implémentation d'une bibliothèque minimale de messages d'erreur doit être envisagée
+        //  TODO A faire au niveau du constructeur de EventMessages
+        /// </remarks>
         public void postProcess(AeroCalcCommand Cmd)
         {
             if (Cmd.eventCode == AeroCalcCommand.ECODE_INITIAL_VALUE)
@@ -142,26 +150,52 @@ namespace AeroCalcCore
 
 
 
+        /// <summary>
+        /// Load a language pack and update the event messages library
+        /// </summary>
+        /// <param name="fileAbsolutePath"></param>
+        /// <returns>AeroCalcCommand.ECODE_ERR_LANGFILE_*</returns>
+        /// <remarks>
+        /// The current lang pack is considered valid and the new one only replaces the current when
+        /// checks completed
+        /// </remarks>
         public int changeLanguage(string fileAbsolutePath) {
 
             EventMessagesXMLFile xmlFile = new EventMessagesXMLFile(fileAbsolutePath);
-            if (xmlFile.IOStatus == FileIO.FILEOP_SUCCESSFUL) {
-                // Load it then !
-                EventMessages msgs = xmlFile.getEventMessagesFromXML();
-                if (msgs == null) {
-                    // Problem when forging messages library
-                    return AeroCalcCommand.ECODE_ERR_LANG_UNDETERMINED;
-                }
-                else {
-                    // This new lib is ok
-                    EMsgLib = msgs;
-                    return AeroCalcCommand.ECODE_LANG_CHANGED_SUCCESSFULL;
-                }
-            }
-            else {
-                // Error from file reading
-                // TODO Il faut renvoyer un int homogène !!! ECODE ou IOStatus ???
-                return xmlFile.IOStatus;
+
+            switch (xmlFile.IOStatus) {
+
+                case FileIO.FILEOP_SUCCESSFUL:
+                    // Load it then !
+                    EventMessages msgs = xmlFile.getEventMessagesFromXML();
+                    if (msgs == null) {
+                        // Problem when forging messages library
+                        return AeroCalcCommand.ECODE_ERR_LANG_UNDETERMINED;
+                    }
+                    else {
+                        // TODO Is this new library ok ?
+                        // TODO What kind of test should be implemented ? A package should refer to a 'standard' number ?
+                        EMsgLib = msgs;
+                        return AeroCalcCommand.ECODE_LANG_CHANGED_SUCCESSFULL;
+                    }
+
+                case FileIO.FILEOP_INVALID_PATH:
+                    return AeroCalcCommand.ECODE_ERR_LANGFILE_PATH;
+
+                case FileIO.FILEOP_IO_ERROR:
+                    return AeroCalcCommand.ECODE_ERR_LANGFILE_IO_ERROR;
+
+                case FileIO.FILEOP_FILE_DOES_NOT_EXIST:
+                    return AeroCalcCommand.ECODE_ERR_LANGFILE_DOES_NOT_EXIST;
+
+                case FileIO.FILEOP_INPUT_FILE_IS_LOCKED:
+                    return AeroCalcCommand.ECODE_ERR_LANGFILE_SECURITY;
+
+                case FileIO.FILEOP_FILE_INVALID_CONTENT:
+                    return AeroCalcCommand.ECODE_ERR_LANGFILE_CONTENT;
+
+                default:
+                    return AeroCalcCommand.ECODE_ERR_LANGFILE_UKN_ERROR;
             }
         }
 
@@ -175,9 +209,6 @@ namespace AeroCalcCore
             string msg = "";
             msg += "raw command  { " + Cmd.rawTxtCommand;
             msg += " }  action code { " + Cmd.action;
-            // if (!string.IsNullOrEmpty(Cmd.workDirectory)) { msg += " }  work directory { " + Cmd.workDirectory; }
-            // if (!string.IsNullOrEmpty(Cmd.inputFileName)) { msg += " }  input file { " + Cmd.inputFileName; }
-            // if (!string.IsNullOrEmpty(Cmd.outputFileName)) { msg += " }  output file { " + Cmd.outputFileName; }
             msg += " }  event code { " + Cmd.eventCode;
             msg += " }  result { " + Cmd.numericResult;
             msg += " }  duration { " + Cmd.durationMilliSecond + " ms }" + Environment.NewLine;

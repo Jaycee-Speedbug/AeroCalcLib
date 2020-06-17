@@ -28,7 +28,9 @@ namespace AeroCalcCore
         /*
          * CONSTRUCTEURS
          */
-        /// <summary>Construit un objet Language</summary>
+        /// <summary>
+        /// Construit un objet Language
+        /// </summary>
         public Language(string name, string shortName, string fileAbsolutePath, bool enabled)
         {
             this.name = name;
@@ -36,7 +38,10 @@ namespace AeroCalcCore
             this.fileAbsolutePath = fileAbsolutePath;
             this.enabled = enabled;
         }
-        /// <summary>Construit un objet Language par copie</summary>
+
+        /// <summary>
+        /// Construit un objet Language par copie
+        /// </summary>
         public Language(Language lang)
         {
             name = lang.name;

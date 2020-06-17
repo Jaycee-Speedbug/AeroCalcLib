@@ -21,8 +21,8 @@ namespace AeroCalcCore
     public class AeroCalcCommand
     {
         /*
-         * CONSTANTES
-         */
+          * CONSTANTES
+          */
 
         /// <summary>
         /// Caractères de séparation du langage de script
@@ -85,6 +85,7 @@ namespace AeroCalcCore
         public const int ACTION_VERBOSE = 90;
         public const int ACTION_STOP_VERBOSE = 91;
         public const int ACTION_LANG = 95;
+        public const int ACTION_LANG_CHANGE = 96;
 
 
 
@@ -104,7 +105,7 @@ namespace AeroCalcCore
         public const int ECODE_VERBOSE_INACTIVE = 911;
         public const int ECODE_VERBOSE_ALREADY = 912;
         public const int ECODE_HELP_REQUESTED = 900;
-        public const int ECODE_LIST_LANG_SUCCESSFULL = 560; // TODO A ajouter aux fichiers de langue
+        public const int ECODE_LIST_LANG_SUCCESSFULL = 560;
         public const int ECODE_LIST_UNITS_SUCCESSFULL = 550;
         public const int ECODE_SCRIPTFILE_SUCCESSFULL = 500;
         public const int ECODE_LOAD_MODELS_SUCCESSFULL = 400;
@@ -156,6 +157,7 @@ namespace AeroCalcCore
         public const int ECODE_ERR_LANG_DISABLED = -303;
         public const int ECODE_ERR_LANG_ALREADY_SET = -304;
 
+        public const int ECODE_ERR_LANGFILE_CONTENT = -311;
         public const int ECODE_ERR_LANGFILE_DOES_NOT_EXIST = -312;
         public const int ECODE_ERR_LANGFILE_PATH = -313;
         public const int ECODE_ERR_LANGFILE_IO_ERROR = -314;
@@ -187,21 +189,6 @@ namespace AeroCalcCore
                 return (DateTimeOffset.Now.Ticks - startOfProcess.Ticks) / TimeSpan.TicksPerMillisecond;
             }
         }
-
-        /// <summary>
-        /// Nom du dossier de travail, si un tel dossier est nécessaire
-        /// </summary>
-        // public string workDirectory { get; private set; }
-
-        /// <summary>
-        /// Nom du fichier source, si un tel fichier est utilisé
-        /// </summary>
-        // public string inputFileName { get; private set; }
-
-        /// <summary>
-        /// Nom du fichier de sortie, si un tel fichier est créé
-        /// </summary>
-        // public string outputFileName { get; private set; }
 
         /// <summary>
         /// Table des mots de la commande au format texte
@@ -277,18 +264,15 @@ namespace AeroCalcCore
 
         /// <summary>
         /// Constructeur d'objet Commande
-        /// 
         /// </summary>
-        /// <param name="inputText">string contenant la commande en mode texte, sans traitement préalable.
-        /// </param>
-        /// 
+        /// <param name="inputText">string contenant la commande en mode texte, sans traitement préalable.</param>
+        /// <param name="DMC">DataModelContainer, Conteneur de modèles de calculs</param>
+        /// <param name="EC">EnvironmentContext, Objet contenant toutes les données de contexte</param>
+        /// <param name="MS">MemoryStack, Pile de mémoire</param>
         public AeroCalcCommand(string inputText, DataModelContainer DMC, EnvironmentContext EC, MemoryStack MS) {
             // Initialisation des propriétés
             startOfProcess = new DateTime(DateTime.Now.Ticks, DateTimeKind.Utc);
             action = ACTION_INITIAL_VALUE;
-            // workDirectory = "";
-            // inputFileName = "";
-            // outputFileName = "";
             eventCode = ECODE_INITIAL_VALUE;
             numericResult = Double.NaN;
             subs = null;
@@ -325,8 +309,8 @@ namespace AeroCalcCore
 
 
         /*
-         * SERVICES
-         */
+          * SERVICES
+          */
 
         /// <summary>
         /// Retourne True si la valeur du facteur dont le nom a été passé en argument a bien été
@@ -335,8 +319,6 @@ namespace AeroCalcCore
         /// <param name="factorName">Nom du facteur</param>
         /// <param name="value">Valeur du facteur</param>
         /// <returns></returns>
-        /// 
-        // TODO, Pas normal de renvoyer true si le factorName est invalide !!! 
         public bool factor(string factorName, out double value) {
             if (string.IsNullOrEmpty(factorName)) {
                 value = AeroCalc.MODEL_DIMENSION_DEFAULT_VALUE;
@@ -358,7 +340,6 @@ namespace AeroCalcCore
         /// Enregistre le code de l'événement passé en argument
         /// </summary>
         /// <param name="eventCode"></param>
-        /// 
         public void setEventCode(int eventCode) {
             this.eventCode = eventCode;
         }
@@ -368,8 +349,7 @@ namespace AeroCalcCore
         /// <summary>
         /// Enregistre le résultat numérique du calcul réalisé
         /// </summary>
-        /// <param name="result">
-        /// Double, valeur numérique résultat du calcul demandé</param>
+        /// <param name="result">Double, valeur numérique résultat du calcul demandé</param>
         public void setNumericResult(double result) {
             this.numericResult = result;
         }
@@ -379,8 +359,7 @@ namespace AeroCalcCore
         /// <summary>
         /// Enregistre le texte passé en argument comme résultat au format texte
         /// </summary>
-        /// <param name="txtResult">
-        /// Résultat au format texte qui sera communiqué à un utilisateur utilisant la console texte
+        /// <param name="txtResult">Résultat au format texte qui sera communiqué à un utilisateur utilisant la console texte
         /// </param>
         public void setResultText(string txtResult) {
             this.txtResult = txtResult;
@@ -406,17 +385,17 @@ namespace AeroCalcCore
 
 
         /*
-         * METHODES
-         */
+          * METHODES
+          */
 
         /// <summary>
         /// Analyse la requête texte pour définir l'action à réaliser, puis lance l'action
         /// </summary>
-        /// <returns>True si l'action a pu être déterminée et menée</returns>
-        /// <remarks>Créée spécialement pour respecter un principe d'architecture POO, le constructeur ne doit pas
+        /// <returns>True si l'action a pu être identifiée et traitée</returns>
+        /// <remarks>
+        /// Créée spécialement pour respecter un principe d'architecture POO, le constructeur ne doit pas
         /// comporter de traitement métier.
-        /// 
-        /// TODO: Traitement de la chaine de caractère pour localisation.
+        //  TODO: Traitement de la chaine de caractère pour localisation.
         /// </remarks>
         private bool execute() {
             StringComparison StrCompOpt = StringComparison.CurrentCultureIgnoreCase;
@@ -538,7 +517,7 @@ namespace AeroCalcCore
                 }
 
                 if (subs[0].Equals(CMD_WORD_LANG, StrCompOpt)) {
-                    action = ACTION_LANG;
+                    action = ACTION_LANG_CHANGE;
                     cmd_LANG();
                 }
 
@@ -559,15 +538,12 @@ namespace AeroCalcCore
 
         /// <summary>
         /// Traitement d'une commande de calcul de performance.
-        /// Retourne True si le traitement de la commande est complet.
         /// </summary>
-        /// <param name="Cmd">Commande active</param>
         /// <returns>
+        /// Retourne True si le traitement de la commande est complet.
         /// </returns>
         /// <remarks>
-        /// NEW PROCESSOR STRUCTURE
-        ///</remarks>
-        /// 
+        /// </remarks>
         private bool cmd_CALCULATE() {
             // Initialisation
             double numResult = double.NaN;
@@ -624,6 +600,10 @@ namespace AeroCalcCore
 
 
 
+        /// <summary>
+        /// Traitement de la commande de conversion entre unités
+        /// </summary>
+        /// <returns></returns>
         private bool cmd_CONVERT() {
             // COMMANDE NON SUPPORTEE
             eventCode = ECODE_ERR_UNSUPPORTED_CMD;
@@ -632,17 +612,26 @@ namespace AeroCalcCore
 
 
 
+        /// <summary>
+        ///  Traitement de la commande d'exécution d'un script
+        /// </summary>
+        /// <returns></returns>
         private bool cmd_SCRIPTFILE() {
             // Commande traitée par le processeur
             addInfo(subs[1]);
+            eventCode = ECODE_CMD_HANDOVER;
             return true;
         }
 
 
 
+        /// <summary>
+        /// Traitement de la commande de gestion du pack de langue
+        /// </summary>
+        /// <returns></returns>
         private bool cmd_LANG() {
-            if (subs.Length == 1) {
-                // Ask for what language is currently used
+            if (action == ACTION_LANG) {
+                // Language currently used
                 addInfo(EnvContext.Langs.Library[EnvContext.activeLangIndex].name);
                 addInfo(EnvContext.Langs.Library[EnvContext.activeLangIndex].shortName);
                 eventCode = ECODE_ACTIVE_LANG;
@@ -665,12 +654,22 @@ namespace AeroCalcCore
                     eventCode = ECODE_ERR_LANG_ALREADY_SET;
                     return true;
                 }
+                // Substitution du code language par le chemin du fichier
+                // TODO A voir si cette substitution est acceptable pour la qualité du code !!
+                // TODO Une propriété absolutePath pour AeroCalcCommand, dédiée à recevoir les chemins d'accès
+                // TODO serait peut être plus appropriée
+                subs[1] = l.fileAbsolutePath;
+                eventCode = ECODE_CMD_HANDOVER;
             }
             return true;
         }
 
 
 
+        /// <summary>
+        ///  Traitement de la commande de fermeture de l'interpréteur de commande
+        /// </summary>
+        /// <returns></returns>
         private bool cmd_EXIT() {
             // Commande traitée par le processeur
             // TODO eventCode à générer ds le processeur
@@ -680,6 +679,10 @@ namespace AeroCalcCore
 
 
 
+        /// <summary>
+        /// Traitement de la commande de demande d'aide
+        /// </summary>
+        /// <returns></returns>
         private bool cmd_HELP() {
             // Commande traitée par le processeur
             // TODO eventCode à générer ds le processeur
@@ -689,6 +692,10 @@ namespace AeroCalcCore
 
 
 
+        /// <summary>
+        /// Traitement de la commande d'initialisation de l'interpréteur de commande
+        /// </summary>
+        /// <returns></returns>
         private bool cmd_INIT() {
             // Commande traitée par le processeur
             eventCode = ECODE_CMD_HANDOVER;
@@ -702,8 +709,9 @@ namespace AeroCalcCore
         /// disponibles dans le container de performances
         /// </summary>
         /// <returns>Bool résultat du traitement</returns>
-        /// <remarks></remarks>
-        /// TODO Objectif non atteint, on doit pouvoir lister les modèles avec filtrage
+        /// <remarks>
+        // TODO Objectif partiellement atteint, on doit pouvoir lister les modèles avec filtrage
+        /// </remarks>
         private bool cmd_LIST_MODELS() {
             // Recherche des noms de modèles de performance qui match
             string models;
@@ -724,10 +732,10 @@ namespace AeroCalcCore
         /// Traitement de la commande de création d'une liste des unités de mesures
         /// disponibles dans le container de performances
         /// </summary>
-        /// <param name="Cmd">Commande active</param>
         /// <returns>True si le traitement n'a pas généré d'erreur</returns>
-        /// <remarks></remarks>
-        /// TODO: Objectif non encore atteint, on doit pouvoir lister les unités avec filtrage
+        /// <remarks>
+        // TODO Objectif partiellement atteint, on doit pouvoir lister les unités avec filtrage
+        /// </remarks>
         private bool cmd_LIST_UNITS() {
             // Liste des unités de la bibliothèque
             string msg = "";
@@ -749,9 +757,11 @@ namespace AeroCalcCore
 
 
 
+        /// <summary>
+        /// Traitement de la commande de liste des packs de langue enregistrés
+        /// </summary>
+        /// <returns></returns>
         private bool cmd_LIST_LANG() {
-            // COMMANDE NON SUPPORTEE
-            //eventCode = ECODE_ERR_UNSUPPORTED_CMD;
             string listMsg = "";
             foreach (Language lang in EnvContext.Langs.Library) {
                 listMsg += lang.ToString() + Environment.NewLine;
@@ -803,7 +813,6 @@ namespace AeroCalcCore
         /// <summary>
         /// Traite la commande de changement de mode VERBOSE
         /// </summary>
-        /// <param name="Cmd">Commande active</param>
         /// <returns>Code du traitement de l'opération</returns>
         /// <remarks>TO BE DEVELOPPED</remarks>
         private void cmd_VERBOSE() {
@@ -928,7 +937,7 @@ namespace AeroCalcCore
         /// <remarks>
         /// A remplacer par un traitement plus automatisé, en utilisant une List<> ou 
         /// </remarks>
-        /// TODO To be replaced by a formating function
+        // TODO To be replaced by a formating function
         private void useAlias() {
             bool aliasUsed = false;
             string aliasCmd = "";

@@ -82,8 +82,7 @@ namespace AeroCalcCore
         /// </remarks>
         public AeroCalcCommand process(string txtCommand) {
             AeroCalcCommand Cmd = new AeroCalcCommand(txtCommand, ModelsLib, EnvContext, MemStack);
-
-            // Certaines commandes rendent la main pour être traitées ici, dans le processeur
+            // Certaines commandes sont traitées ici, dans le processeur et non à la construction de la commande
             switch (Cmd.action) {
                 case AeroCalcCommand.ACTION_INIT_INTERPRETER:
                     // Initialisation
@@ -103,6 +102,12 @@ namespace AeroCalcCore
                 case AeroCalcCommand.ACTION_HELP:
                     // Aide
                     Cmd.setEventCode(AeroCalcCommand.ECODE_HELP_REQUESTED);
+                    break;
+
+                case AeroCalcCommand.ACTION_LANG_CHANGE:
+                    // Changement de pack de langue
+                    if (Cmd.eventCode==AeroCalcCommand.ECODE_CMD_HANDOVER) { setLanguage(Cmd); }
+                    //setLanguage(Cmd);
                     break;
             }
             // Post process: Génération de tous les messages vers l'utilisateur
@@ -178,9 +183,6 @@ namespace AeroCalcCore
                         break;
                 }
             }
-
-            // COMMANDE NON SUPPORTEE
-            //Cmd.setEventCode(AeroCalcCommand.EVENTCODE_UNSUPPORTED_COMMAND);
             return true;
         }
 
@@ -241,6 +243,19 @@ namespace AeroCalcCore
                 Cmd.setEventCode(AeroCalcCommand.ECODE_ERR_REINIT_NOT_ALLOWED);
             }
             return false;
+        }
+
+
+
+        /// <summary>
+        /// Active un pack de langue demandé par l'utilisateur
+        /// </summary>
+        /// <param name="Cmd">AeroCalcCommand qui a demandé le traitement</param>
+        /// <returns></returns>
+        private bool setLanguage(AeroCalcCommand Cmd) {
+
+            Cmd.setEventCode(PostProc.changeLanguage(Cmd.subs[1]));
+            return true;
         }
 
     }

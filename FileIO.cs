@@ -68,6 +68,10 @@ namespace AeroCalcCore
         //     The file specified in path was not found.
         public const int FILEOP_FILE_DOES_NOT_EXIST = -8;
 
+        //   Other errors due to content
+        //   i.e. XML errors
+        public const int FILEOP_FILE_INVALID_CONTENT = -9;
+
 
 
         // Constantes des types de fichiers gérés
@@ -240,12 +244,6 @@ namespace AeroCalcCore
             catch (Exception e) {
                 setIOStatus(e);
             }
-            /*
-            if (Directory.Exists(directoryAbsolutePath)) {
-            }
-            else {
-                IOStatus = FILEOP_INVALID_PATH;
-            }*/
             return files;
         }
 
@@ -537,7 +535,6 @@ namespace AeroCalcCore
         /// <param name="word">String à convertir</param>
         /// <param name="result">Résultat de la conversion</param>
         /// <returns>True si la conversion a réussie, False dans le cas contraire</returns>
-        /// 
         protected bool parseABoolean(string word, out bool result) {
             int parsedInt;
 
@@ -586,39 +583,6 @@ namespace AeroCalcCore
         public bool __testParseADouble(string word, out double result) {
             return parseADouble(word, out result);
         }
-
-
-
-        /// <summary>
-        /// Expurge les commentaires
-        /// </summary>
-        /// <returns>True, si réussite</returns>
-        /// TODO A déplacer dans une classe supérieure, en charge des SCRIPTS et MODELS
-        /*
-        private bool filterComments(string[] originalLines, List<String> filteredLines) {
-            int count = 0;
-            int pos = -1;
-
-            // Vider filteredLines
-            filteredLines.Clear();
-            // Lecture et filtrage des lignes
-            while (count < originalLines.Length) {
-                pos = originalLines[count].IndexOf(IDENTIFIER_COMMENT_LINE);
-                if (pos > 0) {
-                    // La ligne est partiellement commentée
-                    filteredLines.Add(originalLines[count].Remove(pos));
-                }
-                else if (pos == 0) {
-                    // La ligne commence par l'opérateur de commentaire
-                }
-                else {
-                    // Pas d'occurence trouvée
-                    filteredLines.Add(originalLines[count]);
-                }
-                count++;
-            }
-            return true;
-        }*/
 
     }
 

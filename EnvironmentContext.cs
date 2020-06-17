@@ -58,7 +58,6 @@ namespace AeroCalcCore
 
         public Languages Langs { get; private set; }
 
-        // public string[] languageList { get; private set; }
 
 
         public int status { get; private set; }
@@ -67,16 +66,22 @@ namespace AeroCalcCore
         /*
          * CONSTRUCTEUR
          */
-
+        /// <summary>
+        /// Construit un objet EnvironmentContext, en charge de tous les paramètres de configuration
+        /// utiles lors de l'exécution
+        /// </summary>
         public EnvironmentContext()
         {
             status = 0;
             appDirPath = AppDomain.CurrentDomain.BaseDirectory;
         }
 
+        /// <summary>
+        /// Construit un objet EnvironmentContext, en charge de tous les paramètres de configuration
+        /// utiles lors de l'exécution
+        /// </summary>
         public EnvironmentContext(string configFileRelPath)
         {
-
             status = 0;
             appDirPath = AppDomain.CurrentDomain.BaseDirectory;
             loadConfigFile(configFileRelPath);
@@ -87,10 +92,13 @@ namespace AeroCalcCore
         /*
          * SERVICES
          */
-
+        /// <summary>
+        /// Réalise la lecture de tous les paramètres disponibles dans le fichier de configuration
+        /// </summary>
+        /// <param name="configFileRelPath"></param>
+        /// <returns></returns>
         public int loadConfigFile(string configFileRelPath)
         {
-
             // Path absolu du fichier de configuration
             configFilePath = appDirPath + configFileRelPath;
             // Dossier de configuration
@@ -155,7 +163,10 @@ namespace AeroCalcCore
 
 
 
+        /// <summary>
         /// Set VERBOSE according to VerboseAllowed
+        /// </summary>
+        /// <param name="v"></param>
         public void setVerbose(bool v)
         {
             if (verboseAllowed)
@@ -202,89 +213,6 @@ namespace AeroCalcCore
         /*
          * METHODES
          */
-
-        /*  Supprimé pour éviter les traitements bas niveau
-        bool setConfigFileDir(string configurationFileRelativePath)
-        {
-            configFilePath = appDirPath + configurationFileRelativePath;
-            try
-            {
-                configDirPath = Path.GetFullPath(configFilePath).Substring(0, configFilePath.LastIndexOf(Path.DirectorySeparatorChar));
-            }
-            catch (ArgumentException)
-            {
-                return false;
-            }
-            return true;
-        }
-        */
-
-
-
-        /// Lecture du fichier de configuration
-        /// SUPPR: remplacé par un traitement direct dans une fonction publique
-        /*
-        bool loadConfiguration()
-        {
-
-            // Lecture et exploitation du fichier XML de configuration
-            XMLFile configFile = new XMLFile("", configFilePath);
-            if (configFile.IOStatus == FileIO.FILEOP_SUCCESSFUL)
-            {
-                // Fichier des unités de calcul
-                unitsFileName = configDirPath +
-                                System.IO.Path.DirectorySeparatorChar +
-                                configFile.getValue(XMLFile.NODE_FILE, XMLFile.ATTRIB_NAME, XMLFile.UNITS);
-                // Dossier des modèles de calcul
-                modelsDirPath = appDirPath +
-                                  configFile.getValue(XMLFile.NODE_DIR, XMLFile.ATTRIB_NAME, XMLFile.MODELS);
-                // Dossier des scripts
-                scriptsDirPath = appDirPath +
-                                   configFile.getValue(XMLFile.NODE_DIR, XMLFile.ATTRIB_NAME, XMLFile.SCRIPTS);
-
-                // Mode VERBOSE ALLOWED
-                verboseAllowed = getBoolValue(configFile, XMLFile.NODE_SETTING, XMLFile.ATTRIB_NAME, XMLFile.VERBOSE_ALLOWED, true);
-                // Mode VERBOSE
-                setVerbose(getBoolValue(configFile, XMLFile.NODE_SETTING, XMLFile.ATTRIB_NAME, XMLFile.VERBOSE, false));
-                // Mode UnitsEnabled
-                unitsEnabled = getBoolValue(configFile, XMLFile.NODE_SETTING, XMLFile.ATTRIB_NAME, XMLFile.UNITS_ENABLED, true);
-                // Mode Logger
-                logger = getBoolValue(configFile, XMLFile.NODE_SETTING, XMLFile.ATTRIB_NAME, XMLFile.LOGGER, true);
-
-                status = FileIO.FILEOP_SUCCESSFUL;
-            }
-            else
-            {
-                status = configFile.IOStatus;
-                return false;
-            }
-            // NO ERROR
-            return true;
-        }
-        */
-
-
-
-        /// <summary>
-        /// Return the boolean value of the designated XML field (a node name with an attribute), otherwise the default value
-        /// </summary>
-        /*
-        bool getBoolValue(XMLFile configFile, string nodeName, string attributeName, string attributeValue, bool defaultVal)
-        {
-
-            bool b;
-
-            if (!Boolean.TryParse(configFile.getValue(nodeName, attributeName, attributeValue), out b))
-            {
-                return defaultVal;
-            }
-            else
-            {
-                return b;
-            }
-
-        }
-        */
 
     }
 
