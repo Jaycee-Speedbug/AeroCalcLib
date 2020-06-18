@@ -111,16 +111,11 @@ namespace AeroCalcCore
                 // Langue active
                 activeLangIndex = 0;
                 activeLang = configFile.getValue(XMLFile.NODE_SETTING, XMLFile.ATTRIB_NAME, XMLFile.LANGUAGE);
-                // Dossier de l'application
-                appDirPath = appDirPath;
-                // Fichier de configuration
-                configFilePath = configFilePath;
-
                 // Version du fichier de configuration (non utilisé)
                 // TODO implémenter l'utilisation du numéro de version du fichier de configuration
-                string[] nodes = { XMLFile.NODE_CONFIG };
-                configFileVersion = configFile.getAttribute(nodes, XMLFile.ATTRIB_VERSION);
-
+                //string[] nodes = { XMLFile.NODE_CONFIG };
+                configFileVersion = configFile.getAttribute(new string[] { XMLFile.NODE_APP, XMLFile.NODE_CONFIG},
+                                                            XMLFile.ATTRIB_VERSION);
                 // Packs de langue
                 Langs = configFile.GetLanguagesFromXML(configDirPath);
                 // Dossiers des logs
@@ -181,6 +176,20 @@ namespace AeroCalcCore
 
 
 
+        public void setActiveLanguage(int libIndex) {
+            if (libIndex>=0 && libIndex < Langs.Count) {
+                activeLangIndex = libIndex;
+                activeLang = Langs.Library[activeLangIndex].isoCode;
+            }
+        }
+
+
+
+        public Language getActiveLanguage() {
+            return Langs.Find(activeLang);
+        }
+
+
         public override string ToString()
         {
             string msg;
@@ -203,7 +212,7 @@ namespace AeroCalcCore
             msg += "\n Languages             : ";
             foreach (Language l in Langs.Library)
             {
-                msg += "\n     " + l.shortName + " " + l.name + " " + l.fileAbsolutePath;
+                msg += "\n     " + l.isoCode + " " + l.name + " " + l.fileAbsolutePath;
             }
             return msg;
         }

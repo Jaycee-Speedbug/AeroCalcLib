@@ -106,8 +106,7 @@ namespace AeroCalcCore
 
                 case AeroCalcCommand.ACTION_LANG_CHANGE:
                     // Changement de pack de langue
-                    if (Cmd.eventCode==AeroCalcCommand.ECODE_CMD_HANDOVER) { setLanguage(Cmd); }
-                    //setLanguage(Cmd);
+                    if (Cmd.eventCode == AeroCalcCommand.ECODE_CMD_HANDOVER) { setLanguage(Cmd); }
                     break;
             }
             // Post process: Génération de tous les messages vers l'utilisateur
@@ -253,8 +252,10 @@ namespace AeroCalcCore
         /// <param name="Cmd">AeroCalcCommand qui a demandé le traitement</param>
         /// <returns></returns>
         private bool setLanguage(AeroCalcCommand Cmd) {
-
-            Cmd.setEventCode(PostProc.changeLanguage(Cmd.subs[1]));
+            Cmd.setEventCode(PostProc.changeLanguage(EnvContext.Langs.Library[Cmd.index]));
+            if (Cmd.eventCode == AeroCalcCommand.ECODE_LANG_CHANGED_SUCCESSFULL) {
+                EnvContext.setActiveLanguage(Cmd.index);
+            }
             return true;
         }
 

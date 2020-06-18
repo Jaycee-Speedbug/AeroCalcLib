@@ -37,21 +37,21 @@ namespace AeroCalcCore
 
         public void Add(Language lang)
         {
-            if (!Library.Exists(x => x.shortName == lang.shortName))
+            if (!Library.Exists(x => x.isoCode == lang.isoCode))
             {
                 Library.Add(lang);
             }
         }
 
 
-        public Language Find(string langShortName)
+        public Language Find(string languageISOCode)
         {
-            return (Library.Find(item => item.shortName == langShortName));
+            return (Library.Find(item => item.isoCode == languageISOCode));
         }
 
-        public int languageIndex(string langShortName)
+        public int languageIndex(string languageISOCode)
         {
-            Language lang = Library.Find(item => item.shortName == langShortName);
+            Language lang = Library.Find(item => item.isoCode == languageISOCode);
             if (lang is null)
             {
                 return -1;

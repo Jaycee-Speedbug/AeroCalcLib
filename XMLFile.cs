@@ -156,7 +156,34 @@ namespace AeroCalcCore
         /// Chaine contenant l'attribut, ou une chaine vide si l'attribut n'a pas été trouvé
         /// </returns>
         public string getAttribute(string[] nodeNames, string attributeName) {
-            if (xDoc == null || nodeNames == null || string.IsNullOrEmpty(attributeName)) { return ""; }
+            if (xDoc == null || nodeNames == null || string.IsNullOrEmpty(attributeName)) {
+                return "";
+            }
+            string attribVal;
+            try {
+                XElement xe = xDoc.Element(nodeNames[0]);
+                for (int index = 1; index < nodeNames.Length; index++) {
+                    xe = xe.Element(nodeNames[index]);
+                    if (xe == null) {
+                        break;
+                    }
+                }
+                attribVal = xe.Attribute(attributeName).Value;
+            }
+            catch (Exception e) {
+                return "";
+            }
+            return (attribVal == null) ? "" : attribVal;
+
+
+            /*
+            List<XElement> loopCollec = new List<XElement>();
+                foreach (XElement item in collec) {
+                    loopCollec.AddRange(item.Descendants(nodeNames[index]));
+                }
+
+
+                xDoc.Element(NODE_APP);
             List<XElement> collec = new List<XElement>();
             collec.Add((XElement)xDoc.FirstNode);
             for (int index = 0; index < nodeNames.Length; index++) {
@@ -172,6 +199,7 @@ namespace AeroCalcCore
                 }
             }
             return "";
+            */
         }
 
 

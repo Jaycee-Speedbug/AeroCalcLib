@@ -31,8 +31,6 @@ namespace AeroCalcCore {
             double val;
             name = "";
 
-            // TODO les séparateurs ne doivent pas être locaux
-            // char[] separators = { '=', ':' };
             char[] separators = { AeroCalcCommand.CMD_OPERATOR_AFFECT, AeroCalcCommand.CMD_OPERATOR_UNIT };
             string[] subStrings = factor.Split(separators);
 
@@ -54,7 +52,7 @@ namespace AeroCalcCore {
                     name = subStrings[0];
                     value = val;
                     /// <remarks>
-                    /// TODO, à modifier une fois la gestion des unités implémentée
+                    // TODO, à modifier une fois la gestion des unités implémentée
                     /// </remarks>
                     unitCode = AeroCalc.UNIT_UNDETERMINED;
                     /*

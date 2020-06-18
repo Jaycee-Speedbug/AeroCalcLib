@@ -35,13 +35,25 @@ namespace AeroCalcCore
         /*
          * SERVICES
          */
-
+        /// <summary>
+        /// Load the Library with all EventMessage objects found in the XML file
+        /// </summary>
+        /// <returns></returns>
         public EventMessages getEventMessagesFromXML()
         {
             EventMessages EMLib = new EventMessages();
             string[] splitters = { "\r\n", "\n" };
 
             if (xDoc != null) {
+                // Language Package ISO code
+                string isoCode = getAttribute(new string[] { NODE_APP, NODE_LANG_PACK }, ATTRIB_NAME);
+                EMLib.setLangShortName(isoCode);
+                // Language Package version number
+                string versionStr = getAttribute(new string[] { NODE_APP, NODE_LANG_PACK }, ATTRIB_VERSION);
+                int version = getIntOrMinValue(versionStr);
+                version = (version == int.MinValue) ? 0 : version;
+                EMLib.setVersion(version);
+                // This is the requested Language package
                 foreach (XElement item in xDoc.Descendants(NODE_MESSAGE)) {
                     // This is a Message node, let's get the data
                     string msg = item.Value;

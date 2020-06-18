@@ -19,6 +19,11 @@ namespace AeroCalcCore
         public int Count => eMsgList.Count;
         public int Capacity => eMsgList.Capacity;
 
+        public string langIsoCode { get; private set; }
+
+        // TODO Propriété à développer pour contrôler la version des packs de langue utilisés
+        public int langPackVersion { get; private set; }
+
 
 
         /*
@@ -30,6 +35,9 @@ namespace AeroCalcCore
         public EventMessages()
         {
             eMsgList = new List<EventMessage>();
+            langIsoCode = "";
+            langPackVersion = 0;
+
             // TODO Minimal Library to be implemented
 
         }
@@ -38,15 +46,47 @@ namespace AeroCalcCore
         /*
          * SERVICES
          */
-
+        /// <summary>
+        /// Vide la library
+        /// </summary>
         public void Clear() => eMsgList.Clear();
 
 
 
+        /// <summary>
+        /// Ajoute un EventMessage à la Library
+        /// </summary>
+        /// <param name="em"></param>
         public void Add(EventMessage em) => addItem(em.msgID,em.msgStr);
 
 
 
+        /// <summary>
+        /// Enregistrement du code de deux lettres correspondant au package de langue utilisé pour la Library
+        /// </summary>
+        /// <param name="languageShortName"></param>
+        public void setLangShortName(string languageShortName) {
+            langIsoCode = languageShortName;
+        }
+
+
+
+        /// <summary>
+        /// Enregistre le numéro de version du package de langue utilisé pour la Library
+        /// </summary>
+        /// <param name="languagePackVersion"></param>
+        public void setVersion(int languagePackVersion) {
+            langPackVersion = languagePackVersion;
+        }
+
+
+
+        /// <summary>
+        /// Ajoute un EventMessage à la Library
+        /// </summary>
+        /// <param name="eventCode">Code de l'événement de type AeroCalcCommand.ECODE_* </param>
+        /// <param name="eventMessage">Message à l'utilisateur</param>
+        /// <returns></returns>
         public bool addItem(int eventCode, string eventMessage)
         {
             EventMessage eMsg = new EventMessage(eventCode, eventMessage);

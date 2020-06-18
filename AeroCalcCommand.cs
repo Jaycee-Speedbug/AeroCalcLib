@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
-
+using System.Runtime.CompilerServices;
 
 namespace AeroCalcCore
 {
@@ -232,8 +231,15 @@ namespace AeroCalcCore
         // TODO DRAFT of a report system
         public string[] info { get; private set; }
 
+        /// <summary>
+        /// Flag du mode Verbose
+        /// </summary>
         public bool verbosed { get; private set; }
-
+        
+        /// <summary>
+        /// Index servant dans certaines commandes (LANG CHANGE)
+        /// </summary>
+        public int index { get; private set; }
 
 
         /*
@@ -633,33 +639,30 @@ namespace AeroCalcCore
             if (action == ACTION_LANG) {
                 // Language currently used
                 addInfo(EnvContext.Langs.Library[EnvContext.activeLangIndex].name);
-                addInfo(EnvContext.Langs.Library[EnvContext.activeLangIndex].shortName);
+                addInfo(EnvContext.Langs.Library[EnvContext.activeLangIndex].isoCode);
                 eventCode = ECODE_ACTIVE_LANG;
             }
             else {
                 // Set a language
-                Language l = EnvContext.Langs.Library.Find(x => x.shortName.Equals(subs[1]));
+                Language l = EnvContext.Langs.Library.Find(x => x.isoCode.Equals(subs[1]));
                 if (l == null) {
                     addInfo(subs[1]);
                     eventCode = ECODE_ERR_LANG_DOES_NOT_EXIST;
                     return true;
                 }
                 if (!l.enabled) {
-                    addInfo(l.shortName);
+                    addInfo(l.isoCode);
                     eventCode = ECODE_ERR_LANG_DISABLED;
                     return true;
                 }
-                if (l.shortName.Equals(EnvContext.activeLang)) {
+                if (l.isoCode.Equals(EnvContext.activeLang)) {
                     addInfo(subs[1]);
                     eventCode = ECODE_ERR_LANG_ALREADY_SET;
                     return true;
                 }
-                // Substitution du code language par le chemin du fichier
-                // TODO A voir si cette substitution est acceptable pour la qualité du code !!
-                // TODO Une propriété absolutePath pour AeroCalcCommand, dédiée à recevoir les chemins d'accès
-                // TODO serait peut être plus appropriée
-                subs[1] = l.fileAbsolutePath;
+                index = EnvContext.Langs.Library.IndexOf(l);
                 eventCode = ECODE_CMD_HANDOVER;
+                addInfo(new string[] { l.name, l.isoCode });
             }
             return true;
         }
@@ -672,7 +675,6 @@ namespace AeroCalcCore
         /// <returns></returns>
         private bool cmd_EXIT() {
             // Commande traitée par le processeur
-            // TODO eventCode à générer ds le processeur
             eventCode = ECODE_CMD_HANDOVER;
             return true;
         }
@@ -685,7 +687,6 @@ namespace AeroCalcCore
         /// <returns></returns>
         private bool cmd_HELP() {
             // Commande traitée par le processeur
-            // TODO eventCode à générer ds le processeur
             eventCode = ECODE_CMD_HANDOVER;
             return true;
         }

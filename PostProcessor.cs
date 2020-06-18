@@ -1,6 +1,6 @@
 using System;
 using System.IO; // TODO remove when messages filename integrated with EnvContext
-
+using System.Reflection.Emit;
 
 namespace AeroCalcCore
 {
@@ -27,51 +27,31 @@ namespace AeroCalcCore
         /*
          * PROPRIETES
          */
-        //readonly string[] fields = { FIELD_RAW_TXT_CMD, FIELD_MODEL_NAME, FIELD_MODEL_FACTOR, FIELD_MODELS_IN_MEM };
 
 
 
         /*
          * MEMBRES
          */
-        // TODO La bibliothèque doit être au minimum chargée avec le minimum de messages nécessaires pour indiquer
+        // TODO La bibliothèque doit être au minimum chargée avec les messages nécessaires pour indiquer
         // TODO le problème à l'utilisateur, dans la 'langue de base', l'anglais.
         // TODO Cette bibliothèque minimale est ensuite remplacée par celle chargée via un pack de langue.
         // TODO Le remplacement d'une bibliothèque de messages ne se fait qu'après validation de la nouvelle
         // TODO par num de version?, contrôle de la présence de certains messages clés ? A DEFINIR
-        
+
         /// <summary>
         /// Library stockant les messages à l'utilisateur
         /// </summary>
         private EventMessages EMsgLib;
-
-        //private bool verbose;
 
 
 
         /*
          * CONSTRUCTEUR
          */
-        public PostProcessor(EnvironmentContext EC)
-        {
-            // TODO A intégrer pleinement à l'object EnvironmentContext pour éviter le codage en dur du nom de fichier
-            //! Remove when possible
-            //string fileName = EC.configDirPath + Path.AltDirectorySeparatorChar + "fr.xml";
-            string fileName = EC.Langs.Library.Find(x => x.shortName.Equals(EC.activeLang)).fileAbsolutePath;
-
-            // TODO Utiliser la fonction changeLanguage() pour charger la bibliothèque de messages
-            //EventMessagesXMLFile xmlFile = new EventMessagesXMLFile(fileName);
-
-            changeLanguage(fileName);
-
-            /*
-            if (xmlFile.IOStatus == FileIO.FILEOP_SUCCESSFUL) {
-                EMsgLib = xmlFile.getEventMessagesFromXML();
-            }
-            */
-
-            //verbose = EC.verbose;
-
+        public PostProcessor(EnvironmentContext EC) {
+            EMsgLib = new EventMessages();
+            changeLanguage(EC.getActiveLanguage());
         }
 
 
@@ -87,42 +67,33 @@ namespace AeroCalcCore
         //  TODO L'implémentation d'une bibliothèque minimale de messages d'erreur doit être envisagée
         //  TODO A faire au niveau du constructeur de EventMessages
         /// </remarks>
-        public void postProcess(AeroCalcCommand Cmd)
-        {
-            if (Cmd.eventCode == AeroCalcCommand.ECODE_INITIAL_VALUE)
-            {
+        public void postProcess(AeroCalcCommand Cmd) {
+            if (Cmd.eventCode == AeroCalcCommand.ECODE_INITIAL_VALUE) {
                 // Command totally unprocessed, not a normal situation
                 string msg = "[" + Cmd.eventCode + "]" + " POSTPROC:UNPROCESSED COMMAND";
                 Cmd.setResultText(msg);
                 // TODO Faut-il autoriser la demande EXIT par PostProcessor ?
                 Cmd.isExit();
             }
-            if (Cmd.eventCode > 0)
-            {
+            if (Cmd.eventCode > 0) {
                 // Successfull operations
-                if (!double.IsNaN(Cmd.numericResult))
-                {
+                if (!double.IsNaN(Cmd.numericResult)) {
                     // A numeric value has been produced
                     Cmd.setResultText(Cmd.rawTxtCommand + " = " + Cmd.numericResult);
                 }
-                else
-                {
+                else {
                     // No numeric value to expose
                     string msg = swapFields(EMsgLib.getMessageWith(Cmd.eventCode), Cmd.info);
-                    if (!string.IsNullOrEmpty(Cmd.txtResult))
-                    {
+                    if (!string.IsNullOrEmpty(Cmd.txtResult)) {
                         // A message has been prepared, message from library is added, if it exists
-                        if (!string.IsNullOrEmpty(msg))
-                        {
+                        if (!string.IsNullOrEmpty(msg)) {
                             // A msg from library is found
                             Cmd.setResultText(Cmd.txtResult + Environment.NewLine + msg);
                         }
                     }
-                    else
-                    {
+                    else {
                         // No message prepared by the command
-                        if (string.IsNullOrEmpty(msg))
-                        {
+                        if (string.IsNullOrEmpty(msg)) {
                             // No msg from library
                             msg = "[" + Cmd.eventCode + "]" + " POSTPROC:RESULT MSG NOT IMPLEMENTED";
                         }
@@ -130,20 +101,17 @@ namespace AeroCalcCore
                     }
                 }
             }
-            if (Cmd.eventCode < 0)
-            {
+            if (Cmd.eventCode < 0) {
                 // Error
                 string msg = swapFields(EMsgLib.getMessageWith(Cmd.eventCode), Cmd.info);
-                if (string.IsNullOrEmpty(msg))
-                {
+                if (string.IsNullOrEmpty(msg)) {
                     // Nothing returned
                     msg = "[" + Cmd.eventCode + "]" + " POSTPROC:ERROR MSG NOT IMPLEMENTED";
                 }
                 Cmd.setResultText(msg);
             }
             // Verbose
-            if (Cmd.verbosed)
-            {
+            if (Cmd.verbosed) {
                 verboseCommand(Cmd);
             }
         }
@@ -159,9 +127,10 @@ namespace AeroCalcCore
         /// The current lang pack is considered valid and the new one only replaces the current when
         /// checks completed
         /// </remarks>
-        public int changeLanguage(string fileAbsolutePath) {
+        public int changeLanguage(Language Lang) {
 
-            EventMessagesXMLFile xmlFile = new EventMessagesXMLFile(fileAbsolutePath);
+            //EventMessagesXMLFile xmlFile = new EventMessagesXMLFile(fileAbsolutePath);
+            EventMessagesXMLFile xmlFile = new EventMessagesXMLFile(Lang.fileAbsolutePath);
 
             switch (xmlFile.IOStatus) {
 
@@ -175,8 +144,17 @@ namespace AeroCalcCore
                     else {
                         // TODO Is this new library ok ?
                         // TODO What kind of test should be implemented ? A package should refer to a 'standard' number ?
-                        EMsgLib = msgs;
-                        return AeroCalcCommand.ECODE_LANG_CHANGED_SUCCESSFULL;
+                        if (msgs.langIsoCode != Lang.isoCode) {
+                            // Ce n'est pas le language demandé...
+                            return AeroCalcCommand.ECODE_ERR_LANG_UNDETERMINED;
+                        }
+                        else {
+                            // OK !!
+                            EMsgLib = msgs;
+
+                            return AeroCalcCommand.ECODE_LANG_CHANGED_SUCCESSFULL;
+                        }
+
                     }
 
                 case FileIO.FILEOP_INVALID_PATH:
@@ -204,8 +182,7 @@ namespace AeroCalcCore
         /*
          * METHODES
          */
-        private void verboseCommand(AeroCalcCommand Cmd)
-        {
+        private void verboseCommand(AeroCalcCommand Cmd) {
             string msg = "";
             msg += "raw command  { " + Cmd.rawTxtCommand;
             msg += " }  action code { " + Cmd.action;
@@ -217,13 +194,10 @@ namespace AeroCalcCore
 
 
 
-        private string swapFields(string message, string[] info)
-        {
-            if (info != null && message.Contains("$0"))
-            {
+        private string swapFields(string message, string[] info) {
+            if (info != null && message.Contains("$0")) {
                 // Un code à remplacer est identifié
-                for (int index = 0; index < info.Length; index++)
-                {
+                for (int index = 0; index < info.Length; index++) {
                     message = message.Replace(string.Concat("$", index.ToString()), info[index]);
                 }
             }
@@ -232,8 +206,7 @@ namespace AeroCalcCore
         /// <summary>
         /// Accesseur de Test
         /// </summary>
-        public string _A_formatMsg(string message, string[] info)
-        {
+        public string _A_formatMsg(string message, string[] info) {
             return swapFields(message, info);
         }
 

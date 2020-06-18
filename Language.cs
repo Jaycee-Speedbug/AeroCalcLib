@@ -16,7 +16,7 @@ namespace AeroCalcCore
         /// Nom abrégé en deux lettres, constitue l'ID qui doit être unique dans la liste
         /// Doit se conformer à ISO 639-1 Code
         /// </summary>
-        public string shortName { get; private set; }
+        public string isoCode { get; private set; }
 
         /// <summary>Chemin absolu vers le fichier de définition du language</summary>
         public string fileAbsolutePath { get; private set; }
@@ -31,10 +31,10 @@ namespace AeroCalcCore
         /// <summary>
         /// Construit un objet Language
         /// </summary>
-        public Language(string name, string shortName, string fileAbsolutePath, bool enabled)
+        public Language(string name, string isoCode, string fileAbsolutePath, bool enabled)
         {
             this.name = name;
-            this.shortName = shortName;
+            this.isoCode = isoCode;
             this.fileAbsolutePath = fileAbsolutePath;
             this.enabled = enabled;
         }
@@ -45,7 +45,7 @@ namespace AeroCalcCore
         public Language(Language lang)
         {
             name = lang.name;
-            shortName = lang.shortName;
+            isoCode = lang.isoCode;
             fileAbsolutePath = lang.fileAbsolutePath;
             enabled = lang.enabled;
         }
@@ -67,7 +67,7 @@ namespace AeroCalcCore
         /// <returns></returns>
         public override string ToString() {
             string msg = "";
-            msg += shortName + " ";
+            msg += isoCode + " ";
             msg += name + " ";
             msg += enabled ? "ENABLED " : "DISABLED ";
             msg += fileAbsolutePath + " ";
@@ -86,7 +86,7 @@ namespace AeroCalcCore
             {
                 return false;
             }
-            if (this.shortName == lang.shortName)
+            if (this.isoCode == lang.isoCode)
             {
                 return true;
             }
@@ -116,7 +116,7 @@ namespace AeroCalcCore
             else
             {
                 Language lang = (Language)obj;
-                return (shortName == lang.shortName);
+                return (isoCode == lang.isoCode);
             }
         }
 
@@ -128,7 +128,7 @@ namespace AeroCalcCore
             // TODO: write your implementation of GetHashCode() here
             // throw new System.NotImplementedException();
 
-            string fullName = this.shortName + this.name;
+            string fullName = this.isoCode + this.name;
             int hashCode=0;
 
             foreach (char c in fullName)
