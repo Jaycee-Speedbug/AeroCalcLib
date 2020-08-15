@@ -1,0 +1,218 @@
+﻿*
+* AeroCalc Language Specification
+*
+*
+
+
+
+AeroCalc est un projet de calculateur dédié aux performances de vol et à la mécanique du vol, pour l’aéronautique.
+Le calculateur AeroCalc interprète les commandes de l'utilisateur rédigées conformément à un langage de script
+simple. Les calculs de performances de vol requièrent la création préalable de modèles de calcul. Ceux-ci peuvent
+être fournis sous forme de tables de données ou d'équations.
+
+
+
+A. Présentation & fonctionnement
+
+L’utilisateur peut utiliser AeroCalc de plusieurs façons :
+- En tapant directement des lignes de commandes de script dans une interface type ‘console’.
+- En préparant un script complet dans un fichier de script.
+
+Le langage de script reste simple pour être compréhensible par une personne ne disposant pas de connaissances
+particulières en informatique, et doit refléter au mieux la logique des modèles de calcul ainsi que les
+pratiques usuelles des calculs en aéronautique.
+
+Des droits particuliers peuvent être octroyés à un utilisateur afin qu'il puisse créer un nouveau modèle de calcul
+et le rendre utilisable par les autres utilisateurs. Ces droits constitue les attributs de l'administrateur de
+données.
+
+Il est possible d'actionner le calculateur depuis du code C#. L'essentiel du code est une librairie utilisable comme
+composant dans une application.
+
+
+
+B. Spécifications du Langage de script
+
+B.X Opérateurs
+
+Un certain nombre d'opérateurs sont nécessaires à la construction des instructions.
+
+B.X.1 Opérateur d'affectation
+
+L'opérateur d'affectation est le symbole '='
+Il est utilisé entre un identificateur placé à gauche, et une valeur ou une commande à droite
+L'identificateur sera donc le moyen d'accéder à une valeur ou à certains champs de la commande.
+
+
+B.X.2 Opérateur conditionnel
+
+Afin de réaliser des choix, l'opérateur conditionnel utilisant le symbol '?' sera utilisé. Il sera
+suivi de deux commandes ou valeurs, la première exécutée 
+
+
+B.1. Calcul multidimensionnel
+
+B.1.1 Identificateur du calcul
+
+Une commande commence par le nom associé au calcul. Cet identificateur ne doit pas contenir de mots réservés du
+langage. Il doit au moins contenir un point '.' signifiant un nom de type (partie gauche) et un nom de modèle (partie 
+droite).
+Ex : BOEING.KC135R.R3.VMCA
+
+Il est recommandé de respecter la composition suivante pour créer un identificateur :
+A.B.C1.C2...Cn.D, ou
+A est le nom du constructeur ou un abrégé (ex BOEING ou BNG pour Boeing Company)
+B est le nom du modèle
+C1 à Cn les versions et sous-versions éventuelles
+D le nom du paramètre calculé
+
+
+B.1.2 Facteurs
+
+Les facteurs viennent à la suite de l’identificateur, sans ordre particulier :
+Ex : ZP=2150 TRN=39.5 ATEMP=35 MASSE=235.6
+Les noms de chaque facteur sont définis pour chaque calcul dimensionnel. Ils sont donc choisis librement. Toutefois, il est préférable au moins pour un modèle d’aéronef de respecter la nomenclature fixée par le constructeur dans le manuel de vol.
+Les noms des mêmes facteurs devraient aussi rester identiques entre les différents calculs d’un même modèle, pour simplifier la rédaction des scripts.
+
+
+B.1.3 Unités
+
+Les calculs multi-dimensionnels de performances de vol s'accomodent très bien de l'absence d'unité, car le résultat final est interprété
+par l'utilisateur. On peut toutefois apporter une plus grande efficacité du calculateur en permettant l'emploi des unités.
+Les conversions sont aussi un service qu'il est nécessaire d'offrir.
+
+
+B.1.3.1 Identificateurs des unités
+
+Les unités seront identifiées par un nom court et un nom long.
+Le nom court, ou alias, a vocation à raccourcir la longueur du texte des commandes. Les noms longs servent à identifier sans
+ambiguïté les unités.
+
+
+B.1.3.2 Symbole séparateur d'unité
+
+Les unités seront précisées en utilisant le séparateur ':'
+
+Ex : ATEMP=35:CDEG
+
+
+B.1.3.3 Liste des unités retenues pour être représentées dans le calculateur
+
+Nombre
+	% pourcent
+
+Distance
+	M mètre
+	FT pied
+	NM miles nautique
+	SM statut miles
+
+Température
+	C degré Celsius
+	F degré Farenheït
+	K degré Kelvin
+
+Temps
+	HR heure
+	MIN minute
+	SEC seconde
+
+
+
+B.1.4 Options de calcul
+
+Le calculateur ouvre la possibilité d'utiliser des options de calcul. Les options de calcul disponibles dépendent de
+la version du calculateur AeroCalc. Elles sont à priori admissibles pour tous les calculs multi-dimensionnels, mais
+peuvent être restreintes par la définition du calcul.
+
+B.1.4.1 Séparateur d'option de calcul
+
+Les options de calcul seront ajoutées aux commandes grace au séparateur '!'
+Par exemple, pour exiger que les calculs fassent appel à l'interpolation linéaire :
+BOEING.KC135R.R3.VMCA ZP=2150:FT TRN=39.5 !LIN
+
+B.1.4.2 Calcul par interpolation linéaire
+
+Pour exiger l'utilisation de l'interpolation linéaire dans un calcul, l'option de calcul sera notée 'LIN'.
+
+B.1.5 Espace de nom
+
+Chaque calcul multi-dimensionnel définit son espace de nom privé pour les paramètres utilisés.
+Par exemple,
+BOEING.KC135R.R3.VMCA ZP=2150 TRN=39.5
+Le facteur ZP n'est connu que dans ce calcul multi-dimensionnel
+ZP est considéré comme privé
+Par contre, BOEING.KC135R.R3.VMCA est considéré comme public
+
+
+
+B.2 Conversion d’unité
+
+Les conversions entre unités de même dimension sont proposées 'built-in'.
+Une conversion est une opération de calcul, la syntaxe sera donc aussi proche que possible de celle de la
+commande de calcul.
+
+
+B.2.1 Commande de conversion par mot clé
+La commande commence par le mot réservé CONVERT
+Ex : CONVERT MPS(KT=130.3)
+
+
+B.2.2 Commande par nom de fonction
+Ex : MPS(KT=130.3)
+B.3
+
+
+
+C Le calcul multidimensionnel
+
+C.1 Présentation du calcul multidimensionnel
+
+Les paramètres de performances de vol sont très couramment influencés par un grand nombre de facteurs.
+Pour les calculer, la technique la plus répandues dans les manuels de vol a été de transformer les données de performances issues
+de la phase d’essai en vol en ensembles de graphes dont les sections permettent de mettre en jeux deux facteurs à la fois.
+On peut ainsi successivement traiter les nombreux facteurs par l’utilisation d’un nombre suffisant de sections de graphe.
+
+Un graphe peut comporter une seule courbe (dans ce cas, un unique facteur est pris en compte) ou un jeu de courbes
+(cette fois, deux facteurs seront pris en compte).
+
+
+
+C.2 Définition d’un calcul
+
+La première méthode consiste à stocker tous les éléments d’un calcul dans un fichier de définition XML.
+Le nom du fichier sera identique à l’identificateur du calcul.
+Ex : BOEING.KC135R.R3.VMCA.xml
+Le fichier sera enregistré dans le répertoire suivant :
+<Dossier de base>/data/multidimcalc
+
+C.3 Définition du fichier xml
+
+<aeroCalcCmd>
+	<info>
+		<calcName>
+		<admin>
+		<designer>
+		<aircraft type>
+			<manufacturer>
+			<type>
+			<version>
+			<subversion>
+	<data>
+		<step nb=”1”>
+			<resultScale>
+			<tableScale>
+			<serieScale>
+			<pointScale>
+			<table value=”0”>
+				<serie value=”122.3” >
+					<point>
+						<xValue>
+						<zValue>
+	<algebric>
+		<element>
+			<xScale>
+			<aFactorValue>
+			<yFactorValue>
+			<bFactorValue>
+

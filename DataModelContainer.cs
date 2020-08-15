@@ -710,7 +710,6 @@ namespace AeroCalcCore
         /// TODO Refactoring:
         /// Utiliser les List<string> 
         /// </remarks>
-        /// 
         private string[] expendFilter(string[] filterSubs, int wordCount)
         {
 

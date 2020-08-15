@@ -210,6 +210,10 @@ namespace AeroCalcCore
                         // TODO Traiter le false de setDataModelsDirectory
                         // Construction de PostProcessor et de la librairie des messages
                         PostProc = new PostProcessor(EnvContext);
+                        // TODO Il faut retourner un EventCode si un problème est survenu pendant la construction du
+                        // TODO PostProcessor (langue...)
+                        // TODO Ne faut-il pas préparer la librairie des messages ici et la transmettre à la construction
+                        // TODO du PostProcessor, plutôt ??? (et donc rapatrier tout le traitement dans setLanguage() )
                         Cmd.setEventCode(AeroCalcCommand.ECODE_INIT_SUCCESSFULL);
                         break;
 

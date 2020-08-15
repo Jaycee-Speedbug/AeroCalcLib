@@ -156,7 +156,7 @@ namespace AeroCalcCore
         public const int ECODE_ERR_LANG_DISABLED = -303;
         public const int ECODE_ERR_LANG_ALREADY_SET = -304;
 
-        public const int ECODE_ERR_LANGFILE_CONTENT = -311;
+        public const int ECODE_ERR_LANGFILE_CONTENT_MISSING = -311;
         public const int ECODE_ERR_LANGFILE_DOES_NOT_EXIST = -312;
         public const int ECODE_ERR_LANGFILE_PATH = -313;
         public const int ECODE_ERR_LANGFILE_IO_ERROR = -314;
@@ -165,6 +165,8 @@ namespace AeroCalcCore
         public const int ECODE_ERR_LANGFILE_SECURITY = -317;
         public const int ECODE_ERR_LANGFILE_GENERIC = -318;
         public const int ECODE_ERR_LANGFILE_VOID = -319;
+        public const int ECODE_ERR_LANGFILE_OLD_VERSION = -320;
+        public const int ECODE_ERR_LANGFILE_ID = -321;
 
         public const int ECODE_ERR_NO_MODEL_LOADED = -500;
 

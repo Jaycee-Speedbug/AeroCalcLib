@@ -52,6 +52,7 @@ namespace AeroCalcCore
         public PostProcessor(EnvironmentContext EC) {
             EMsgLib = new EventMessages();
             changeLanguage(EC.getActiveLanguage());
+            // TODO Traiter les erreurs retournées par changeLanguage()
         }
 
 
@@ -146,12 +147,11 @@ namespace AeroCalcCore
                         // TODO What kind of test should be implemented ? A package should refer to a 'standard' number ?
                         if (msgs.langIsoCode != Lang.isoCode) {
                             // Ce n'est pas le language demandé...
-                            return AeroCalcCommand.ECODE_ERR_LANG_UNDETERMINED;
+                            return AeroCalcCommand.ECODE_ERR_LANGFILE_ID;
                         }
                         else {
                             // OK !!
                             EMsgLib = msgs;
-
                             return AeroCalcCommand.ECODE_LANG_CHANGED_SUCCESSFULL;
                         }
 
@@ -170,7 +170,7 @@ namespace AeroCalcCore
                     return AeroCalcCommand.ECODE_ERR_LANGFILE_SECURITY;
 
                 case FileIO.FILEOP_FILE_INVALID_CONTENT:
-                    return AeroCalcCommand.ECODE_ERR_LANGFILE_CONTENT;
+                    return AeroCalcCommand.ECODE_ERR_LANGFILE_CONTENT_MISSING;
 
                 default:
                     return AeroCalcCommand.ECODE_ERR_LANGFILE_UKN_ERROR;
