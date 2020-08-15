@@ -3,6 +3,13 @@
 *
 *
 
+///
+///   DEPRECATED   ///   DEPRECATED   ///   DEPRECATED   ///
+///
+
+REFER TO AEROCALC-SPECIFICATIONS.docx
+
+
 
 
 AeroCalc est un projet de calculateur dédié aux performances de vol et à la mécanique du vol, pour l’aéronautique.
