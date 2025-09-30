@@ -13,11 +13,11 @@ namespace AeroCalcCore
 
 
     /// <summary>
-    /// Classe abstraite dÃ©finissant les services de base offerts par les Objets dÃ©rivÃ©s 
-    /// spÃ©cialisÃ©s dans la connexion aux fichiers de donnÃ©es textes/XML/JSON...
+    /// Classe abstraite définissant les services de base offerts par les classes dérivées 
+    /// spécialisées dans la connexion aux fichiers de données textes : CSV/XML/JSON...
     /// </summary>
     // <remarks>
-    // TODO: Tests unitaires Ã  mettre en place
+    // TODO: Tests unitaires à mettre en place
     // </remarks>
     /// 
     public abstract class FileIO {
@@ -25,7 +25,7 @@ namespace AeroCalcCore
          * CONSTANTES
          */
 
-        // Constantes liÃ©es aux opÃ©rations sur les fichiers
+        // Constantes liées aux opérations sur les fichiers
         public const int FILEOP_SUCCESSFUL = 1;
 
         // Initial value, when no access nor any check has been done on file/directory
@@ -74,14 +74,14 @@ namespace AeroCalcCore
 
 
 
-        // Constantes des types de fichiers gÃ©rÃ©s
+        // Constantes des types de fichiers gérés
         public const int FILE_TYPE_UNKNOWN = 0;
         public const int FILE_TYPE_XML = 1;
         public const int FILE_TYPE_CSV = 2;
         public const int FILE_TYPE_TXT = 3;
         public const int FILE_TYPE_JSON = 4;
 
-        // Constantes de nature des fichiers gÃ©rÃ©s
+        // Constantes de nature des fichiers gérés
         public const int FILE_TYPE_CONFIG = 100;
         public const int FILE_TYPE_DATA_MODEL = 200;
         public const int FILE_TYPE_UNITS = 300;
@@ -93,7 +93,7 @@ namespace AeroCalcCore
         public const string FILENAME_EXTENSION_SCRIPT = ".accsc";
         public const string FILENAME_EXTENSION_JSON = ".json";
 
-        // Constantes utilisÃ©es dans les fichiers textes
+        // Constantes utilisées dans les fichiers textes
         private const char IDENTIFIER_COMMENT_LINE = '#';
 
 
@@ -108,7 +108,7 @@ namespace AeroCalcCore
         private string[] rawFileLines;
 
         /// <summary>
-        /// List<string> des lignes du fichier texte, aprÃ¨s traitement
+        /// List<string> des lignes du fichier texte, après traitement
         /// </summary>
         protected List<string> FileLines;
 
@@ -119,27 +119,27 @@ namespace AeroCalcCore
          */
 
         /// <summary>
-        /// Chemin du rÃ©pertoire contenant les fichiers utilisÃ©s
+        /// Chemin du répertoire contenant les fichiers utilisés
         /// </summary>
         public string directoryAbsolutePath { get; protected set; }
 
         /// <summary>
-        /// Chemin du fichier utilisÃ© en entrÃ©e
+        /// Chemin du fichier utilisé en entrée
         /// </summary>
         public string inputFileAbsolutePath { get; protected set; }
 
         /// <summary>
-        /// Chemin du fichier utilisÃ© en sortie
+        /// Chemin du fichier utilisé en sortie
         /// </summary>
         public string outputFileAbsolutePath { get; protected set; }
 
         /// <summary>
-        /// Recoit le code de la derniÃ¨re opÃ©ration IO (voir constantes FILEOP)
+        /// Recoit le code de la dernière opération IO (voir constantes FILEOP)
         /// </summary>
         public int IOStatus { get; protected set; }
 
         /// <summary>
-        /// Permet de connaitre le nombre de lignes disponibles dans la List<string> FileLines 
+        /// Permet de connaitre le nombre de lignes présentes dans la List<string> FileLines 
         /// </summary>
         public int Count { get => (FileLines == null) ? -1 : FileLines.Count; }
 
@@ -158,9 +158,9 @@ namespace AeroCalcCore
         }
 
         /// <summary>
-        /// Construit un FileConnector et prend en charge un rÃ©pertoire de travail
+        /// Construit un FileConnector et prend en charge un répertoire de travail
         /// </summary>
-        /// <param name="workDirectoryPath">Chemin absolu du rÃ©pertoire de travail</param>
+        /// <param name="workDirectoryPath">Chemin absolu du répertoire de travail</param>
         /// 
         public FileIO(string workDirectoryPath) {
             setWorkDirectory(workDirectoryPath);
@@ -169,10 +169,10 @@ namespace AeroCalcCore
         }
 
         /// <summary>
-        /// Construit un FileConnector et prend en charge un rÃ©pertoire de travail et un fichier de sortie
+        /// Construit un FileConnector et prend en charge un répertoire de travail et un fichier de sortie
         /// </summary>
-        /// <param name="workDirectoryPath">Chemin absolu du rÃ©pertoire de travail</param>
-        /// <param name="inputFileAbsolutePath">Chemin absolu du fichier d'entrÃ©e</param>
+        /// <param name="workDirectoryPath">Chemin absolu du répertoire de travail</param>
+        /// <param name="inputFileAbsolutePath">Chemin absolu du fichier d'entrée</param>
         /// 
         public FileIO(string workDirectoryPath, string inputFileAbsolutePath) {
             setWorkDirectory(workDirectoryPath);
@@ -181,11 +181,11 @@ namespace AeroCalcCore
         }
 
         /// <summary>
-        /// Construit un FileConnector et prend en charge un rÃ©pertoire de travail, un fichier de sortie
+        /// Construit un FileConnector et prend en charge un répertoire de travail, un fichier de sortie
         /// et un fichier de sortie
         /// </summary>
-        /// <param name="workDirectoryPath">Chemin absolu du rÃ©pertoire de travail</param>
-        /// <param name="inputFileAbsolutePath">Chemin absolu du fichier d'entrÃ©e</param>
+        /// <param name="workDirectoryPath">Chemin absolu du répertoire de travail</param>
+        /// <param name="inputFileAbsolutePath">Chemin absolu du fichier d'entrée</param>
         /// <param name="outputFileAbsolutePath">Chemin absolu du fichier de sortie</param>
         /// 
         public FileIO(string workDirectoryPath, string inputFileAbsolutePath, string outputFileAbsolutePath) {
@@ -201,7 +201,7 @@ namespace AeroCalcCore
          */
 
         /// <summary>
-        /// Remplace le tableau de String habituellement constituÃ© par lecture d'un fichier par un tableau
+        /// Remplace le tableau de String habituellement constitué par lecture d'un fichier par un tableau
         /// de String fourni en argument
         /// </summary>
         /// <param name="lines">Tableau de String</param>
@@ -217,11 +217,11 @@ namespace AeroCalcCore
 
 
         /// <summary>
-        /// Retourne une liste des noms de fichiers trouvÃ©s dans le rÃ©pertoire passÃ© en argument,
-        /// rÃ©pondants au critÃ¨re de filtre passÃ© en argument
+        /// Retourne une liste des noms de fichiers trouvés dans le répertoire passé en argument,
+        /// répondants au critère de filtre passé en argument
         /// </summary>
-        /// <param name="directoryAbsolutePath">RÃ©pertoire ou chercher les fichiers, s'il est diffÃ©rent du
-        /// rÃ©pertoire de travail</param>
+        /// <param name="directoryAbsolutePath">Répertoire ou chercher les fichiers, s'il est différent du
+        /// répertoire de travail</param>
         /// <param name="fileNameFilter">Filtre des noms de fichiers</param>
         /// <returns></returns>
         public List<string> filesInDirectory(string directoryAbsolutePath, string fileNameFilter) {
@@ -250,17 +250,17 @@ namespace AeroCalcCore
 
 
         /// <summary>
-        /// Enregistre la chaine passÃ©e en argument comme rÃ©pertoire de travail (s'il existe dans la structure
-        /// de fichiers) et retourne True. Renvoie False si le rÃ©pertoire n'existe pas
+        /// Enregistre la chaine passée en argument comme répertoire de travail (s'il existe dans la structure
+        /// de fichiers) et retourne True. Renvoie False si le répertoire n'existe pas
         /// </summary>
         /// <param name="absolutePath"></param>
-        /// <returns></returns>
+        /// <returns>True, si l'opération est réussie</returns>
         public bool setWorkDirectory(string absolutePath) {
             if (!string.IsNullOrEmpty(absolutePath)) {
                 if (Directory.Exists(absolutePath)) {
-                    // Le Directory proposÃ© existe, on l'enregistre en temps que Directory de travail
+                    // Le Directory proposé existe, on l'enregistre en temps que Directory de travail
                     directoryAbsolutePath = absolutePath;
-                    // On rÃ©initialise le status
+                    // MaJ du status
                     IOStatus = FILEOP_SUCCESSFUL;
                     return true;
                 }
@@ -273,10 +273,10 @@ namespace AeroCalcCore
 
 
         /// <summary>
-        /// Enregistre un chemin absolu comme fichier d'entrÃ©e
+        /// Enregistre un chemin absolu comme fichier d'entrée
         /// </summary>
         /// <param name="absolutePath">Chemin absolu du fichier</param>
-        /// <returns>True en cas de succÃ¨s, False sinon.</returns>
+        /// <returns>True en cas de succès, False sinon.</returns>
         /// <remarks>
         /// No Exception to handle
         /// </remarks>
@@ -284,9 +284,9 @@ namespace AeroCalcCore
         public bool setInputFileAbsolutePath(string absolutePath) {
             if (!string.IsNullOrEmpty(absolutePath)) {
                 if (File.Exists(absolutePath)) {
-                    // Le fichier proposÃ© existe, on l'enregistre en temps que fichier d'entrÃ©e
+                    // Le fichier proposé existe, on l'enregistre en temps que fichier d'entrée
                     inputFileAbsolutePath = absolutePath;
-                    // On rÃ©initialise le status
+                    // On réinitialise le status
                     IOStatus = FILEOP_SUCCESSFUL;
                     return true;
                 }
@@ -298,11 +298,11 @@ namespace AeroCalcCore
 
 
         /// <summary>
-        /// Constitue le chemin absolu du fichier d'entrÃ©e sur la base du rÃ©pertoire de travail, fixÃ© au prÃ©alable,
+        /// Constitue le chemin absolu du fichier d'entrée sur la base du répertoire de travail, fixé au préalable,
         ///  et du nom de fichier transmis en argument.
         /// </summary>
-        /// <param name="relativePath">Chemin relatif du fichier, par rapport au rÃ©pertoire de travail</param>
-        /// <returns>True en cas de succÃ¨s, False sinon.</returns>
+        /// <param name="relativePath">Chemin relatif du fichier, par rapport au répertoire de travail</param>
+        /// <returns>True en cas de succès, False sinon.</returns>
         /// <remarks>
         /// No Exception to handle
         /// </remarks>
@@ -320,16 +320,16 @@ namespace AeroCalcCore
         /// Enregistre un chemin absolu comme fichier de sortie
         /// </summary>
         /// <param name="absolutePath">Chemin absolu du fichier</param>
-        /// <returns>True en cas de succÃ¨s, False sinon.</returns>
+        /// <returns>True en cas de succès, False sinon.</returns>
         /// <remarks>
         /// 
         /// </remarks>
         public bool setOutputFileAbsolutePath(string absolutePath) {
             if (!string.IsNullOrEmpty(absolutePath)) {
                 if (File.Exists(absolutePath)) {
-                    // Le fichier proposÃ© existe, on l'enregistre en temps que fichier d'entrÃ©e
+                    // Le fichier proposé existe, on l'enregistre en temps que fichier d'entrée
                     outputFileAbsolutePath = absolutePath;
-                    // On rÃ©initialise le status
+                    // On réinitialise le status
                     IOStatus = FILEOP_SUCCESSFUL;
                     return true;
                 }
@@ -366,11 +366,11 @@ namespace AeroCalcCore
 
 
         /// <summary>
-        /// Retourne un int figurant le type de l'extension du nom de fichier passÃ© en argument
+        /// Retourne un int figurant le type de l'extension du nom de fichier passé en argument
         /// </summary>
         /// <param name="fileName">Nom du fichier</param>
         /// <returns>
-        /// Constante int nÃ©gative en cas d'erreur, positive en cas d'identification rÃ©ussie de l'extension du nom de fichier
+        /// Constante int négative en cas d'erreur, positive en cas d'identification réussie de l'extension du nom de fichier
         /// </returns>
         /// <remarks>
         /// </remarks>
@@ -403,10 +403,10 @@ namespace AeroCalcCore
 
 
         /// <summary>
-        /// VÃ©rifie si le rÃ©pertoire de travail existe 
+        /// Vérifie si le répertoire de travail existe 
         /// </summary>
         /// <returns>
-        /// Bool, True si le rÃ©pertoire existe, False sinon
+        /// Bool, True si le répertoire existe, False sinon
         /// </returns>
         protected bool workDirExists() {
             return Directory.Exists(directoryAbsolutePath);
@@ -415,7 +415,7 @@ namespace AeroCalcCore
 
 
         /// <summary>
-        /// VÃ©rifie l'existance du fichier utilisÃ© en entrÃ©e
+        /// Vérifie l'existance du fichier utilisé en entrée
         /// </summary>
         /// <returns>Tue si le fichier existe</returns>
         /// 
@@ -426,7 +426,7 @@ namespace AeroCalcCore
 
 
         /// <summary>
-        /// VÃ©rifie l'existance du fichier utilisÃ© en entrÃ©e
+        /// Vérifie l'existance du fichier utilisé en entrée
         /// </summary>
         /// <returns>True si le fichier existe</returns>
         /// 
@@ -437,11 +437,11 @@ namespace AeroCalcCore
 
 
         /// <summary>
-        /// Lit une fichier texte dans son intÃ©gralitÃ© et retourne un code signifiant le rÃ©sultat
+        /// Lit une fichier texte dans son intégralité et retourne un code signifiant le résultat
         /// </summary>
         /// <param name="absoluteFilePath">Chemin complet du fichier</param>
         /// <param name="commentFiltering">True pour filtrer les lignes de commentaires</param>
-        /// <returns>Code d'erreur rÃ©sultant de l'opÃ©ration de lecture</returns>
+        /// <returns>Code d'erreur résultant de l'opération de lecture</returns>
         /// 
         protected int readTextFile(string absoluteFilePath, bool commentFiltering) {
             
@@ -465,14 +465,14 @@ namespace AeroCalcCore
                     if (!string.IsNullOrEmpty(rawFileLines[count])) {
                         pos = rawFileLines[count].IndexOf(IDENTIFIER_COMMENT_LINE);
                         if (pos > 0) {
-                            // La ligne est partiellement commentÃ©e
+                            // La ligne est partiellement commentée
                             outputLines.Add(rawFileLines[count].Remove(pos));
                         }
                         else if (pos == 0) {
-                            // La ligne commence par l'opÃ©rateur de commentaire
+                            // La ligne commence par l'opérateur de commentaire
                         }
                         else {
-                            // Pas d'occurence trouvÃ©e
+                            // Pas d'occurence trouvée
                             outputLines.Add(rawFileLines[count]);
                         }
                     }
@@ -528,18 +528,18 @@ namespace AeroCalcCore
 
 
         /// <summary>
-        /// Convertit la reprÃ©sentation sous forme de chaine d'un boolÃ©en en boolÃ©en.
+        /// Convertit la représentation sous forme de chaine d'un booléen en booléen.
         /// 0 ou False pour False,
         /// et 1 ou True pour True.
         /// </summary>
-        /// <param name="word">String Ã  convertir</param>
-        /// <param name="result">RÃ©sultat de la conversion</param>
-        /// <returns>True si la conversion a rÃ©ussie, False dans le cas contraire</returns>
+        /// <param name="word">String à convertir</param>
+        /// <param name="result">Résultat de la conversion</param>
+        /// <returns>True si la conversion a réussie, False dans le cas contraire</returns>
         protected bool parseABoolean(string word, out bool result) {
             int parsedInt;
 
             if (!bool.TryParse(word, out result)) {
-                // La conversion directe en boolÃ©en n'a pas fonctionnÃ©, on essaye de trouver les valeurs 0 ou 1
+                // La conversion directe en booléen n'a pas fonctionné, on essaye de trouver les valeurs 0 ou 1
                 if (int.TryParse(word, out parsedInt)) {
                     if (parsedInt == 0) {
                         result = false;
@@ -565,13 +565,13 @@ namespace AeroCalcCore
 
 
         /// <summary>
-        /// Convertit la reprÃ©sentation texte d'un Double en Double.
-        /// Assure une cohÃ©rence globale dans le traitement des chaines de caractÃ¨res des fichiers
-        /// textes utilisÃ©s comme source de donnÃ©es numÃ©riques en encapsulant Double.TryParse()
+        /// Convertit la représentation texte d'un Double en Double.
+        /// Assure une cohérence globale dans le traitement des chaines de caractères des fichiers
+        /// textes utilisés comme source de données numériques en encapsulant Double.TryParse()
         /// </summary>
         /// <param name="word"></param>
         /// <param name="result"></param>
-        /// <returns>True si la conversion a rÃ©ussie, False dans le cas contraire</returns>
+        /// <returns>True si la conversion a réussie, False dans le cas contraire</returns>
         /// 
         protected bool parseADouble(string word, out double result) {
             return Double.TryParse(word,

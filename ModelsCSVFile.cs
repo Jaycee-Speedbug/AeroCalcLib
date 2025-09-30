@@ -6,13 +6,13 @@ namespace AeroCalcCore {
 
 
     /// <summary>
-    /// Classe assurant l'interface avec des fichiers textes, au format CSV, contenant des modÃ¨les
+    /// Classe assurant l'interface avec des fichiers textes, au format CSV, contenant des modèles
     /// de calcul de performances de vol.
     /// 
     /// Principe:
-    /// ReÃ§oit le chemin du dossier Ã  traiter et le filtre Ã  appliquer sur les noms de fichiers.
-    /// Renvoie une liste des fichiers rÃ©pondant au critÃ¨re du filtre
-    /// Renvoie un modÃ¨le de performance de vol sur requÃ¨te d'un nom de fichier de cette liste
+    /// Reçoit le chemin du dossier à traiter et le filtre à appliquer sur les noms de fichiers.
+    /// Renvoie une liste des fichiers répondant au critère du filtre
+    /// Renvoie un modèle de performance de vol sur requète d'un nom de fichier de cette liste
     /// </summary>
     /// 
     public class ModelCSVFile : CSVFile {
@@ -27,6 +27,7 @@ namespace AeroCalcCore {
         protected const string KWD_PILE_HIDDEN = "Hidden";
         protected const string KWD_DISCRET_NAME = "DiscretName";
         protected const string KWD_DISCRET_VALUE = "DiscretValue";
+        protected const string KWD_INDEPENDENT_LAYERS = "IndependentLayers";
 
         protected const string KWD_OUTPUT_NAME = "OutputName";
         protected const string KWD_OUTPUT_UNIT = "OutputUnit";
@@ -53,7 +54,7 @@ namespace AeroCalcCore {
          */
 
         /// <summary>
-        /// Constructeur de la classe, simple appel au constructeur de la classe mÃ¨re
+        /// Constructeur de la classe, simple appel au constructeur de la classe mère
         /// </summary>
         /// 
         public ModelCSVFile():base() {
@@ -67,10 +68,10 @@ namespace AeroCalcCore {
          */
          
         /// <summary>
-        /// Renvoie un objet PerfPile contenant toutes les donnÃ©es extraites depuis un fichier texte au format csv
-        /// contenant un modÃ¨le de performances de vol.
+        /// Renvoie un objet PerfPile contenant toutes les données extraites depuis un fichier texte au format csv
+        /// contenant un modèle de performances de vol.
         /// </summary>
-        /// <param name="fileAbsolutePath">Chemin complet du fichier CSV Ã  analyser</param>
+        /// <param name="fileAbsolutePath">Chemin complet du fichier CSV à analyser</param>
         /// <returns>Objet PerfPile</returns>
         /// 
         public PerfPile readFile(string fileAbsolutePath)
@@ -87,19 +88,62 @@ namespace AeroCalcCore {
                 int serieFactorUnit;
                 int layerFactorUnit;
                 int outputUnit;
+                bool independent;
+                string discretName;
+                string pointFactorName;
+                string serieFactorName;
+                string layerFactorName;
+                string outputName;
 
-                // Lecture des paramÃ¨tres de la Pile
-                if (!parseADouble(valueWithFieldName(KWD_PILE_FACTOR_VALUE, -1), out pileFactorValue)) {
+
+                // Lecture des paramètres numériques de la Pile
+                // Une 
+                if (!parseADouble(StrRightOf(KWD_PILE_FACTOR_VALUE), out pileFactorValue))
+                {
                     pileFactorValue = 1;
                 }
-                if (!long.TryParse(valueWithFieldName(KWD_DISCRET_VALUE, -1), out discretValue)) {
+                if (!long.TryParse(StrRightOf(KWD_DISCRET_VALUE), out discretValue))
+                {
                     discretValue = 1;
                 }
-                if (!parseABoolean(valueWithFieldName(KWD_PILE_HIDDEN, -1), out hidden)) {
+                if (!parseABoolean(StrRightOf(KWD_PILE_HIDDEN), out hidden))
+                {
                     hidden = false;
+                }
+                if (!parseABoolean(StrRightOf(KWD_INDEPENDENT_LAYERS), out independent))
+                {
+                    independent = false;
+                }
+
+                // Lecture des paramètres textuels de la Pile
+                outputName = StrRightOf(KWD_OUTPUT_NAME);
+
+                discretName = StrRightOf(KWD_DISCRET_NAME);
+                if (discretName == null)
+                {
+                    discretName = "";
+                }
+
+                layerFactorName = StrRightOf(KWD_LAYER_FACTOR_NAME);
+                if (layerFactorName == null)
+                {
+                    layerFactorName = "";
+                }
+
+                serieFactorName = StrRightOf(KWD_SERIE_FACTOR_NAME);
+                if (serieFactorName == null)
+                {
+                    serieFactorName = "";
+                }
+
+                pointFactorName = StrRightOf(KWD_POINT_FACTOR_NAME);
+                if (pointFactorName == null)
+                {
+                    pointFactorName = "";
                 }
 
                 // TODO UnitCode as int should be replaced by string
+                // Lecture des unités non gérées pour l'instant
                 /*
                 pointFactorUnit = parseUnitCode(KWD_POINT_FACTOR_UNIT);
                 serieFactorUnit = parseUnitCode(KWD_SERIE_FACTOR_UNIT);
@@ -112,27 +156,23 @@ namespace AeroCalcCore {
                 outputUnit = -1;
 
                 // Constitution de la Pile
-                pp = new PerfPile(pileFactorValue,
-                                  valueWithFieldName(KWD_DISCRET_NAME, -1),
-                                  discretValue,
-                                  valueWithFieldName(KWD_POINT_FACTOR_NAME, -1),
-                                  pointFactorUnit,
-                                  valueWithFieldName(KWD_SERIE_FACTOR_NAME, -1),
-                                  serieFactorUnit,
-                                  valueWithFieldName(KWD_LAYER_FACTOR_NAME, -1),
-                                  layerFactorUnit,
-                                  valueWithFieldName(KWD_OUTPUT_NAME, -1),
-                                  outputUnit, hidden);
+                pp = new PerfPile(pileFactorValue, discretName, discretValue,
+                                  pointFactorName, pointFactorUnit, 
+                                  serieFactorName, serieFactorUnit,
+                                  layerFactorName, layerFactorUnit, independent, 
+                                  outputName, outputUnit,
+                                  hidden);
 
                 // Analyse du tableau des layers de performance
-                int startLine = getLineIndex(KWD_OUTPUT_NAME) + 1;
-                int endLine = getLineIndex(KWD_END_TABLE);
+                //int startLine = getLineIndex(KWD_OUTPUT_NAME) + 1;
+                int startLine = GetLineIndex(KWD_START_TABLE) + 1;
+                int endLine = GetLineIndex(KWD_END_TABLE);
 
-                int layerFactorColumn = getColumnIndex(KWD_LAYER_FACTOR_VALUE);
-                int serieFactorColumn = getColumnIndex(KWD_SERIE_FACTOR_VALUE);
-                int pointFactorColumn = getColumnIndex(KWD_POINT_FACTOR_VALUE);
-                int outColumn = getColumnIndex(KWD_OUTPUT_VALUE);
-                int breakColumn = getColumnIndex(KWD_BREAK_VALUE);
+                int layerFactorColumn = GetColumnIndex(KWD_LAYER_FACTOR_VALUE);
+                int serieFactorColumn = GetColumnIndex(KWD_SERIE_FACTOR_VALUE);
+                int pointFactorColumn = GetColumnIndex(KWD_POINT_FACTOR_VALUE);
+                int outColumn = GetColumnIndex(KWD_OUTPUT_VALUE);
+                int breakColumn = GetColumnIndex(KWD_BREAK_VALUE);
 
                 if (layerFactorColumn > -1 &&
                     serieFactorColumn > -1 &&
@@ -140,7 +180,7 @@ namespace AeroCalcCore {
                     outColumn > -1 &&
                     breakColumn > -1 &&
                     startLine > -1 && endLine > startLine) {
-                    // Les colonnes sont identifiÃ©es, lecture possible
+                    // Les colonnes sont identifiées, lecture possible
 
                     double layerFactor;
                     double serieFactor;
@@ -156,18 +196,18 @@ namespace AeroCalcCore {
                         outputFactor = double.NaN;
                         breakValue = false;
 
-                        if (parseADouble(valueAtPosition(count, layerFactorColumn), out layerFactor) &&
-                            parseADouble(valueAtPosition(count, serieFactorColumn), out serieFactor) &&
-                            parseADouble(valueAtPosition(count, pointFactorColumn), out pointFactor) &&
-                            parseADouble(valueAtPosition(count, outColumn), out outputFactor) &&
-                            parseABoolean(valueAtPosition(count, breakColumn), out breakValue)) {
-                            // DonnÃ©es valides, un Point de performances peut Ãªtre ajoutÃ© Ã  la Pile
+                        if (parseADouble(ValueAtPosition(count, layerFactorColumn), out layerFactor) &&
+                            parseADouble(ValueAtPosition(count, serieFactorColumn), out serieFactor) &&
+                            parseADouble(ValueAtPosition(count, pointFactorColumn), out pointFactor) &&
+                            parseADouble(ValueAtPosition(count, outColumn), out outputFactor) &&
+                            parseABoolean(ValueAtPosition(count, breakColumn), out breakValue)) {
+                            // Données valides, un Point de performances peut être ajouté à la Pile
                             pp.add(new PerfPoint(pointFactor, outputFactor, breakValue), serieFactor, layerFactor);
                         }
                     }
                 }
                 else {
-                    // ProblÃ¨me de structure du fichier, les colonnes ne peuvent Ãªtre correctement identifiÃ©es
+                    // Problème de structure du fichier, les colonnes ne peuvent être correctement identifiées
                     pp = null;
                 }
             }

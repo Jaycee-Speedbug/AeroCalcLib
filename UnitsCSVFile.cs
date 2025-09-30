@@ -73,15 +73,15 @@ namespace AeroCalcCore
 
             if (readTextFile(fileAbsolutePath, true) == FILEOP_SUCCESSFUL) {
                 // Analyse de la structure de la table TABLE_1
-                unitDimensionColumn = getColumnIndex(KWD_UNIT_DIMENSION);
-                unitNameColumn = getColumnIndex(KWD_UNIT_NAME);
-                unitAliasColumn = getColumnIndex(KWD_UNIT_ALIAS);
-                unitIsRefColumn = getColumnIndex(KWD_UNIT_IS_REF);
-                unitFactorColumn = getColumnIndex(KWD_UNIT_FACTOR);
-                unitConstantColumn = getColumnIndex(KWD_UNIT_CONSTANT);
+                unitDimensionColumn = GetColumnIndex(KWD_UNIT_DIMENSION);
+                unitNameColumn = GetColumnIndex(KWD_UNIT_NAME);
+                unitAliasColumn = GetColumnIndex(KWD_UNIT_ALIAS);
+                unitIsRefColumn = GetColumnIndex(KWD_UNIT_IS_REF);
+                unitFactorColumn = GetColumnIndex(KWD_UNIT_FACTOR);
+                unitConstantColumn = GetColumnIndex(KWD_UNIT_CONSTANT);
 
                 // recherche de la position de départ de la lecture
-                cursor = getLineIndex(KWD_START_TABLE_1) + 1;
+                cursor = GetLineIndex(KWD_START_TABLE_1) + 1;
 
                 // Lecture de la table et insertions des items au dictionnaire
                 while (!FileLines[cursor].Contains(KWD_END_TABLE_1)) {

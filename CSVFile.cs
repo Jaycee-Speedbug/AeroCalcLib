@@ -8,9 +8,23 @@ namespace AeroCalcCore
 {
 
 
+    /// <summary>
+    /// Structure de données désignant les coordonnées d'une cellule dans un fichier CSV
+    /// </summary>
+    public struct CSVCoordinates
+        {
+        public int line;
+        public int column;
+        public CSVCoordinates(int l, int c) {
+            line = l;
+            column = c;
+        }
+    }
+
+
 
     /// <summary>
-    /// Classe abstraite permettant de construire une classe destinÃ©e Ã  l'accÃ¨s aux donnÃ©es
+    /// Classe abstraite permettant de construire une classe destinée à l'accès aux données
     /// textes contenues dans un fichier au format CSV.
     /// </summary>
     /// 
@@ -22,14 +36,15 @@ namespace AeroCalcCore
          * CONSTANTES
          */
 
-        // Constantes d'analyse des fichiers des modÃ¨les de calcul, d'unitÃ©s
+        // Constantes d'analyse des fichiers des modèles de calcul ou d'unités
         protected const char CELL_SEPARATOR_SEMICOLON = ';';
         protected const char CELL_SEPARATOR_TAB = '\t';
         protected const char CELL_SEPARATOR_COMMA = ',';
         protected const char CELL_SEPARATOR_PERIOD = '.';
         protected const char CELL_SEPARATOR_SPACE = ' ';
 
-        // Constantes de balisage de la structure des donnÃ©es
+        // Constantes de balisage de la structure des données
+        protected const string KWD_START_TABLE = "START_TABLE";
         protected const string KWD_END_TABLE = "END_TABLE";
 
         protected const string KWD_START_TABLE_1 = "TABLE_1";
@@ -54,7 +69,7 @@ namespace AeroCalcCore
          */
 
         /// <summary>
-        /// Tableau des caractÃ¨res utilisÃ©s en sÃ©parateurs
+        /// Tableau des caractères utilisés en séparateurs
         /// </summary>
         protected char[] cellSeparator;
 
@@ -70,9 +85,9 @@ namespace AeroCalcCore
         /// </summary>
         /// 
         public CSVFile() {
-            // DÃ©fini le tableau de char contenant les sÃ©parateurs acceptÃ©s
+            // Défini le tableau de char contenant les séparateurs acceptés
             cellSeparator = new char[] { CELL_SEPARATOR_SEMICOLON, CELL_SEPARATOR_TAB };
-            // DÃ©fini un tableau de String destinÃ© Ã  contenir les lignes du fichier CSV
+            // Défini un tableau de String destiné à contenir les lignes du fichier CSV
             FileLines = new List<String>();
         }
 
@@ -83,46 +98,57 @@ namespace AeroCalcCore
          */
 
         /// <summary>
-        /// Retourne une String prÃ©sente dans la cellule dÃ©signÃ©e par le nom du champ et la ligne fournis
-        /// en argument, dans un fichier texte CSV. Si l'argument ligne est -1, la ligne sous celle du nom de
-        /// champ est utilisÃ©e.
+        /// Retourne une String présente dans la colonne fieldName, à la ligne fournie en argument
+        /// dans un fichier texte CSV. Si l'argument line est -1, la ligne placée sous celle du nom de
+        /// champ est utilisée.
         /// </summary>
-        /// <remarks>CSV Structure V2</remarks>
+        /// <remarks>Index en base 0</remarks>
         /// <param name="fieldName">Nom du champ au format texte</param>
-        /// <param name="line">NumÃ©ro de ligne dans laquelle lire la chaine, ou -1.
-        /// du nom de champ</param>
+        /// <param name="line">Numéro de ligne dans laquelle lire la chaine de caractères, ou -1.
+        /// </param>
         /// <returns>
-        /// String prÃ©sente dans la collone du champ, Ã  la ligne dÃ©signÃ©e.
+        /// String présente dans la même colonne que le fieldName, à la ligne désignée. Null si introuvable.
         /// </returns>
         /// 
-        protected string valueWithFieldName(string fieldName, int line) {
+        protected string ValueWithFieldName(string fieldName, int line)
+        {
 
-            int column = getColumnIndex(fieldName);
-            if (column > -1) {
-                // Le champ a Ã©tÃ© trouvÃ©
-                if (line < 0) {
-                    line = getLineIndex(fieldName);
+            int column = GetColumnIndex(fieldName);
+            if (column > -1)
+            {
+                // Le champ a été trouvé, et le numéro de colonne est connu
+                if (line < 0)
+                {
+                    // La ligne n'est pas définie, on prend la ligne sous celle du champ
+                    line = GetLineIndex(fieldName);
+                    if (line < 0)
+                    {
+                        return null;
+                    }
+                    // La ligne du champ a été trouvée
+                    line++;
                 }
-                return valueAtPosition(line + 1, column);
+                return ValueAtPosition(line, column);
             }
             return null;
         }
         // Accesseur de test
-        public string _T_ValueWithFieldName(string fieldName, int line) {
-            return valueWithFieldName(fieldName, line);
+        public string _A_ValueWithFieldName(string fieldName, int line)
+        {
+            return ValueWithFieldName(fieldName, line);
         }
 
 
 
         /// <summary>
-        /// Retourne la chaine de caractÃ¨re Ã  la position dÃ©finie par les arguments
-        /// Les index de lignes et colonnes sont en base 0
+        /// Retourne la chaine de caractère à la position définie par les arguments
+        /// Les index de ligne et colonne sont en base 0
         /// </summary>
         /// <remarks>CSV Structure V2</remarks>
         /// <param name="line"></param>
         /// <param name="column"></param>
-        /// <returns>String, Ã  la position dÃ©finie en arguments</returns>
-        protected string valueAtPosition(int line, int column) {
+        /// <returns>String, à la position définie en arguments, Null si la colonne ou la ligne n'existe pas</returns>
+        protected string ValueAtPosition(int line, int column) {
             if (line < FileLines.Count) {
                 string[] subs;
                 subs = FileLines[line].Split(cellSeparator, StringSplitOptions.None);
@@ -133,46 +159,86 @@ namespace AeroCalcCore
             return null;
         }
         // Accesseur de test
-        public string _T_ValueAtPosition(int line, int column) {
-            return valueAtPosition(line, column);
+        public string _A_ValueAtPosition(int line, int column) {
+            return ValueAtPosition(line, column);
         }
 
 
 
         /// <summary>
-        /// Renvoie l'index de la colonne identifiÃ©e par le keyword passÃ© en argument
-        /// Les index de lignes et colonnes sont en base 0
+        /// Renvoie la String située dans la cellule à droite du keyword passé en argument
+        /// </summary>
+        /// <returns>String si existante, ou null si introuvable</returns> 
+        /// <remarks>Permet de récupérer des paramètres dans un fichier CSV
+        /// </remarks>
+        /// <param name="keyword">string, Keyword à identifier</param>
+        protected string StrRightOf(string keyword)
+        {
+            int line = GetLineIndex(keyword);
+            int column = GetColumnIndex(keyword);
+
+            if (line < 0 || column < 0) return null;
+            return ValueAtPosition(line, column + 1);
+        }
+        // Accesseur de test
+        public string _A_StrRightOf(string keyword)
+        {
+            return StrRightOf(keyword);
+        }
+
+
+
+        /// <summary>
+        /// Renvoie l'index de la colonne identifiée par le keyword passé en argument
+        /// (Les index de lignes et colonnes sont en base 0)
         /// </summary>
         /// <param name="keyword">string, Keyword identifiant la colonne</param>
-        /// <returns>index de la colonne, si le keyword est trouvÃ©, sinon -1</returns>
+        /// <returns>index de la colonne, si le keyword est trouvé, sinon -1</returns>
         /// 
-        protected int getColumnIndex(string keyword) {
+        protected int GetColumnIndex(string keyword)
+        {
 
-            int lineOfInterest = getLineIndex(keyword);
-            if (lineOfInterest >= 0) {
+            int lineOfInterest = GetLineIndex(keyword);
+            if (lineOfInterest >= 0)
+            {
                 string[] subs = FileLines[lineOfInterest].Split(cellSeparator, StringSplitOptions.None);
-                for (int counter = 0; counter < subs.Length; counter++) {
-                    if (subs[counter].Contains(keyword)) {
+                for (int counter = 0; counter < subs.Length; counter++)
+                {
+                    if (subs[counter].Contains(keyword))
+                    {
                         return counter;
                     }
                 }
             }
             return -1;
         }
+        public int _A_GetColumnIndex(string keyword)
+        {
+            return GetColumnIndex(keyword);
+        }
 
 
 
         /// <summary>
-        /// Renvoie l'index de la ligne oÃ¹ apparait le keyword passÃ© en argument
+        /// Renvoie l'index de la ligne où apparait le keyword passé en argument
         /// </summary>
-        /// <param name="keyword">string, keyword Ã  identifier</param>
-        /// <returns>index de la ligne du tableau contenant les lignes du fichier texte</returns>
-        /// 
-        protected int getLineIndex(string keyword) {
-            return FileLines.FindIndex(line => line.Contains(keyword));
+        /// <param name="keyword">string, keyword à identifier</param>
+        /// <returns>index de la ligne du tableau contenant les lignes du fichier texte
+        /// -1 si l'argument est null ou si l'argument est introuvable</returns>
+        /// TODO : Tests
+        protected int GetLineIndex(string keyword)
+        {
+            if (keyword==null || FileLines==null) return -1;
+            try
+            {
+                int theLine = FileLines.FindIndex(line => line.Contains(keyword));
+                return theLine;
+            }
+            catch (Exception) { return -1; }
         }
-        public int _A_getLineIndex(string keyword) {
-            return getLineIndex(keyword);
+        public int _A_GetLineIndex(string keyword)
+        {
+            return GetLineIndex(keyword);
         }
 
     }

@@ -112,6 +112,15 @@ namespace AeroCalcCore {
         }
 
         /// <summary>
+        /// Flag indiquant si les Layers de la Pile sont indépendantes.
+        /// Dans ce cas, aucune interpolation n'est possible entre les Layers
+        /// </summary>
+        public bool independentLayers {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// Valeur du facteur de la Pile (quatrième dimension)
         /// </summary>
         /// <remarks>
@@ -135,7 +144,7 @@ namespace AeroCalcCore {
 
         /// <summary>
         /// Valeur discrète associée à la Pile
-        /// Permet d'ajouter un paramètre à une Pile, comme un braquage volet, l'état de surface de la piste
+        /// Permet d'ajouter un paramètre à une Pile, comme un braquage volet, l'état de surface de la piste...
         /// Ce paramètre devra figurer dans la liste des paramètres fournis pour un calcul
         /// </summary>
         public long discretValue { get; set; }
@@ -247,6 +256,7 @@ namespace AeroCalcCore {
             this.layerFactorUnitCode = pp.layerFactorUnitCode;
             this.discretName = pp.discretName;
             this.discretValue = pp.discretValue;
+            this.independentLayers = pp.independentLayers;
             this.hidden = pp.hidden;
             for (int count = 0; count < pp.count; count++) {
                 this.add(new PerfLayer(pp.perfLayerList.ElementAt(count)));
@@ -267,15 +277,17 @@ namespace AeroCalcCore {
         /// <param name="serieFactorUnitCode">Unité de mesure de la dimension des Serie</param>
         /// <param name="layerFactorName">Nom de la dimension des Layer de la Pile (dimension 3)</param>
         /// <param name="layerFactorUnitCode">Unité de mesure de la dimension des Layer</param>
+        /// <param name="independentLayers">Propriété décrivant l'indépendance des Layers entre elles</param>"
         /// <param name="outName">Nom de la Pile (nom des résultats des prédictions réalisées avec cette Pile)</param>
         /// <param name="outUnitCode">Unité de mesure de la prédiction</param>
         /// <param name="hidden">Propriété de visibilité du nom du modèle de calcul</param>
         /// 
         public PerfPile(double ownFactorValue,
-                        String discretName, long discretValue,
+                        string discretName, long discretValue,
                         String pointFactorName, int pointFactorUnitCode,
                         String serieFactorName, int serieFactorUnitCode,
                         String layerFactorName, int layerFactorUnitCode,
+                        bool independentLayers,
                         String outName, int outUnitCode,
                         bool hidden) {
             this.factorValue = ownFactorValue;
@@ -285,6 +297,7 @@ namespace AeroCalcCore {
             this.serieFactorUnitCode = serieFactorUnitCode;
             this.layerFactorName = layerFactorName;
             this.layerFactorUnitCode = layerFactorUnitCode;
+            this.independentLayers = independentLayers;
             this.discretName = discretName;
             this.discretValue = discretValue;
             this.outputName = outName;
@@ -808,6 +821,9 @@ namespace AeroCalcCore {
         /// <returns>
         /// False, si aucune Layer n'a pu être sélectionnée. True dans le cas contraire
         /// </returns>
+        /// <remarks>
+        /// TODO: L'information, en cas d'échec de la sélection, n'est pas transmise
+        /// </remarks>
         private bool selectLayers(double x, int nb) {
 
             // Tri des Layer, dans l'ordre de proximité avec la valeur x
@@ -815,22 +831,41 @@ namespace AeroCalcCore {
             // Déselection de toutes les Layer de la Pile
             selectNone();
 
-            if (layers == null) {
+            if (layers == null || nb == 0) return false;
+
+            // Cas des Layer indépendantes
+            if (independentLayers) {
+                // On ne peut sélectionner qu'une seule Layer, celle ayant pour valeur x
+                for (int count = 0; count < layers.Length; count++) {
+                    if (layerAt(layers[count]).factorValue == x) {
+                        layerAt(layers[count]).selected = true;
+                        return true;
+                    }
+                }
+                // Aucune Layer ne correspond à la valeur x
                 return false;
             }
-            if (nb == 0) {
-                return true;
-            }
-            if (layers.Length == 1 || nb == 1 || layerAt(layers[0]).factorValue == x) {
+
+            if (layers.Length == 1 && nb == 1 || layerAt(layers[0]).factorValue == x)
+            {
                 layerAt(layers[0]).selected = true;
                 return true;
             }
-            if (layers.Length == 2 || nb == 2) {
+            if (layers.Length == 2 && nb == 2)
+            {
                 layerAt(layers[0]).selected = true;
                 layerAt(layers[1]).selected = true;
                 return true;
             }
-            else {
+            if (layers.Length == 3 && nb == 3)
+            {
+                layerAt(layers[0]).selected = true;
+                layerAt(layers[1]).selected = true;
+                layerAt(layers[2]).selected = true;
+                return true;
+            }
+            else
+            {
                 // Trois Layer minimum dans la Pile, il faut maintenant analyser les ruptures de linéarité (breakpoints)
                 int count = 0;
                 int selectCounter = 0;

@@ -1,8 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "FhrTAfs8q4KT54KtXUEB1YqFkBScR7uoK15U3pxD0QUxdArAvzNrMDAY2uZDpjLicUW3hYTRlZoVhWozwj+FDg==",
+  "dgSpecHash": "5GfExfAT9Rk=",
   "success": true,
-  "projectFilePath": "C:\\Users\\ZenBookDeLu\\Documents\\ITDevelopment\\Projects\\AeroCalc\\AeroCalcCore\\AeroCalcCore.csproj",
-  "expectedPackageFiles": [],
+  "projectFilePath": "C:\\Users\\speed\\Documents\\ITDevelopment\\Projects\\AeroCalc\\AeroCalcCore\\AeroCalcCore.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\speed\\.nuget\\packages\\microsoft.netcore.platforms\\8.0.0-preview.7.23375.6\\microsoft.netcore.platforms.8.0.0-preview.7.23375.6.nupkg.sha512",
+    "C:\\Users\\speed\\.nuget\\packages\\netstandard.library\\2.0.3\\netstandard.library.2.0.3.nupkg.sha512"
+  ],
   "logs": []
 }

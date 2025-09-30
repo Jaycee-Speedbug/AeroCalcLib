@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AeroCalcCore")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1ab98ab51f545cbe8ed10def05d07120a5d08ccf")]
 [assembly: System.Reflection.AssemblyProductAttribute("AeroCalcCore")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AeroCalcCore")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
