@@ -137,7 +137,6 @@ namespace AeroCalcCore
         {
 
             // Recherche du modèle de performances permettant le traitement (nom + discret)
-            //PerfPile Pile = dataModels.ElementAt(dataModelIndex(dataModelName, factors));
             PerfPile Pile = dataModels.Find(x => x.outputName == dataModelName);
             double result = double.NaN;
 
@@ -187,7 +186,8 @@ namespace AeroCalcCore
                 if (double.IsNaN(layerFactorValue))
                 {
                     // layerFactorValue n'est pas disponible dans les facteurs, on tente de le calculer
-                    serieFactorValue = compute(Pile.layerFactorName, factors);
+                    //serieFactorValue = compute(Pile.layerFactorName, factors);                        BUG IDENTIFIE ET CORRIGE
+                    layerFactorValue = compute(Pile.layerFactorName, factors);
                     if (double.IsNaN(layerFactorValue))
                     {
                         // Echec de la tentative du calcul
