@@ -53,11 +53,15 @@ namespace AeroCalcCore
         /// <summary>
         /// Méthode de prédiction préférée pour calculer l'image d'un réel à proximité du point de performance
         /// </summary>
-        public int optimizedMethod
+        /// <remarks>Ne correspond pas à une caractéristique propre à un point de performance
+        /// TODO : à déplacer dans PerfSerie ou dans un autre objet
+        /// </remarks>
+        /*public int optimizedMethod
         {
             get;
             set;
         }
+        */
 
         /// <summary>
         /// Etat de sélection du point de performance. La sélection permet de ne prendre en compte
@@ -99,7 +103,7 @@ namespace AeroCalcCore
             this.factorValue = pp.factorValue;
             this.output = pp.output;
             this.isBreak = pp.isBreak;
-            this.optimizedMethod = pp.optimizedMethod;
+            //this.optimizedMethod = pp.optimizedMethod;
             this.selected = pp.selected;
         }
 
@@ -114,7 +118,8 @@ namespace AeroCalcCore
         /// <param name="pp2">Point 2</param>
         /// <returns>True si les deux points ont la même abscisse, False dans les autres cas</returns>
         ///
-        public static bool areColocated(PerfPoint pp1, PerfPoint pp2) {
+        public static bool areColocated(PerfPoint pp1, PerfPoint pp2)
+        {
             if (pp1.factorValue == pp2.factorValue) {
                 return true;
             }
@@ -129,7 +134,8 @@ namespace AeroCalcCore
         /// </summary>
         /// <returns>String, descriptive du Point</returns>
         ///
-        public override String ToString() {
+        public override String ToString()
+        {
             String msg = "";
 
             msg = "X= " + factorValue;
@@ -140,7 +146,7 @@ namespace AeroCalcCore
             else {
                 msg += "\nBreak point : NO\n";
             }
-            msg += "Optimized method : " + optimizedMethod;
+            //msg += "Optimized method : " + optimizedMethod;
             if (selected) {
                 msg += "\nSelected : YES\n\n";
             }

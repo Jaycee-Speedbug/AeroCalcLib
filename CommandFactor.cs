@@ -13,7 +13,6 @@ namespace AeroCalcCore {
 
         public double value { get; private set; }
 
-
         public int unitCode { get; private set; }
 
 

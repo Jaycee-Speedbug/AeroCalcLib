@@ -676,6 +676,7 @@ namespace AeroCalcCore
         /// <param name="list">Liste des commandFactor</param>
         /// <param name="name">Nom du facteur</param>
         /// <returns></returns>
+        /// <remarks>TODO: Améliorer le traitement du cas name=""</remarks>
         private double valueFromFactor(List<CommandFactor> list, string name)
         {
             if (name.Equals("")) { return 1; }
