@@ -86,6 +86,7 @@ namespace AeroCalcCore
         /// </summary>
         /// <remarks>
         /// TODO: Problématique en multithreading, à revoir
+        /// Eviter une mutation de l'objet lors d'un calcul
         /// Il est recommandé de confier l'interpolation à un objet externe, qui pourra adapter la méthode de calcul à la situation
         /// </remarks>
         public bool selected
@@ -130,17 +131,22 @@ namespace AeroCalcCore
         /// <summary>
         /// Construction par clonage d'une série de points de performance
         /// </summary>
-        /// <param name="ps">Série de layers de performance à cloner</param>
+        /// <param name="ps">Série de points de performance à cloner</param>
         public PerfSerie(PerfSerie ps)
         {
-            dataBaseKey = ps.dataBaseKey;
-            this.endRange = ps.endRange;
-            this.endRangeType = ps.endRangeType;
-            this.factorValue = ps.factorValue;
-            this.ranged = ps.ranged;
-            this.startRange = ps.startRange;
-            this.startRangeType = ps.startRangeType;
-            this.perfPointList = new List<PerfPoint>(ps.perfPointList);
+            if (ps!=null)
+            {
+                dataBaseKey = ps.dataBaseKey;
+                this.endRange = ps.endRange;
+                this.endRangeType = ps.endRangeType;
+                this.factorValue = ps.factorValue;
+                this.ranged = ps.ranged;
+                this.startRange = ps.startRange;
+                this.startRangeType = ps.startRangeType;
+                this.perfPointList = new List<PerfPoint>(ps.perfPointList);
+                // Tri de la nouvelle série
+                perfPointList.Sort(ps.pointAt(0));
+            }
         }
 
 
@@ -163,7 +169,7 @@ namespace AeroCalcCore
 
 
         /// <summary>
-        /// Ajoute un point de performance à la série
+        /// Ajoute un point de performance à la série, et réalise le tri de la série
         /// </summary>
         /// <param name="pp">Point de perforance à ajouter</param>
         /// <returns>True si l'opération a réussi, False en cas d'échec, typiquement quand on essaye d'ajouter 
@@ -182,8 +188,12 @@ namespace AeroCalcCore
             // pp est bien un nouveau point de performance de vol
             perfPointList.Add(pp);
             perfPointList.Sort(pp);
-            // Le domaine de calcul n'est plus valable
+            /*
+            // Le domaine de la série n'est plus valable
+            startRange = this.pointAt(0).factorValue;
+            endRange = this.pointAt(perfPointList.Count - 1).factorValue;
             ranged = false;
+            */
             return true;
         }
 
@@ -195,7 +205,6 @@ namespace AeroCalcCore
         ///
         public int selectedCount()
         {
-
             int selPtsNb = 0;
 
             foreach (PerfPoint pp in this.perfPointList)
@@ -288,7 +297,7 @@ namespace AeroCalcCore
         public double predict(double inputValue)
         {
 
-            PolInter poli = new PolInter(this);
+            PerformanceModelSolver poli = new PerformanceModelSolver(this);
 
             //Si le domaine de calcul n'a pas été défini au préalable, il est réduit à l'étendue de la série
             if (!ranged)
@@ -392,7 +401,7 @@ namespace AeroCalcCore
 
 
         /// <summary>
-        /// Définie le domaine de calcul de la série
+        /// Défini le domaine de calcul de la série
         /// </summary>
         /// <param name="start">Borne inférieure</param>
         /// <param name="startType">Type de borne</param>
@@ -429,8 +438,10 @@ namespace AeroCalcCore
         }
 
 
+
         /// <summary>
-        /// Définie le domaine de calcul de la série
+        /// Défini par défaut le domaine de calcul de la série. C'est à dire l'étendue des points de performance, en incluant
+        /// les limites dans le domaine de calcul
         /// </summary>
         /// <returns>True en cas de succès</returns>
         ///
@@ -450,7 +461,7 @@ namespace AeroCalcCore
 
 
         /// <summary>
-        /// Renvoie un tableau des indexes des séries de performance, classés par proximité avec une valeur.
+        /// Renvoie un tableau des points de performance, classés par proximité avec une valeur.
         /// </summary>
         /// <param name="x">Valeur</param>
         /// <returns>Tableau de Int, null si aucun point n'est présent dans la série</returns>
@@ -465,7 +476,7 @@ namespace AeroCalcCore
                 return null;
             }
 
-            // Cas général, la série contient des layers
+            // Cas général, la série contient des points de performance
             //
             sortedIndexes = new int[this.count];
             int minDistIndex = -1;
@@ -555,11 +566,12 @@ namespace AeroCalcCore
         }
 
 
+
         /// <summary>
-        /// Sélectionne les layers liés de façon continue autour d'une abscisse pp1
+        /// Sélectionne les points de performance liés de façon continue autour d'une abscisse pp1
         /// </summary>
         /// <param name="x">Abscisse de référence</param>
-        /// <param name="nb">Nombre de layers à sélectionner</param>
+        /// <param name="nb">Nombre de points de performance à sélectionner</param>
         ///
         private bool selectPoints(double x, int nb)
         {

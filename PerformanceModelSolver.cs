@@ -1,5 +1,5 @@
 using System;
-
+using System.Numerics;
 
 
 namespace AeroCalcCore
@@ -10,7 +10,7 @@ namespace AeroCalcCore
     /// <summary>
     /// Classe chargée de réaliser une interpolation polynomiale de degré n
     /// </summary>
-    public class PolInter
+    public class PerformanceModelSolver
     {
 
 
@@ -19,8 +19,11 @@ namespace AeroCalcCore
 
         // Private fields
 
-
         PerfSerie perfSerie;
+
+        double[] ppX;
+        double[] ppY;
+
 
 
 
@@ -33,9 +36,28 @@ namespace AeroCalcCore
         /// <param name="ps">
         /// Série de layers de performance de vol
         /// </param>
-        public PolInter(PerfSerie ps)
+        /// <remarks>
+        /// TODO: Améliorer la gestion des exceptions (cas du système avec moins de 2 points)
+        /// </remarks>
+        public PerformanceModelSolver(PerfSerie ps)
         {
             this.perfSerie = ps;
+            if (ps == null)
+            {
+                throw new ModelException(AeroCalc.E_VOID_SYSTEM, "", "", Double.NaN);
+            }
+            if (ps.count < 2)
+            {
+                throw new ModelException(AeroCalc.E_SHORT_SERIE, "", "", Double.NaN);
+            }
+
+            ppX = new double[ps.count];
+            ppY = new double[ps.count];
+            for (int count = 0; count < ps.count; count++)
+            {
+                ppX[count] = ps.pointAt(count).factorValue;
+                ppY[count] = ps.pointAt(count).output;
+            }
         }
 
 
@@ -45,18 +67,20 @@ namespace AeroCalcCore
          */
 
         /// <summary>
-        /// Interpolation polynomiale pour une abscisse de référence, sur la base d'une série de points de
-        /// performance sélectionnés, dans une série Perfserie
+        /// Interpolation polynomiale de second degrés.
+        /// Pour une valeur x passée en argument, sur la base des points de performance de la PerfSerie
+        /// passée au constructeur, renvoie la valeur interpolée.
         /// </summary>
-        /// <param name="x">Abscisse de référence</param>
+        /// <param name="x">Valeur pour laquelle l'interpolation est demandée</param>
         /// <returns>
-        /// Renvoie la valeur prédite par interpolation
+        /// Renvoie la valeur prédite par interpolation, NaN en cas d'échec
         /// </returns>
         public double interpolate(double x)
         {
 
             double interpolation = Double.NaN;
             int[] selectedPoints = selectedPointsTable();
+            int[] orderedPointsIndexes = orderedIndexesByDistance(x);
 
             // Cas ou aucun point n'est sélectionné
             if (selectedPoints == null)
@@ -133,10 +157,13 @@ namespace AeroCalcCore
          */
 
         /// <summary>
-        /// Renvoie un tableau contenant les indexes des layers de performances sélectionnés dans la série
+        /// Renvoie un tableau contenant les indexes des points de performances sélectionnés dans la série
         /// </summary>
         /// <returns>Tableau d'indexes des layers sélectionnés
         /// </returns>
+        /// <remarks>
+        /// REBUILD: Suppression de cette méthode et utilisation directe de la PerfSerie
+        /// </remarks>
         private int[] selectedPointsTable()
         {
             if (perfSerie.selectedCount() > 0)
@@ -161,6 +188,53 @@ namespace AeroCalcCore
             }
         }
 
-    }
 
+
+        private int[] orderedIndexesByDistance(double x)
+        {
+            int[] pts = new int[ppX.Length];
+            double[] dist = distances(x);
+            bool[] taken = new bool[ppX.Length];
+            
+            // Triage
+            int shortestIndex = 0;
+            double shortestDistance = dist[shortestIndex];
+
+            for (int i = 0; i < pts.Length; i++)
+            {
+                shortestDistance = Double.MaxValue;
+                for (int j = 0; j < dist.Length; j++)
+                {
+                    if (!taken[j])
+                    {
+                        if (dist[j] < shortestDistance)
+                        {
+                            shortestDistance = dist[j];
+                            shortestIndex = j;
+                        }
+                    }
+                }
+                pts[i] = shortestIndex;
+                taken[shortestIndex] = true;
+            }
+            return pts;
+        }
+        public int[] _A_orderedIndexesByDistance(double x)
+            {
+            return orderedIndexesByDistance(x);
+        }
+
+
+
+        private double[] distances(double x)
+        {
+            double[] distances = new double[ppX.Length];
+            for (int count = 0; count < ppX.Length; count++)
+            {
+                distances[count] = Math.Abs(x - ppX[count]);
+            }
+            return distances;
+        }
+
+    }
 }

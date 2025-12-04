@@ -16,6 +16,7 @@ public static class AeroCalc {
         public const int E_SERIE_VALUE_OUT_OF_RANGE = 4;
         public const int E_POINT_VALUE_OUT_OF_RANGE = 5;
         public const int E_VOID_SYSTEM = 100;
+        public const int E_SHORT_SERIE = 101;
         //public const string E_UNKNOWN_FACTOR_VALUE_MSG = " : Valeur inconnue.";
 
 
