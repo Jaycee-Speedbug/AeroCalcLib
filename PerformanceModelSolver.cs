@@ -13,7 +13,6 @@ namespace AeroCalcCore
     public class PerformanceModelSolver
     {
 
-
         // Public fields
 
 
@@ -25,8 +24,6 @@ namespace AeroCalcCore
         double[] ppY;
 
 
-
-
         // CONSTRUCTEUR(S)
 
 
@@ -34,7 +31,7 @@ namespace AeroCalcCore
         /// Construit un objet destiné à réaliser des interpolations polynomiales
         /// </summary>
         /// <param name="ps">
-        /// Série de layers de performance de vol
+        /// Série de points de performances de vol
         /// </param>
         /// <remarks>
         /// TODO: Améliorer la gestion des exceptions (cas du système avec moins de 2 points)
@@ -48,7 +45,7 @@ namespace AeroCalcCore
             }
             if (ps.count < 2)
             {
-                throw new ModelException(AeroCalc.E_SHORT_SERIE, "", "", Double.NaN);
+                throw new ModelException(AeroCalc.E_TOO_SHORT_SERIE, "", "", Double.NaN);
             }
 
             ppX = new double[ps.count];
@@ -67,7 +64,7 @@ namespace AeroCalcCore
          */
 
         /// <summary>
-        /// Interpolation polynomiale de second degrés.
+        /// Interpolation polynomiale de degrés n.
         /// Pour une valeur x passée en argument, sur la base des points de performance de la PerfSerie
         /// passée au constructeur, renvoie la valeur interpolée.
         /// </summary>
@@ -75,77 +72,52 @@ namespace AeroCalcCore
         /// <returns>
         /// Renvoie la valeur prédite par interpolation, NaN en cas d'échec
         /// </returns>
-        public double interpolate(double x)
+        public double interpolateLagrange(double x)
         {
 
-            double interpolation = Double.NaN;
-            int[] selectedPoints = selectedPointsTable();
+            // Recherche des points de plus grande proximité
             int[] orderedPointsIndexes = orderedIndexesByDistance(x);
 
-            // Cas ou aucun point n'est sélectionné
-            if (selectedPoints == null)
-            {
-                throw new ModelException(AeroCalc.E_VOID_SYSTEM, "", "", x);
-            }
-            // Cas ou un seul point est sélectionné dans la série
-            if (selectedPoints.Length == 1)
-            {
-                return perfSerie.pointAt(selectedPoints[0]).output;
-            }
-            else
-            {
-                // Cas général, plus d'un point sélectionné
-                //
-                double[] ptX = new double[selectedPoints.Length];
-                double[] ptY = new double[selectedPoints.Length];
+            // Calcul des polynomes
+            double[] p = new double[ppX.Length];
+            double numerateur;
+            double denominateur;
 
-                for (int count = 0; count < selectedPoints.Length; count++)
+            for (int count = 0; count < p.Length; count++)
+            {
+                numerateur = 1;
+                denominateur = 1;
+                // Calcul du numerateur
+                for (int counter = 0; counter < p.Length; counter++)
                 {
-                    ptX[count] = perfSerie.pointAt(selectedPoints[count]).factorValue;
-                    ptY[count] = perfSerie.pointAt(selectedPoints[count]).output;
-                }
-
-                // Calcul des polynomes
-                double[] p = new double[selectedPoints.Length];
-                double numerateur;
-                double denominateur;
-
-                for (int count = 0; count < p.Length; count++)
-                {
-                    numerateur = 1;
-                    denominateur = 1;
-                    // Calcul du numerateur
-                    for (int counter = 0; counter < p.Length; counter++)
+                    if (count == counter)
                     {
-                        if (count == counter)
-                        {
-                            // Pas de produit à calculer
-                        }
-                        else
-                        {
-                            numerateur *= x - ptX[counter];
-                        }
+                        // Pas de produit à calculer
                     }
-                    // Calcul du dénominateur
-                    for (int counter = 0; counter < p.Length; counter++)
+                    else
                     {
-                        if (count == counter)
-                        {
-                            // Pas de produit à calculer
-                        }
-                        else
-                        {
-                            denominateur *= ptX[count] - ptX[counter];
-                        }
+                        numerateur *= x - ppX[counter];
                     }
-                    p[count] = numerateur / denominateur;
                 }
-                // Somme des polynômes
-                interpolation = 0;
-                for (int count = 0; count < p.Length; count++)
+                // Calcul du dénominateur
+                for (int counter = 0; counter < p.Length; counter++)
                 {
-                    interpolation += ptY[count] * p[count];
+                    if (count == counter)
+                    {
+                        // Pas de produit à calculer
+                    }
+                    else
+                    {
+                        denominateur *= ppX[count] - ppX[counter];
+                    }
                 }
+                p[count] = numerateur / denominateur;
+            }
+            // Somme des polynômes
+            double interpolation = 0;
+            for (int count = 0; count < p.Length; count++)
+            {
+                interpolation += ppY[count] * p[count];
             }
             return interpolation;
         }
@@ -156,6 +128,7 @@ namespace AeroCalcCore
          * METHODES
          */
 
+        /*
         /// <summary>
         /// Renvoie un tableau contenant les indexes des points de performances sélectionnés dans la série
         /// </summary>
@@ -187,9 +160,18 @@ namespace AeroCalcCore
                 return null;
             }
         }
+        */
 
 
 
+        /// <summary>
+        /// Returns the indexes of all reference points ordered by their distance from the specified value.
+        /// </summary>
+        /// <remarks>This method can be used to identify which reference points are nearest to a given
+        /// value. The length of the returned array matches the number of reference points.</remarks>
+        /// <param name="x">The value to compare against each reference point when calculating distances.</param>
+        /// <returns>An array of indexes representing the reference points, sorted in ascending order of their distance from
+        /// <paramref name="x"/>. The first element corresponds to the closest point.</returns>
         private int[] orderedIndexesByDistance(double x)
         {
             int[] pts = new int[ppX.Length];
@@ -225,7 +207,11 @@ namespace AeroCalcCore
         }
 
 
-
+        /// <summary>
+        /// Construit une table des distances entre une valeur x et les abscisses des points de performance
+        /// </summary>
+        /// <param name="x">Valeur de l'abscisse pour laquelle on recherche les distances</param>
+        /// <returns>Table de double des distances entre chaque abscisse de point de performance et x</returns>
         private double[] distances(double x)
         {
             double[] distances = new double[ppX.Length];

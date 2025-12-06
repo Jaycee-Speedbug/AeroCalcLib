@@ -6,14 +6,12 @@ using System.Collections.Generic;
 namespace AeroCalcCore
 {
 
-
-
     /// <summary>
     /// Classe de dimension 1 du package 'Calculateur de performances de vol'
     /// Enregistre les caractéristiques d'un point de performance de vol
     /// </summary>
     /// 
-    public class PerfPoint : IComparer<PerfPoint>
+    public readonly struct PerfPoint : IComparable<PerfPoint>
     {
 
         // FIELDS ////////////////////////////////////////////////////////////////////////////////////
@@ -28,7 +26,6 @@ namespace AeroCalcCore
         public double factorValue
         {
             get;
-            private set;
         }
 
         /// <summary>
@@ -38,7 +35,6 @@ namespace AeroCalcCore
         public double output
         {
             get;
-            private set;
         }
 
         /// <summary>
@@ -47,31 +43,8 @@ namespace AeroCalcCore
         public bool isBreak
         {
             get;
-            private set;
         }
 
-        /// <summary>
-        /// Méthode de prédiction préférée pour calculer l'image d'un réel à proximité du point de performance
-        /// </summary>
-        /// <remarks>Ne correspond pas à une caractéristique propre à un point de performance
-        /// TODO : à déplacer dans PerfSerie ou dans un autre objet
-        /// </remarks>
-        /*public int optimizedMethod
-        {
-            get;
-            set;
-        }
-        */
-
-        /// <summary>
-        /// Etat de sélection du point de performance. La sélection permet de ne prendre en compte
-        /// que certains points pour les calculs de prédiction
-        /// </summary>
-        public bool selected
-        {
-            get;
-            set;
-        }
 
 
         // PRIVATE FIELDS ///////////////////////////////////////////////////////////////////////////////////
@@ -94,6 +67,7 @@ namespace AeroCalcCore
         }
 
 
+
         /// <summary>
         /// Construit un point de performance par clonage
         /// </summary>
@@ -103,30 +77,12 @@ namespace AeroCalcCore
             this.factorValue = pp.factorValue;
             this.output = pp.output;
             this.isBreak = pp.isBreak;
-            //this.optimizedMethod = pp.optimizedMethod;
-            this.selected = pp.selected;
         }
+
 
 
         // SERVICES /////////////////////////////////////////////////////////////////////////////////////////
 
-
-        /// <summary>
-        /// Vérifie si deux points disposent de la même abscisse
-        /// </summary>
-        /// <param name="pp1">Point 1</param>
-        /// <param name="pp2">Point 2</param>
-        /// <returns>True si les deux points ont la même abscisse, False dans les autres cas</returns>
-        ///
-        public static bool areColocated(PerfPoint pp1, PerfPoint pp2)
-        {
-            if (pp1.factorValue == pp2.factorValue) {
-                return true;
-            }
-            else {
-                return false;
-            }
-        }
 
 
         /// <summary>
@@ -136,9 +92,7 @@ namespace AeroCalcCore
         ///
         public override String ToString()
         {
-            String msg = "";
-
-            msg = "X= " + factorValue;
+            string msg = "X= " + factorValue;
             msg += "\nY= " + output;
             if (isBreak) {
                 msg += "\nBreak point : YES\n";
@@ -146,14 +100,7 @@ namespace AeroCalcCore
             else {
                 msg += "\nBreak point : NO\n";
             }
-            //msg += "Optimized method : " + optimizedMethod;
-            if (selected) {
-                msg += "\nSelected : YES\n\n";
-            }
-            else {
-                msg += "\nSelected : NO\n\n";
-            }
-            return msg;
+            return "";
         }
 
 
@@ -161,23 +108,14 @@ namespace AeroCalcCore
 
 
         /// <summary>
-        /// Compare deux 'PerfPoint' entre eux.
-        /// L'abscisse est le critère déterminant car dans une 'PerfSerie', les points
-        /// sont ordonnés selon leurs abscisses
+        /// Comparaison par rapport à un autre PerfPoint
+        /// L'abscisse est le critère déterminant car dans une PerfSerie, les points sont ordonnés selon leurs abscisses
         /// </summary>
-        /// <param name="pp1">Point de performance à comparer</param>
-        /// <param name="pp2">Point de performance à comparer</param>
+        /// <param name="pp">Point de performance à qui se comparer</param>
         /// <returns>-1 si pp1 est avant pp2, O si pp1 = pp2, 1 si pp1 est plus grand que pp2</returns>
         ///
-        public int Compare(PerfPoint pp1, PerfPoint pp2) {
-            if (pp1.factorValue < pp2.factorValue) {
-                return -1;
-            }
-            if (pp1.factorValue > pp2.factorValue) {
-                return 1;
-            }
-            return 0;
-        }
+        public int CompareTo(PerfPoint pp) => factorValue.CompareTo(pp.factorValue);
+
 
     }
 

@@ -285,6 +285,8 @@ namespace AeroCalcCore {
         }
 
 
+
+        
         /// <summary>
         /// Renvoie le nombre de Serie de performances sélectionnées dans la Layer
         /// </summary>
@@ -299,6 +301,8 @@ namespace AeroCalcCore {
             }
             return selectedSeries;
         }
+        
+
 
 
         /// <summary>
@@ -311,6 +315,8 @@ namespace AeroCalcCore {
         }
 
 
+
+        
         /// <summary>
         /// Sélectionne toutes les Serie de la Layer
         /// </summary>
@@ -319,8 +325,11 @@ namespace AeroCalcCore {
                 ps.selected = true;
             }
         }
+        
 
 
+
+        
         /// <summary>
         /// Désélectionne toutes les Serie de la Layer
         /// </summary>
@@ -329,6 +338,8 @@ namespace AeroCalcCore {
                 ps.selected = false;
             }
         }
+        
+
 
 
         /// <summary>

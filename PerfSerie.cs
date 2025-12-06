@@ -11,8 +11,8 @@ namespace AeroCalcCore
 
     /// <summary>
     /// Classe de dimension 2 du package 'Calculateur de performances de vol'
-    /// Enregistre les caractéristiques d'un ensemble cohérent de points de performances de vol
-    /// Par contraction, une série de points de performance s'appelle 'série de performance'
+    /// Enregistre les caractéristiques d'un ensemble cohérent de allPoints de performances de vol
+    /// Par contraction, une série de allPoints de performance s'appelle 'série de performance'
     /// </summary>
     /// 
     public class PerfSerie : IComparer<PerfSerie>
@@ -52,7 +52,7 @@ namespace AeroCalcCore
         }
 
         /// <summary>
-        /// Etat 'breakpoint' de la série de points de performance (rupture de linéarité)
+        /// Etat 'breakpoint' de la série de allPoints de performance (rupture de linéarité)
         /// </summary>
         public bool isBreak
         {
@@ -89,14 +89,17 @@ namespace AeroCalcCore
         /// Eviter une mutation de l'objet lors d'un calcul
         /// Il est recommandé de confier l'interpolation à un objet externe, qui pourra adapter la méthode de calcul à la situation
         /// </remarks>
+        
+        
         public bool selected
         {
             get;
             set;
         }
+        
 
         /// <summary>
-        /// Nombre de points dans la série
+        /// Nombre de points de performance dans la série
         /// </summary>
         public int count
         {
@@ -111,7 +114,7 @@ namespace AeroCalcCore
 
 
         /// <summary>
-        /// Liste générique utilisée pour ordonner les layers de performance PerfPoint de la série
+        /// Liste générique utilisée pour ordonner les points de performance PerfPoint de la série
         /// </summary>
         List<PerfPoint> perfPointList;
 
@@ -136,7 +139,7 @@ namespace AeroCalcCore
         {
             if (ps!=null)
             {
-                dataBaseKey = ps.dataBaseKey;
+                this.dataBaseKey = ps.dataBaseKey;
                 this.endRange = ps.endRange;
                 this.endRangeType = ps.endRangeType;
                 this.factorValue = ps.factorValue;
@@ -145,7 +148,8 @@ namespace AeroCalcCore
                 this.startRangeType = ps.startRangeType;
                 this.perfPointList = new List<PerfPoint>(ps.perfPointList);
                 // Tri de la nouvelle série
-                perfPointList.Sort(ps.pointAt(0));
+                perfPointList.Sort();
+                
             }
         }
 
@@ -165,6 +169,23 @@ namespace AeroCalcCore
         }
 
 
+
+        public PerfSerie(long dataBaseKey, double factorValue, bool isBreak)
+        {
+            this.dataBaseKey = dataBaseKey;
+            this.factorValue = factorValue;
+            this.isBreak = isBreak;
+
+            // Table des allPoints de performance, initialisée vide
+            this.perfPointList = new List<PerfPoint>();
+
+        }
+
+
+
+
+
+
         // SERVICES /////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -180,14 +201,18 @@ namespace AeroCalcCore
         {
             foreach (PerfPoint p in perfPointList)
             {
-                if (p.Compare(p, pp) == 0)
+                if (p.CompareTo(pp) == 0)
                 {
                     return false;
                 }
             }
             // pp est bien un nouveau point de performance de vol
             perfPointList.Add(pp);
-            perfPointList.Sort(pp);
+            perfPointList.Sort();
+
+            // Mise à jour du domaine de la série
+            
+
             /*
             // Le domaine de la série n'est plus valable
             startRange = this.pointAt(0).factorValue;
@@ -199,11 +224,12 @@ namespace AeroCalcCore
 
 
         /// <summary>
-        /// Renvoie le nombre de points de performances sélectionnés dans la série
+        /// Renvoie le nombre de allPoints de performances sélectionnés dans la série
         /// </summary>
-        /// <returns>Un entier représentant le nombre de points sélectionnés dans la série</returns>
+        /// <returns>Un entier représentant le nombre de allPoints sélectionnés dans la série</returns>
         ///
-        public int selectedCount()
+        /*
+         * public int selectedCount()
         {
             int selPtsNb = 0;
 
@@ -214,6 +240,7 @@ namespace AeroCalcCore
             }
             return selPtsNb;
         }
+        */
 
 
         /// <summary>
@@ -241,9 +268,10 @@ namespace AeroCalcCore
 
 
         /// <summary>
-        /// Sélectionne tous les points de la série
+        /// Sélectionne tous les allPoints de la série
         /// </summary>
         ///
+        /*
         public void selectAll()
         {
             foreach (PerfPoint pp in perfPointList)
@@ -251,12 +279,15 @@ namespace AeroCalcCore
                 pp.selected = true;
             }
         }
+        */
+
 
 
         /// <summary>
-        /// Désélectionne tous les points de la série
+        /// Désélectionne tous les allPoints de la série
         /// </summary>
         ///
+        /*
         public void selectNone()
         {
             foreach (PerfPoint pp in perfPointList)
@@ -264,6 +295,7 @@ namespace AeroCalcCore
                 pp.selected = false;
             }
         }
+        */
 
 
         /// <summary>
@@ -296,8 +328,7 @@ namespace AeroCalcCore
         ///
         public double predict(double inputValue)
         {
-
-            PerformanceModelSolver poli = new PerformanceModelSolver(this);
+            PerformanceModelSolver solver = new PerformanceModelSolver(this);
 
             //Si le domaine de calcul n'a pas été défini au préalable, il est réduit à l'étendue de la série
             if (!ranged)
@@ -311,15 +342,17 @@ namespace AeroCalcCore
                 throw new ModelException(AeroCalc.E_POINT_VALUE_OUT_OF_RANGE, "", "", double.NaN);
             }
 
-            // Sélection des points d'intérêt
-            selectPoints(inputValue, 3);
+            // Sélection des points de performance d'intérêt
+            int[] selectedPoints = sortedClosestPointsIndexes(inputValue);
+
+            //selectPoints(inputValue, 3);
             try
             {
-                return poli.interpolate(inputValue);
+                return solver.interpolateLagrange(inputValue);
             }
-            catch (ModelException e)
+            catch (ModelException)
             {
-                throw e;
+                throw;
             }
         }
 
@@ -353,15 +386,6 @@ namespace AeroCalcCore
                 msg += "]";
             }
             msg += "\n";
-            msg += "Selected : ";
-            if (selected)
-            {
-                msg += "YES\n";
-            }
-            else
-            {
-                msg += "NO\n";
-            }
             msg += "Points :\n";
             foreach (PerfPoint pp in perfPointList)
             {
@@ -440,7 +464,7 @@ namespace AeroCalcCore
 
 
         /// <summary>
-        /// Défini par défaut le domaine de calcul de la série. C'est à dire l'étendue des points de performance, en incluant
+        /// Défini par défaut le domaine de calcul de la série. C'est à dire l'étendue des allPoints de performance, en incluant
         /// les limites dans le domaine de calcul
         /// </summary>
         /// <returns>True en cas de succès</returns>
@@ -460,13 +484,106 @@ namespace AeroCalcCore
         // METHODS //////////////////////////////////////////////////////////////////////////////////////////
 
 
+
+        private double[] distances(double x)
+        {
+            // Au minimum, il faut un point de performance dans la série
+            if (perfPointList.Count < 1) { return null; }
+            
+            double[] distances = new double[perfPointList.Count - 1];
+
+            foreach (PerfPoint pp in perfPointList)
+            {
+                distances[perfPointList.IndexOf(pp)] = Math.Abs(x - pp.factorValue);
+            }
+            return distances;
+        }
+
+
+
+        private int[] orderedClosestPoints(double x)
+        {     
+            double[] distTable = distances(x);
+            if (distTable == null) { return null; }
+
+            int[] orderedIndexes = new int[distTable.Length];
+            bool[] indexUsed = new bool[distTable.Length];
+            for (int count = 0; count < distTable.Length; count++)
+            {
+                double minDist = Double.MaxValue;
+                int minIndex = -1;
+                for (int index = 0; index < distTable.Length; index++)
+                {
+                    if (!indexUsed[index])
+                    {
+                        if (distTable[index] < minDist)
+                        {
+                            minDist = distTable[index];
+                            minIndex = index;
+                        }
+                    }
+                }
+                orderedIndexes[count] = minIndex;
+                indexUsed[minIndex] = true;
+            }
+            return orderedIndexes;
+        }
+
+
         /// <summary>
-        /// Renvoie un tableau des points de performance, classés par proximité avec une valeur.
+        /// Renvoie un tableau des index des allPoints de performance, dont l'abscisse voisine avec x
+        /// et s'assurant de l'encadrement autour de la valeur x, si existant
+        /// </summary>
+        /// <param name="x">Absisse de la cible</param>
+        /// <returns></returns>
+        private int[] closestPointsAround(double x)
+        {
+            int[] orderedIndexes = orderedClosestPoints(x);
+            int[] cpa = new int[orderedIndexes.Length];
+
+            if (orderedIndexes == null) { return null; }
+            List<int> closestPoints = new List<int>();
+
+            closestPoints.Add(orderedIndexes[0]);
+            for (int count = 1; count < orderedIndexes.Length; count++)
+            {
+                int index = orderedIndexes[count];
+                if (pointAt(index).factorValue < x)
+                {
+                    // Point en dessous de x
+                    if (closestPoints.Min() > index)
+                    {
+                        closestPoints.Insert(0, index);
+                    }
+                }
+                else if (pointAt(index).factorValue > x)
+                {
+                    // Point au dessus de x
+                    if (closestPoints.Max() < index)
+                    {
+                        closestPoints.Add(index);
+                    }
+                }
+                else
+                {
+                    // Point exactement à x, on l'a déjà ajouté
+                }
+            }
+            return closestPoints.ToArray();
+        }
+
+
+
+
+
+
+        /// <summary>
+        /// Renvoie un tableau des index des allPoints de performance, classés par ordre de proximité avec une valeur x.
         /// </summary>
         /// <param name="x">Valeur</param>
         /// <returns>Tableau de Int, null si aucun point n'est présent dans la série</returns>
         ///
-        private int[] sortedClosestPoints(double x)
+        private int[] sortedClosestPointsIndexes(double x)
         {
 
             int[] sortedIndexes;
@@ -476,7 +593,7 @@ namespace AeroCalcCore
                 return null;
             }
 
-            // Cas général, la série contient des points de performance
+            // Cas général, la série contient des allPoints de performance
             //
             sortedIndexes = new int[this.count];
             int minDistIndex = -1;
@@ -560,83 +677,86 @@ namespace AeroCalcCore
             return sortedIndexes;
         }
         // Accesseur de test
-        public int[] _A_sortedClosestPoints(double x)
+        public int[] _A_sortedClosestPointsIndexes(double x)
         {
-            return sortedClosestPoints(x);
+            return sortedClosestPointsIndexes(x);
         }
 
 
 
         /// <summary>
-        /// Sélectionne les points de performance liés de façon continue autour d'une abscisse pp1
+        /// Sélectionne les allPoints de performance liés de façon continue autour d'une abscisse pp1
         /// </summary>
         /// <param name="x">Abscisse de référence</param>
-        /// <param name="nb">Nombre de points de performance à sélectionner</param>
+        /// <param name="nb">Nombre de allPoints de performance à sélectionner</param>
         ///
-        private bool selectPoints(double x, int nb)
+        private int[] selectPoints(double x, int nb)
         {
 
-            int[] points = sortedClosestPoints(x);
-            selectNone();
+            int[] allPoints = sortedClosestPointsIndexes(x);
 
-            if (points == null)
-            {
-                return false;
-            }
-            if (nb == 0)
-            {
-                return true;
-            }
-            if (points.Length == 1 || nb == 1 || x == pointAt(points[0]).factorValue)
-            {
-                pointAt(points[0]).selected = true;
-                return true;
-            }
-            if (points.Length == 2 || nb == 2)
-            {
-                pointAt(points[0]).selected = true;
-                pointAt(points[1]).selected = true;
-                return true;
-            }
-            else
-            {
-                // Trois layers minimum dans la série, il faut maintenant considérer les breakpoints
-                int count = 0;
-                int selectCounter = 0;
-                int upBreakpoint = points.Length;
-                int dnBreakPoint = -1;
+            if (allPoints == null || nb < 2) { return null; }
 
-                while (selectCounter < nb && count < points.Length)
+            // Construction tableau des index de points de performance d'intérêt
+            int[] poi = new int[nb];
+
+            // Cas triviaux, un ou deux points de performance seulement dans la série
+            if (allPoints.Length == 1 || nb == 1)
+            {
+                poi[0] = allPoints[0];
+                for (int i = 1; i < nb; i++)
                 {
-                    if (points[count] < dnBreakPoint || points[count] > upBreakpoint)
-                    {
-                        // Le point ne peut pas être sélectionné, on passe au suivant
+                    poi[i] = -1;
+                }
+                return poi;
+            }
+            if (allPoints.Length == 2)
+            {
+                poi[0]= allPoints[0];
+                poi[1]= allPoints[1];
+                for (int i = 2; i < nb; i++)
+                {
+                    poi[i] = -1;
+                }
+                return poi;
+            }
 
-                    }
-                    else
+            // Trois PerfPoints minimum dans la série, il faut maintenant considérer les breakpoints
+            int count = 0;
+            int selectCounter = 0;
+            int upBreakpoint = allPoints.Length;
+            int dnBreakPoint = -1;
+
+            while (selectCounter < nb && count < allPoints.Length)
+            {
+                if (allPoints[count] < dnBreakPoint || allPoints[count] > upBreakpoint)
+                {
+                    // Le point ne peut pas être sélectionné, on passe au suivant
+
+                }
+                else
+                {
+                    // Sélection du point
+                    poi[selectCounter] = allPoints[count];
+                    selectCounter++;
+                    if (pointAt(allPoints[count]).isBreak)
                     {
-                        // Sélection du point
-                        pointAt(points[count]).selected = true;
-                        selectCounter++;
-                        if (pointAt(points[count]).isBreak)
+                        if (pointAt(allPoints[count]).factorValue < x)
                         {
-                            if (pointAt(points[count]).factorValue < x)
-                            {
-                                dnBreakPoint = points[count];
-                            }
-                            else
-                            {
-                                upBreakpoint = points[count];
-                            }
+                            dnBreakPoint = allPoints[count];
+                        }
+                        else
+                        {
+                            upBreakpoint = allPoints[count];
                         }
                     }
-                    count++;
                 }
-                return true;
+                count++;
             }
+            return poi;
         }
         // Accesseur pour la classe de test unitaire
-        public bool _A_selectPoints(double x, int nb)
+        public int[] _A_selectPoints(double x, int nb)
         {
             return selectPoints(x, nb);
         }
