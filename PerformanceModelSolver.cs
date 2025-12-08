@@ -52,7 +52,7 @@ namespace AeroCalcCore
             ppY = new double[ps.count];
             for (int count = 0; count < ps.count; count++)
             {
-                ppX[count] = ps.pointAt(count).factorValue;
+                ppX[count] = ps.pointAt(count).input;
                 ppY[count] = ps.pointAt(count).output;
             }
         }

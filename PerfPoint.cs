@@ -20,17 +20,17 @@ namespace AeroCalcCore
         // PROPERTIES ///////////////////////////////////////////////////////////////////////////////////////
 
         /// <summary>
-        /// Valeur du facteur (Abscisse) du point de performance
+        /// Valeur input/abscisse du point de performance.
         /// </summary>
         /// <remarks>Dim x</remarks>
-        public double factorValue
+        public double input
         {
             get;
         }
 
         /// <summary>
-        /// 'Ordonnée' du point de performance. Image de factorValue par la fonction de performance décrite par la
-        /// série contenant ce point
+        /// Valeur output/ordonnée du point de performance.
+        /// Image de input par la fonction de performance modélisée par la série contenant ce point.
         /// </summary>
         public double output
         {
@@ -38,7 +38,7 @@ namespace AeroCalcCore
         }
 
         /// <summary>
-        /// Etat 'breakpoint' du point de performance (rupture de linéarité dans le modèle)
+        /// Etat de linéarité du point de performance (TRUE si une rupture de linéarité dans le modèle est observée au point de performance)
         /// </summary>
         public bool isBreak
         {
@@ -61,7 +61,7 @@ namespace AeroCalcCore
         /// <param name="isBreakPoint">Breakpoint</param>
         ///
         public PerfPoint(double input, double output, bool isBreakPoint) {
-            this.factorValue = input;
+            this.input = input;
             this.output = output;
             this.isBreak = isBreakPoint;
         }
@@ -74,7 +74,7 @@ namespace AeroCalcCore
         /// <param name="pp">Point de performance à copier</param>
         ///
         public PerfPoint(PerfPoint pp) {
-            this.factorValue = pp.factorValue;
+            this.input = pp.input;
             this.output = pp.output;
             this.isBreak = pp.isBreak;
         }
@@ -92,7 +92,7 @@ namespace AeroCalcCore
         ///
         public override String ToString()
         {
-            string msg = "X= " + factorValue;
+            string msg = "X= " + input;
             msg += "\nY= " + output;
             if (isBreak) {
                 msg += "\nBreak point : YES\n";
@@ -100,7 +100,7 @@ namespace AeroCalcCore
             else {
                 msg += "\nBreak point : NO\n";
             }
-            return "";
+            return msg;
         }
 
 
@@ -114,7 +114,7 @@ namespace AeroCalcCore
         /// <param name="pp">Point de performance à qui se comparer</param>
         /// <returns>-1 si pp1 est avant pp2, O si pp1 = pp2, 1 si pp1 est plus grand que pp2</returns>
         ///
-        public int CompareTo(PerfPoint pp) => factorValue.CompareTo(pp.factorValue);
+        public int CompareTo(PerfPoint pp) => input.CompareTo(pp.input);
 
 
     }

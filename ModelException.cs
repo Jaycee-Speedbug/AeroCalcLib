@@ -106,13 +106,13 @@ namespace AeroCalcCore
             {
                 return string.Empty;
             }
-            else if (double.IsNaN(factorValue))
+            else if (double.IsNaN(input))
             {
                 return string.Concat(factorName, AeroCalc.E_UNKNOWN_FACTOR_VALUE_MSG);
             }
             else
             {
-                return string.Concat(factorName, string.Format("= {0:F3}", factorValue));
+                return string.Concat(factorName, string.Format("= {0:F3}", input));
             }
 
         }

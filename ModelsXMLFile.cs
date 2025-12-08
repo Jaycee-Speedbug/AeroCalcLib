@@ -71,7 +71,7 @@ namespace AeroCalcCore
         /// <returns>Un élément XML</returns>
         private XElement xmlPerfPoint(PerfPoint pp)
         {
-            XElement xElem = new XElement("Point", new XAttribute("In", pp.factorValue),
+            XElement xElem = new XElement("Point", new XAttribute("In", pp.input),
                                                    new XAttribute("Out", pp.output),
                                                    new XAttribute("Break", pp.isBreak));
             return xElem;

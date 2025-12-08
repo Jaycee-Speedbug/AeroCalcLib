@@ -12,7 +12,7 @@ namespace AeroCalcCore {
     /// </summary>
     /// <remarks>
     /// Deux objets de même nature contenant les performances (deux PerfPoint, deux PerfSerie, deux PerfLayer),
-    /// dans un même ensemble, ne peuvent pas avoir un factorValue identique.
+    /// dans un même ensemble, ne peuvent pas avoir un input identique.
     /// Les PerfPile n'ont pas cette limitation dans le container les regroupants (PerfContainer).
     /// De plus, les PerfPile peuvent être caractérisées par une valeur discrète.
     /// 
@@ -320,7 +320,7 @@ namespace AeroCalcCore {
         /// <returns>True si l'ajout est réussi, False dans le cas contaire</returns>
         public bool add(PerfLayer newPerfLayer) {
 
-            // Deux PerfLayer ne peuvent pas avoir le même factorValue
+            // Deux PerfLayer ne peuvent pas avoir le même input
             foreach (PerfLayer pl in perfLayerList) {
                 if (pl.Compare(pl, newPerfLayer) == 0) {
                     return false;
@@ -364,7 +364,7 @@ namespace AeroCalcCore {
             bool foundIt = false;
             bool success = false;
 
-            // Recherche de la layer de même factorValue
+            // Recherche de la layer de même input
             for (int count = 0; count < perfLayerList.Count; count++) {
                 if (layerFactorValue == layerAt(count).factorValue) {
                     foundIt = true;
@@ -647,7 +647,7 @@ namespace AeroCalcCore {
 
         /// <summary>
         /// Implémente l'interface IComparer
-        /// Comparaison de PerfPile entre elles, sur la base de leur factorValue
+        /// Comparaison de PerfPile entre elles, sur la base de leur input
         /// C'est la valeur de ce facteur qui permet de les classer
         /// </summary>
         /// <param name="pp1">Première PerfPile de la comparaison</param>
@@ -655,7 +655,7 @@ namespace AeroCalcCore {
         /// <returns></returns>
         /// <remarks>
         /// L'ajout du facteur discret n'est pas géré pour l'instant...
-        /// Le factorValue d'une PerfPile n'a pas d'intérêt pour l'instant, car il représente une dimension
+        /// Le input d'une PerfPile n'a pas d'intérêt pour l'instant, car il représente une dimension
         /// supplémentaire non utilisée dans les données de perfomances manipulées jusqu'à présent.
         /// Il est placé à 1, par défaut.
         /// Pour utiliser cette dimension, il faudrait encapsuler les PerfPile dans un nouvel ensemble, ce qui
