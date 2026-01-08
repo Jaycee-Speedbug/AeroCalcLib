@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 
 namespace AeroCalcCore
 {
@@ -237,7 +236,7 @@ namespace AeroCalcCore
         /// Flag du mode Verbose
         /// </summary>
         public bool verbosed { get; private set; }
-        
+
         /// <summary>
         /// Index servant dans certaines commandes (LANG CHANGE)
         /// </summary>
@@ -277,7 +276,8 @@ namespace AeroCalcCore
         /// <param name="DMC">DataModelContainer, Conteneur de modèles de calculs</param>
         /// <param name="EC">EnvironmentContext, Objet contenant toutes les données de contexte</param>
         /// <param name="MS">MemoryStack, Pile de mémoire</param>
-        public AeroCalcCommand(string inputText, DataModelContainer DMC, EnvironmentContext EC, MemoryStack MS) {
+        public AeroCalcCommand(string inputText, DataModelContainer DMC, EnvironmentContext EC, MemoryStack MS)
+        {
             // Initialisation des propriétés
             startOfProcess = new DateTime(DateTime.Now.Ticks, DateTimeKind.Utc);
             action = ACTION_INITIAL_VALUE;
@@ -291,23 +291,28 @@ namespace AeroCalcCore
 
             if (EnvContext.verbose) verbosed = true;
 
-            if (string.IsNullOrEmpty(inputText)) {
+            if (string.IsNullOrEmpty(inputText))
+            {
                 // Cas particulier de la chaine nulle
                 rawTxtCommand = "";
                 action = ACTION_UNDETERMINED;
                 eventCode = ECODE_ERR_CMD_VOID;
             }
-            else {
+            else
+            {
                 // La chaine de texte n'est pas vide, traitement de la commande
                 rawTxtCommand = inputText;
-                if (!execute()) {
+                if (!execute())
+                {
                     // Un problème majeur s'est produit dans le traitement de la commande
                     eventCode = ECODE_ERR_PROCESSOR_FAILURE;
                     verbosed = true;
                 }
-                else {
+                else
+                {
                     // Commande traitée
-                    if (EC.verbose) {
+                    if (EC.verbose)
+                    {
                         verbosed = true;
                     }
                 }
@@ -327,13 +332,16 @@ namespace AeroCalcCore
         /// <param name="factorName">Nom du facteur</param>
         /// <param name="value">Valeur du facteur</param>
         /// <returns></returns>
-        public bool factor(string factorName, out double value) {
-            if (string.IsNullOrEmpty(factorName)) {
+        public bool factor(string factorName, out double value)
+        {
+            if (string.IsNullOrEmpty(factorName))
+            {
                 value = AeroCalc.MODEL_DIMENSION_DEFAULT_VALUE;
                 return true;
             }
             int index = this.Factors.FindIndex(x => x.name == factorName);
-            if (index < 0) {
+            if (index < 0)
+            {
                 // Pas de facteur trouvé
                 value = double.NaN;
                 return false;
@@ -348,7 +356,8 @@ namespace AeroCalcCore
         /// Enregistre le code de l'événement passé en argument
         /// </summary>
         /// <param name="eventCode"></param>
-        public void setEventCode(int eventCode) {
+        public void setEventCode(int eventCode)
+        {
             this.eventCode = eventCode;
         }
 
@@ -358,7 +367,8 @@ namespace AeroCalcCore
         /// Enregistre le résultat numérique du calcul réalisé
         /// </summary>
         /// <param name="result">Double, valeur numérique résultat du calcul demandé</param>
-        public void setNumericResult(double result) {
+        public void setNumericResult(double result)
+        {
             this.numericResult = result;
         }
 
@@ -369,7 +379,8 @@ namespace AeroCalcCore
         /// </summary>
         /// <param name="txtResult">Résultat au format texte qui sera communiqué à un utilisateur utilisant la console texte
         /// </param>
-        public void setResultText(string txtResult) {
+        public void setResultText(string txtResult)
+        {
             this.txtResult = txtResult;
         }
 
@@ -379,7 +390,8 @@ namespace AeroCalcCore
         /// Enregistre EXIT comme action à mener pour cette commande
         /// Permet de demander à Command Line Tool de fermer, en cas d'erreur majeure à l'initialisation par exemple
         /// </summary>
-        public void setExit() {
+        public void setExit()
+        {
             action = ACTION_EXIT;
         }
 
@@ -405,38 +417,46 @@ namespace AeroCalcCore
         /// comporter de traitement métier.
         //  TODO: Traitement de la chaine de caractère pour localisation.
         /// </remarks>
-        private bool execute() {
+        private bool execute()
+        {
             StringComparison StrCompOpt = StringComparison.CurrentCultureIgnoreCase;
             subs = rawTxtCommand.Split(commandSeparators, StringSplitOptions.RemoveEmptyEntries);
 
             // Commandes à mot unique
-            if (subs.Length == 1) {
-                if (subs[0].Equals(CMD_WORD_EXIT, StrCompOpt)) {
+            if (subs.Length == 1)
+            {
+                if (subs[0].Equals(CMD_WORD_EXIT, StrCompOpt))
+                {
                     action = ACTION_EXIT;
                     cmd_EXIT();
                 }
 
-                if (subs[0].Contains(CMD_OPERATOR_AFFECT)) {
+                if (subs[0].Contains(CMD_OPERATOR_AFFECT))
+                {
                     action = ACTION_DECLARE;
                     cmd_DECLARE();
                 }
 
-                if (subs[0].Equals(CMD_WORD_CONVERT, StrCompOpt)) {
+                if (subs[0].Equals(CMD_WORD_CONVERT, StrCompOpt))
+                {
                     action = ACTION_CONVERT;
                     cmd_CONVERT();
                 }
 
-                if (subs[0].Equals(CMD_WORD_VERBOSE, StrCompOpt)) {
+                if (subs[0].Equals(CMD_WORD_VERBOSE, StrCompOpt))
+                {
                     action = ACTION_VERBOSE;
                     cmd_VERBOSE();
                 }
 
-                if (subs[0].Equals(CMD_WORD_CATALOG, StrCompOpt)) {
+                if (subs[0].Equals(CMD_WORD_CATALOG, StrCompOpt))
+                {
                     action = ACTION_CATALOG;
                     cmd_LOAD_CATALOG();
                 }
 
-                if (subs[0].Equals(CMD_WORD_LIST, StrCompOpt)) {
+                if (subs[0].Equals(CMD_WORD_LIST, StrCompOpt))
+                {
                     action = ACTION_LIST_MODELS;
                     // TODO: S'arranger pour que la commande à mot unique LIST soit équivalente à LIST MODEL *
                     // Traitement des ALIAS potentiels
@@ -444,7 +464,8 @@ namespace AeroCalcCore
                     cmd_LIST_MODELS();
                 }
 
-                if (subs[0].Equals(CMD_WORD_LOAD, StrCompOpt)) {
+                if (subs[0].Equals(CMD_WORD_LOAD, StrCompOpt))
+                {
                     action = ACTION_LOAD_MODELS;
                     // TODO: S'arranger pour que la commande à mot unique LOAD soit équivalente à LOAD *
                     // Traitement des ALIAS potentiels
@@ -452,19 +473,22 @@ namespace AeroCalcCore
                     cmd_LOAD_MODELS();
                 }
 
-                if (subs[0].Equals(CMD_WORD_HELP, StrCompOpt)) {
+                if (subs[0].Equals(CMD_WORD_HELP, StrCompOpt))
+                {
                     // Action laissée au processeur
                     action = ACTION_HELP;
                     cmd_HELP();
                 }
 
-                if (subs[0].Equals(CMD_WORD_LANG, StrCompOpt)) {
+                if (subs[0].Equals(CMD_WORD_LANG, StrCompOpt))
+                {
                     action = ACTION_LANG;
                     cmd_LANG();
                 }
 
                 // Default
-                if (action == ACTION_INITIAL_VALUE) {
+                if (action == ACTION_INITIAL_VALUE)
+                {
                     // Pas une action à un seul keyword n'a été identifiée
                     action = ACTION_UNDETERMINED;
                     eventCode = ECODE_ERR_UKN_CMD_WORD;
@@ -473,64 +497,78 @@ namespace AeroCalcCore
             }
 
             // Commandes à mots multiples
-            if (subs.Length > 1) {
-                if (subs[0].Equals(CMD_WORD_INIT_INTERPRETER, StrCompOpt)) {
+            if (subs.Length > 1)
+            {
+                if (subs[0].Equals(CMD_WORD_INIT_INTERPRETER, StrCompOpt))
+                {
                     // Action laissée au processeur
                     action = ACTION_INIT_INTERPRETER;
                     cmd_INIT();
                 }
 
-                if (subs[0].Equals(CMD_WORD_LOAD, StrCompOpt)) {
-                    if (subs[1].Equals(CMD_WORD_MODEL, StrCompOpt)) {
+                if (subs[0].Equals(CMD_WORD_LOAD, StrCompOpt))
+                {
+                    if (subs[1].Equals(CMD_WORD_MODEL, StrCompOpt))
+                    {
                         action = ACTION_LOAD_MODELS;
                         cmd_LOAD_MODELS();
                     }
-                    else if (subs[1].Equals(CMD_WORD_UNIT, StrCompOpt)) {
+                    else if (subs[1].Equals(CMD_WORD_UNIT, StrCompOpt))
+                    {
                         action = ACTION_LOAD_UNITS;
                         // TODO: Define cmd_LOAD_UNITS()
                     }
                 }
 
-                if (subs[0].Equals(CMD_WORD_LIST, StrCompOpt)) {
-                    if (subs[1].Equals(CMD_WORD_MODEL, StrCompOpt)) {
+                if (subs[0].Equals(CMD_WORD_LIST, StrCompOpt))
+                {
+                    if (subs[1].Equals(CMD_WORD_MODEL, StrCompOpt))
+                    {
                         action = ACTION_LIST_MODELS;
                         cmd_LIST_MODELS();
                     }
-                    else if (subs[1].Equals(CMD_WORD_UNIT, StrCompOpt)) {
+                    else if (subs[1].Equals(CMD_WORD_UNIT, StrCompOpt))
+                    {
                         action = ACTION_LIST_UNITS;
                         cmd_LIST_UNITS();
                     }
-                    else if (subs[1].Equals(CMD_WORD_LANG, StrCompOpt)) {
+                    else if (subs[1].Equals(CMD_WORD_LANG, StrCompOpt))
+                    {
                         action = ACTION_LIST_LANG;
                         cmd_LIST_LANG();
                     }
                 }
 
                 if (subs[0].Equals(CMD_WORD_STOP, StrCompOpt) &&
-                    subs[1].Equals(CMD_WORD_VERBOSE, StrCompOpt)) {
+                    subs[1].Equals(CMD_WORD_VERBOSE, StrCompOpt))
+                {
                     // Action laissée au processeur
                     action = ACTION_STOP_VERBOSE;
                     cmd_VERBOSE();
                 }
 
-                if (subs[0].Equals(CMD_WORD_SCRIPTFILE, StrCompOpt)) {
+                if (subs[0].Equals(CMD_WORD_SCRIPTFILE, StrCompOpt))
+                {
                     // Chargement et exécution d'un fichier de script, on repasse la main au processeur
                     action = ACTION_SCRIPTFILE;
                     cmd_SCRIPTFILE();
                 }
 
-                if (subs[0].Equals(CMD_WORD_CONVERT, StrCompOpt)) {
+                if (subs[0].Equals(CMD_WORD_CONVERT, StrCompOpt))
+                {
                     action = ACTION_CONVERT;
                     cmd_CONVERT();
                 }
 
-                if (subs[0].Equals(CMD_WORD_LANG, StrCompOpt)) {
+                if (subs[0].Equals(CMD_WORD_LANG, StrCompOpt))
+                {
                     action = ACTION_LANG_CHANGE;
                     cmd_LANG();
                 }
 
                 // En dernier ressort, on considère une commande de calcul
-                if (action == ACTION_INITIAL_VALUE) {
+                if (action == ACTION_INITIAL_VALUE)
+                {
                     // Commande à mots multiples et non reconnues précédement
                     action = ACTION_CALCULATE;
                     eventCode = ECODE_ERR_CMD_UNPROCESSED;
@@ -552,30 +590,36 @@ namespace AeroCalcCore
         /// </returns>
         /// <remarks>
         /// </remarks>
-        private bool cmd_CALCULATE() {
+        private bool cmd_CALCULATE()
+        {
             // Initialisation
             double numResult = double.NaN;
             // constitution de la Liste des facteurs communiqués dans la commande
             List<CommandFactor> factorList = new List<CommandFactor>();
-            for (int count = 1; count < this.subs.Length; count++) {
+            for (int count = 1; count < this.subs.Length; count++)
+            {
                 factorList.Add(getFactor(subs[count]));
             }
             // Exécution du calcul
-            try {
+            try
+            {
                 numResult = Container.compute(subs[0], factorList);
             }
-            catch (ModelException e) {
+            catch (ModelException e)
+            {
                 // La commande a échoué pendant le calcul 
                 eventCode = ECODE_ERR_CALC_PROCESS;
                 addInfo(new string[] { e.modelName, e.factorName, e.factorValue.ToString() });
             }
             // Tratement post calcul
-            if (!double.IsNaN(numResult)) {
+            if (!double.IsNaN(numResult))
+            {
                 // Réussite du calcul
                 eventCode = ECODE_CALC_SUCCESSFULL;
                 numericResult = numResult;
             }
-            else {
+            else
+            {
                 // Echec du calcul, sans génération d'exception...
                 eventCode = ECODE_ERR_UKN_CMD_WORD;
             }
@@ -588,19 +632,22 @@ namespace AeroCalcCore
         /// DRAFT Mise en mémoire de valeurs
         /// </summary>
         /// <returns></returns>
-        private bool cmd_DECLARE() {
+        private bool cmd_DECLARE()
+        {
             // Initialisation
             bool success;
             CommandFactor factor;
             factor = new CommandFactor(subs[0]);
             success = MemStack.addFactor(factor);
 
-            if (success) {
+            if (success)
+            {
                 addInfo(new string[] { factor.name, factor.value.ToString() });
                 eventCode = ECODE_MEM_SUCCESSFULL;
                 return true;
             }
-            else {
+            else
+            {
                 eventCode = ECODE_ERR_MEM_DECLARATION;
                 return false;
             }
@@ -612,7 +659,8 @@ namespace AeroCalcCore
         /// Traitement de la commande de conversion entre unités
         /// </summary>
         /// <returns></returns>
-        private bool cmd_CONVERT() {
+        private bool cmd_CONVERT()
+        {
             // COMMANDE NON SUPPORTEE
             eventCode = ECODE_ERR_UNSUPPORTED_CMD;
             return true;
@@ -624,7 +672,8 @@ namespace AeroCalcCore
         ///  Traitement de la commande d'exécution d'un script
         /// </summary>
         /// <returns></returns>
-        private bool cmd_SCRIPTFILE() {
+        private bool cmd_SCRIPTFILE()
+        {
             // Commande traitée par le processeur
             addInfo(subs[1]);
             eventCode = ECODE_CMD_HANDOVER;
@@ -637,27 +686,33 @@ namespace AeroCalcCore
         /// Traitement de la commande de gestion du pack de langue
         /// </summary>
         /// <returns></returns>
-        private bool cmd_LANG() {
-            if (action == ACTION_LANG) {
+        private bool cmd_LANG()
+        {
+            if (action == ACTION_LANG)
+            {
                 // Language currently used
                 addInfo(EnvContext.Langs.Library[EnvContext.activeLangIndex].name);
                 addInfo(EnvContext.Langs.Library[EnvContext.activeLangIndex].isoCode);
                 eventCode = ECODE_ACTIVE_LANG;
             }
-            else {
+            else
+            {
                 // Set a language
                 Language l = EnvContext.Langs.Library.Find(x => x.isoCode.Equals(subs[1]));
-                if (l == null) {
+                if (l == null)
+                {
                     addInfo(subs[1]);
                     eventCode = ECODE_ERR_LANG_DOES_NOT_EXIST;
                     return true;
                 }
-                if (!l.enabled) {
+                if (!l.enabled)
+                {
                     addInfo(l.isoCode);
                     eventCode = ECODE_ERR_LANG_DISABLED;
                     return true;
                 }
-                if (l.isoCode.Equals(EnvContext.activeLang)) {
+                if (l.isoCode.Equals(EnvContext.activeLang))
+                {
                     addInfo(subs[1]);
                     eventCode = ECODE_ERR_LANG_ALREADY_SET;
                     return true;
@@ -675,7 +730,8 @@ namespace AeroCalcCore
         ///  Traitement de la commande de fermeture de l'interpréteur de commande
         /// </summary>
         /// <returns></returns>
-        private bool cmd_EXIT() {
+        private bool cmd_EXIT()
+        {
             // Commande traitée par le processeur
             eventCode = ECODE_CMD_HANDOVER;
             return true;
@@ -687,7 +743,8 @@ namespace AeroCalcCore
         /// Traitement de la commande de demande d'aide
         /// </summary>
         /// <returns></returns>
-        private bool cmd_HELP() {
+        private bool cmd_HELP()
+        {
             // Commande traitée par le processeur
             eventCode = ECODE_CMD_HANDOVER;
             return true;
@@ -699,7 +756,8 @@ namespace AeroCalcCore
         /// Traitement de la commande d'initialisation de l'interpréteur de commande
         /// </summary>
         /// <returns></returns>
-        private bool cmd_INIT() {
+        private bool cmd_INIT()
+        {
             // Commande traitée par le processeur
             eventCode = ECODE_CMD_HANDOVER;
             return true;
@@ -715,14 +773,17 @@ namespace AeroCalcCore
         /// <remarks>
         // TODO Objectif partiellement atteint, on doit pouvoir lister les modèles avec filtrage
         /// </remarks>
-        private bool cmd_LIST_MODELS() {
+        private bool cmd_LIST_MODELS()
+        {
             // Recherche des noms de modèles de performance qui match
             string models;
             models = Container.dataModelSignatures();
-            if (string.IsNullOrEmpty(models)) {
+            if (string.IsNullOrEmpty(models))
+            {
                 eventCode = AeroCalcCommand.ECODE_ERR_NO_MODEL_LOADED;
             }
-            else {
+            else
+            {
                 eventCode = AeroCalcCommand.ECODE_PROCESS_SUCCESSFULL;
                 txtResult = models;
             }
@@ -739,19 +800,23 @@ namespace AeroCalcCore
         /// <remarks>
         // TODO Objectif partiellement atteint, on doit pouvoir lister les unités avec filtrage
         /// </remarks>
-        private bool cmd_LIST_UNITS() {
+        private bool cmd_LIST_UNITS()
+        {
             // Liste des unités de la bibliothèque
             string msg = "";
             List<Unit> lu = Container.UnitsLib.getUnits();
-            if (lu != null) {
-                foreach (Unit item in lu) {
+            if (lu != null)
+            {
+                foreach (Unit item in lu)
+                {
                     msg += item.ToString() + Environment.NewLine;
                 }
                 txtResult = msg;
                 addInfo(lu.Count.ToString());
                 eventCode = ECODE_LIST_UNITS_SUCCESSFULL;
             }
-            else {
+            else
+            {
                 // No units available!
                 eventCode = ECODE_ERR_NO_UNIT_DATA_AVAILABLE;
             }
@@ -764,9 +829,11 @@ namespace AeroCalcCore
         /// Traitement de la commande de liste des packs de langue enregistrés
         /// </summary>
         /// <returns></returns>
-        private bool cmd_LIST_LANG() {
+        private bool cmd_LIST_LANG()
+        {
             string listMsg = "";
-            foreach (Language lang in EnvContext.Langs.Library) {
+            foreach (Language lang in EnvContext.Langs.Library)
+            {
                 listMsg += lang.ToString() + Environment.NewLine;
             }
             txtResult = listMsg;
@@ -781,7 +848,8 @@ namespace AeroCalcCore
         /// Traite la commande de chargement du catalogue
         /// </summary>
         /// <returns></returns>
-        private bool cmd_LOAD_CATALOG() {
+        private bool cmd_LOAD_CATALOG()
+        {
             // COMMANDE NON SUPPORTEE
             eventCode = ECODE_ERR_UNSUPPORTED_CMD;
             return true;
@@ -795,17 +863,21 @@ namespace AeroCalcCore
         /// <returns>Code du traitement de l'opération</returns>
         /// <remarks>TO BE DEVELOPPED</remarks>
         /// 
-        private bool cmd_LOAD_MODELS() {
+        private bool cmd_LOAD_MODELS()
+        {
             int counter = 0;
 
-            foreach (string filter in subs) {
+            foreach (string filter in subs)
+            {
                 counter += Container.loadDataModels("", filter);
             }
-            if (counter > 0) {
+            if (counter > 0)
+            {
                 addInfo(counter.ToString());
                 eventCode = ECODE_LOAD_MODELS_SUCCESSFULL;
             }
-            else {
+            else
+            {
                 eventCode = ECODE_ERR_NO_MODEL_LOADED;
             }
             return true;
@@ -818,34 +890,43 @@ namespace AeroCalcCore
         /// </summary>
         /// <returns>Code du traitement de l'opération</returns>
         /// <remarks>TO BE DEVELOPPED</remarks>
-        private void cmd_VERBOSE() {
-            if (action == ACTION_VERBOSE) {
+        private void cmd_VERBOSE()
+        {
+            if (action == ACTION_VERBOSE)
+            {
                 // VERBOSE
-                if (EnvContext.verboseAllowed) {
-                    if (EnvContext.verbose) {
+                if (EnvContext.verboseAllowed)
+                {
+                    if (EnvContext.verbose)
+                    {
                         // VERBOSE is already set
                         eventCode = ECODE_VERBOSE_ALREADY;
                     }
-                    else {
+                    else
+                    {
                         // VERBOSE to be set
                         EnvContext.setVerbose(true);
                         verbosed = true;
                         eventCode = ECODE_VERBOSE_ACTIVE;
                     }
                 }
-                else {
+                else
+                {
                     // Not allowed !
                     eventCode = ECODE_ERR_UNABLE_VERBOSE_MOD;
                 }
             }
-            else {
+            else
+            {
                 // STOP VERBOSE
-                if (EnvContext.verboseAllowed) {
+                if (EnvContext.verboseAllowed)
+                {
                     EnvContext.setVerbose(false);
                     verbosed = false;
                     eventCode = ECODE_VERBOSE_INACTIVE;
                 }
-                else {
+                else
+                {
                     // Not allowed !
                     eventCode = ECODE_ERR_UNABLE_VERBOSE_MOD;
                 }
@@ -859,11 +940,15 @@ namespace AeroCalcCore
         /// à destination de l'utilisateur
         /// </summary>
         /// <param name="information">Information à communiquer</param>
-        private void addInfo(string information) {
-            if (!string.IsNullOrEmpty(information)) {
-                if (info != null) {
+        private void addInfo(string information)
+        {
+            if (!string.IsNullOrEmpty(information))
+            {
+                if (info != null)
+                {
                     string[] newArray = new string[info.Length + 1];
-                    for (int index = 0; index < info.Length; index++) {
+                    for (int index = 0; index < info.Length; index++)
+                    {
                         // Copie de l'ancienne table
                         newArray[index] = info[index];
                     }
@@ -871,7 +956,8 @@ namespace AeroCalcCore
                     newArray[newArray.Length - 1] = information;
                     info = newArray;
                 }
-                else {
+                else
+                {
                     info = new string[1];
                     info[0] = information;
                 }
@@ -885,9 +971,12 @@ namespace AeroCalcCore
         /// à destination de l'utilisateur
         /// </summary>
         /// <param name="information">Informations à communiquer</param>
-        private void addInfo(string[] informations) {
-            if (informations != null) {
-                foreach (string item in informations) {
+        private void addInfo(string[] informations)
+        {
+            if (informations != null)
+            {
+                foreach (string item in informations)
+                {
                     addInfo(item);
                 }
             }
@@ -904,25 +993,31 @@ namespace AeroCalcCore
         /// DEBUG: OLD doit être remplacé par un constructeur d'objet commandFactor
         /// </remarks>
         /// 
-        private CommandFactor getFactor(string subString) {
+        private CommandFactor getFactor(string subString)
+        {
             string name = "";
             int unitDictionaryIndex = 0;
             double val = double.NaN;
             char[] separators = { CMD_OPERATOR_AFFECT, CMD_OPERATOR_UNIT };
             string[] words = subString.Split(separators);
 
-            if (words.Length == 2) {
+            if (words.Length == 2)
+            {
                 // Facteur sans unité
-                if (double.TryParse(words[1], out val)) {
+                if (double.TryParse(words[1], out val))
+                {
                     name = words[0];
                     unitDictionaryIndex = AeroCalc.UNIT_UNDETERMINED;
                 }
             }
-            else if (words.Length == 3) {
+            else if (words.Length == 3)
+            {
                 // Facteur avec unité
-                if (double.TryParse(words[1], out val)) {
+                if (double.TryParse(words[1], out val))
+                {
                     unitDictionaryIndex = Container.UnitsLib.getIndexByAlias(words[2]);
-                    if (unitDictionaryIndex != AeroCalc.UNIT_UNDETERMINED) {
+                    if (unitDictionaryIndex != AeroCalc.UNIT_UNDETERMINED)
+                    {
                         name = words[0];
                     }
                 }
@@ -941,22 +1036,26 @@ namespace AeroCalcCore
         /// A remplacer par un traitement plus automatisé, en utilisant une List<> ou 
         /// </remarks>
         // TODO To be replaced by a formating function
-        private void useAlias() {
+        private void useAlias()
+        {
             bool aliasUsed = false;
             string aliasCmd = "";
 
-            if (subs.Length == 1 && this.action == ACTION_LIST_MODELS) {
+            if (subs.Length == 1 && this.action == ACTION_LIST_MODELS)
+            {
                 // LIST  ->  LIST *
                 aliasCmd = "LIST *";
                 aliasUsed = true;
             }
-            if (subs.Length == 1 && this.action == ACTION_LOAD_MODELS) {
+            if (subs.Length == 1 && this.action == ACTION_LOAD_MODELS)
+            {
                 // LOAD  ->  LOAD *
                 aliasCmd = "LOAD *";
                 aliasUsed = true;
             }
             // Si remplacement, nouveau séquençage en mots
-            if (aliasUsed) {
+            if (aliasUsed)
+            {
                 subs = aliasCmd.Split(commandSeparators, StringSplitOptions.RemoveEmptyEntries);
             }
         }

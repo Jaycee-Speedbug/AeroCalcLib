@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 
 
@@ -60,7 +59,8 @@ namespace AeroCalcCore
         /// <param name="pp2">Ordonnée du point</param>
         /// <param name="isBreakPoint">Breakpoint</param>
         ///
-        public PerfPoint(double input, double output, bool isBreakPoint) {
+        public PerfPoint(double input, double output, bool isBreakPoint)
+        {
             this.input = input;
             this.output = output;
             this.isBreak = isBreakPoint;
@@ -73,7 +73,8 @@ namespace AeroCalcCore
         /// </summary>
         /// <param name="pp">Point de performance à copier</param>
         ///
-        public PerfPoint(PerfPoint pp) {
+        public PerfPoint(PerfPoint pp)
+        {
             this.input = pp.input;
             this.output = pp.output;
             this.isBreak = pp.isBreak;
@@ -94,10 +95,12 @@ namespace AeroCalcCore
         {
             string msg = "X= " + input;
             msg += "\nY= " + output;
-            if (isBreak) {
+            if (isBreak)
+            {
                 msg += "\nBreak point : YES\n";
             }
-            else {
+            else
+            {
                 msg += "\nBreak point : NO\n";
             }
             return msg;

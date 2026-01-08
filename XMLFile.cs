@@ -1,7 +1,7 @@
 using System;
-using System.Xml.Linq;
 using System.Collections.Generic;
 using System.Xml;
+using System.Xml.Linq;
 
 namespace AeroCalcCore
 {
@@ -82,21 +82,24 @@ namespace AeroCalcCore
         /// <summary>
         /// Construit un objet XMLFile, interface pour l'accès en lecture et écriture à un fichier XML
         /// </summary>
-        public XMLFile() : base() {
+        public XMLFile() : base()
+        {
             xDoc = new XDocument();
         }
 
         /// <summary>
         /// Construit un objet XMLFile, interface pour l'accès en lecture et écriture à un fichier XML
         /// </summary>
-        public XMLFile(string workDirectoryPath) : base(workDirectoryPath) {
+        public XMLFile(string workDirectoryPath) : base(workDirectoryPath)
+        {
             xDoc = new XDocument();
         }
 
         /// <summary>
         /// Construit un objet XMLFile, interface pour l'accès en lecture et écriture à un fichier XML
         /// </summary>
-        public XMLFile(string workDirectoryPath, string fileAbsolutePath) : base(workDirectoryPath, fileAbsolutePath) {
+        public XMLFile(string workDirectoryPath, string fileAbsolutePath) : base(workDirectoryPath, fileAbsolutePath)
+        {
             readXmlFile();
         }
 
@@ -105,7 +108,8 @@ namespace AeroCalcCore
         /// </summary>
         public XMLFile(string workDirectoryPath,
                        string inputFileAbsolutePath,
-                       string outputFileAbsolutePath) : base(workDirectoryPath, inputFileAbsolutePath, outputFileAbsolutePath) {
+                       string outputFileAbsolutePath) : base(workDirectoryPath, inputFileAbsolutePath, outputFileAbsolutePath)
+        {
             readXmlFile();
         }
 
@@ -120,23 +124,30 @@ namespace AeroCalcCore
         /// </summary>
         /// <param name="absolutePath">Chemin absolu vers le fichier XML</param>
         /// <returns>Int renseignant sur la réalisation de l'opération sur le fichier. Voir FILEIO.FILEOP_</returns>
-        protected int readXmlFile() {
+        protected int readXmlFile()
+        {
             IOStatus = checkFile(inputFileAbsolutePath);
-            if (IOStatus == FILEOP_SUCCESSFUL) {
-                try {
+            if (IOStatus == FILEOP_SUCCESSFUL)
+            {
+                try
+                {
                     xDoc = XDocument.Load(inputFileAbsolutePath);
                 }
-                catch (Exception e) {
-                    if (e is XmlException) {
+                catch (Exception e)
+                {
+                    if (e is XmlException)
+                    {
                         IOStatus = FILEOP_FILE_INVALID_CONTENT;
                         return FILEOP_FILE_INVALID_CONTENT;
                     }
-                    else {
+                    else
+                    {
                         IOStatus = FILEOP_UNKNOWN_ERROR;
                         return FILEOP_UNKNOWN_ERROR;
                     }
                 }
-                if (xDoc == null) {
+                if (xDoc == null)
+                {
                     IOStatus = FILEOP_UNKNOWN_ERROR;
                 }
             }
@@ -155,22 +166,28 @@ namespace AeroCalcCore
         /// <returns>
         /// Chaine contenant l'attribut, ou une chaine vide si l'attribut n'a pas été trouvé
         /// </returns>
-        public string getAttribute(string[] nodeNames, string attributeName) {
-            if (xDoc == null || nodeNames == null || string.IsNullOrEmpty(attributeName)) {
+        public string getAttribute(string[] nodeNames, string attributeName)
+        {
+            if (xDoc == null || nodeNames == null || string.IsNullOrEmpty(attributeName))
+            {
                 return "";
             }
             string attribVal;
-            try {
+            try
+            {
                 XElement xe = xDoc.Element(nodeNames[0]);
-                for (int index = 1; index < nodeNames.Length; index++) {
+                for (int index = 1; index < nodeNames.Length; index++)
+                {
                     xe = xe.Element(nodeNames[index]);
-                    if (xe == null) {
+                    if (xe == null)
+                    {
                         break;
                     }
                 }
                 attribVal = xe.Attribute(attributeName).Value;
             }
-            catch (Exception e) {
+            catch (Exception e)
+            {
                 return "";
             }
             return (attribVal == null) ? "" : attribVal;
@@ -215,18 +232,22 @@ namespace AeroCalcCore
         /// </returns>
         //  TODO à tester 
         //  BUG Corrigé
-        public string getValue(string[] nodeNames) {
+        public string getValue(string[] nodeNames)
+        {
             if (xDoc == null || nodeNames == null) { return ""; }
             List<XElement> collec = new List<XElement>();
             collec.Add((XElement)xDoc.FirstNode);
-            for (int index = 0; index < nodeNames.Length; index++) {
+            for (int index = 0; index < nodeNames.Length; index++)
+            {
                 List<XElement> loopCollec = new List<XElement>();
-                foreach (XElement item in collec) {
+                foreach (XElement item in collec)
+                {
                     loopCollec.AddRange(item.Descendants(nodeNames[index]));
                 }
                 collec = loopCollec;
             }
-            foreach (XElement xe in collec) {
+            foreach (XElement xe in collec)
+            {
                 return xe.Value;
             }
             return "";
@@ -243,12 +264,17 @@ namespace AeroCalcCore
         /// <returns>
         /// Chaine contenant l'attribut, ou une chaine vide si l'attribut n'a pas été trouvé
         /// </returns>
-        public string getValue(string nodeName, string attributeName, string attributeValue) {
-            if (nodeName != null && attributeName != null && attributeValue != null) {
-                foreach (XElement elemt in xDoc.Descendants(nodeName)) {
+        public string getValue(string nodeName, string attributeName, string attributeValue)
+        {
+            if (nodeName != null && attributeName != null && attributeValue != null)
+            {
+                foreach (XElement elemt in xDoc.Descendants(nodeName))
+                {
                     // Noeud trouvé !
-                    foreach (XAttribute attrib in elemt.Attributes()) {
-                        if (attrib.Name.LocalName.Equals(attributeName) && attrib.Value.Equals(attributeValue)) {
+                    foreach (XAttribute attrib in elemt.Attributes())
+                    {
+                        if (attrib.Name.LocalName.Equals(attributeName) && attrib.Value.Equals(attributeValue))
+                        {
                             // Attribut trouvé
                             return elemt.Value;
                         }
@@ -271,40 +297,49 @@ namespace AeroCalcCore
         /// Boolean contenu dans le loeud désigné, ou la valeur par défaut
         /// </returns>
         /// 
-        public bool getBoolean(string nodeName, string attributeName, string attributeValue, bool defaultValue) {
+        public bool getBoolean(string nodeName, string attributeName, string attributeValue, bool defaultValue)
+        {
             return getBoolOrDefault(getValue(nodeName, attributeName, attributeValue), defaultValue);
         }
 
-        public bool getBoolOrDefault(string fieldString, bool defaultValue) {
+        public bool getBoolOrDefault(string fieldString, bool defaultValue)
+        {
             bool b;
 
-            if (!Boolean.TryParse(fieldString, out b)) {
+            if (!Boolean.TryParse(fieldString, out b))
+            {
                 return defaultValue;
             }
-            else {
+            else
+            {
                 return b;
             }
         }
 
 
 
-        public int getIntOrMinValue(string fieldString) {
+        public int getIntOrMinValue(string fieldString)
+        {
             int i;
-            if (!int.TryParse(fieldString, out i)) {
+            if (!int.TryParse(fieldString, out i))
+            {
                 // TODO Vérifier la compatibilité sur les plateforme Int16/Int32/Int64
                 // TODO Eventuellement faire un choix qui permettent de viser Linux et Windows 10...
                 return int.MinValue;
             }
-            else {
+            else
+            {
                 return i;
             }
         }
 
 
 
-        public double getDoubleOrNaN(string fieldString) {
+        public double getDoubleOrNaN(string fieldString)
+        {
             double d;
-            if (Double.TryParse(fieldString, out d)) {
+            if (Double.TryParse(fieldString, out d))
+            {
                 return d;
             }
             return double.NaN;

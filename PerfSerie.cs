@@ -14,7 +14,7 @@ namespace AeroCalcCore
     /// des extrapolations contrôlées.
     /// </summary>
     /// 
-    public class PerfSerie : IComparer<PerfSerie>
+    public class PerfSerie : IComparable<PerfSerie>
     {
 
         // FIELDS ////////////////////////////////////////////////////////////////////////////////////
@@ -115,7 +115,7 @@ namespace AeroCalcCore
         /// <param name="ps">Série de points de performance à cloner</param>
         public PerfSerie(PerfSerie ps)
         {
-            if (ps!=null)
+            if (ps != null)
             {
                 this.dataBaseKey = ps.dataBaseKey;
                 this.endRange = ps.endRange;
@@ -127,7 +127,7 @@ namespace AeroCalcCore
                 this.perfPointList = new List<PerfPoint>(ps.perfPointList);
                 // Tri de la nouvelle série
                 perfPointList.Sort();
-                
+
             }
         }
 
@@ -262,7 +262,7 @@ namespace AeroCalcCore
             }
 
             // Sélection des points de performance d'intérêt
-            int[] selectedPoints = closestPointsAround(inputValue,3);
+            int[] selectedPoints = closestPointsAround(inputValue, 3);
             PerfSerie tempoSerie = new PerfSerie();
             foreach (int idx in selectedPoints)
             {
@@ -326,22 +326,10 @@ namespace AeroCalcCore
         /// Comparaison des séries entre elles par la valeur de leur facteur associé (secondary dimension)
         /// C'est la valeur de ce facteur qui permet de les classer
         /// </summary>
-        /// <param name="ps1">Première série de layers de performance</param>
-        /// <param name="ps2">Deuxième série de layers de performance</param>
-        /// <returns>-1 si ps1 est avant ps2, O si ps1 = ps2, 1 si ps1 est plus grand que ps2</returns>
+        /// <param name="ps">PerfSerie à laquelle se comparer</param>
+        /// <returns>-1 si le facteur de ps est inférieur, O si la valeur du facteur est identique, 1 si le facteur de ps est supérieur</returns>
         ///
-        public int Compare(PerfSerie ps1, PerfSerie ps2)
-        {
-            if (ps1.factorValue < ps2.factorValue)
-            {
-                return -1;
-            }
-            if (ps1.factorValue > ps2.factorValue)
-            {
-                return 1;
-            }
-            return 0;
-        }
+        public int CompareTo(PerfSerie ps) => factorValue.CompareTo(ps.factorValue);
 
 
         // SETTERS //////////////////////////////////////////////////////////////////////////////////////////
@@ -412,14 +400,19 @@ namespace AeroCalcCore
         {
             // Au minimum, il faut un point de performance dans la série
             if (perfPointList.Count < 1) { return null; }
-            
-            double[] distances = new double[perfPointList.Count - 1];
+
+            double[] distances = new double[perfPointList.Count];
 
             foreach (PerfPoint pp in perfPointList)
             {
                 distances[perfPointList.IndexOf(pp)] = Math.Abs(x - pp.input);
             }
             return distances;
+        }
+        // Accesseur de test
+        public double[] _A_unsignedDistances(double x)
+        {
+            return unsignedDistances(x);
         }
 
 
@@ -429,7 +422,7 @@ namespace AeroCalcCore
             // Au minimum, il faut un point de performance dans la série
             if (perfPointList.Count < 1) { return null; }
 
-            double[] distances = new double[perfPointList.Count - 1];
+            double[] distances = new double[perfPointList.Count];
 
             foreach (PerfPoint pp in perfPointList)
             {
@@ -445,61 +438,73 @@ namespace AeroCalcCore
 
 
 
+        /// <summary>
+        /// Identifies the contiguous subdomain of points surrounding the specified input value, respecting breakpoints
+        /// in the series.
+        /// </summary>
+        /// <remarks>The subdomain is determined by locating the closest point to the specified input
+        /// value and expanding outward until a breakpoint is encountered on either side. If the input value is outside
+        /// the range of the series, the subdomain will include points from the nearest end up to the first breakpoint.
+        /// The returned indexes are ordered in increasing sequence.</remarks>
+        /// <param name="x">The input value for which to determine the relevant subdomain. Represents the target position within the
+        /// series.</param>
+        /// <returns>An array of indexes representing the points in the subdomain that contains or is closest to the specified
+        /// input value. Returns null if the series contains no points.</returns>
         private int[] subDomain(double x)
         {
-            double[] distTable = signedDistances(x);
-            if (distTable == null || distTable.Length<2)
-            {
-                return null; 
-            }
+            int n = this.count;
+            if (n == 0)
+                return null;
+            if (n == 1)
+                return new[] { 0 };
 
-            // Liste temporaire pour stocker les index des points situés dans le sous-domaine
-            List<int> subDomainIndexes = new List<int>();
-            int inf=0;
-            int sup = distTable.Length - 1;
-
-            // Cas où x est en dehors de l'étendue de la PerfSerie
-            // Le sous-domaine est limité par le premier point de rupture rencontré
-            // Permet de prendre en charge les extrapolations contrôlées
-            if (distTable[0] > 0)
+            // 1) Récupérer la liste des index de breakpoints, triés naturellement
+            List<int> breakIndexes = new List<int>();
+            for (int i = 0; i < n; i++)
             {
-                // x est en dehors de l'étendue de la PerfSerie, le sous-domaine commence au premier point
-                for (int index = 0; index < distTable.Length; index++)
+                if (pointAt(i).isBreak)
                 {
-                    subDomainIndexes.Add(index);
-                    if (pointAt(index).isBreak)
-                    {
-                        // Point de rupture, le sous-domaine s'arrête ici
-                        break;
-                    }
-                }
-                return subDomainIndexes.ToArray();
-            }
-            if (distTable[distTable.Length - 1] < 0)
-            {
-                // x est en dehors de l'étendue de la PerfSerie, le sous-domaine finit au dernier point
-                for(int index = distTable.Length -1; index >=0; index--)
-                {
-                    subDomainIndexes.Add(index);
-                    if (pointAt(index).isBreak)
-                    {
-                        // Point de rupture, le sous-domaine s'arrête ici
-                        break;
-                    }
-                }
-                subDomainIndexes.Reverse();
-                return subDomainIndexes.ToArray();
-            }
-
-            // Cas général, x est dans l'étendue de la PerfSerie
-            for (int index = 0; index < distTable.Length; index++)
-            {
-                if (distTable[index] <= 0)
-                {
-                    subDomainIndexes.Add(index);
+                    breakIndexes.Add(i);
                 }
             }
-            return subDomainIndexes.ToArray();
+
+            int startIndex = 0;
+            int endIndex = n - 1;
+
+            // 2) Déterminer la borne supérieure du segment :
+            //    le premier breakpoint dont l'abscisse est STRICTEMENT > x
+            //    (sinon, on garde la borne supérieure = fin de série)
+            foreach (int b in breakIndexes)
+            {
+                if (pointAt(b).input > x)
+                {
+                    endIndex = b;
+                    break;
+                }
+            }
+
+            // 3) Déterminer la borne inférieure du segment :
+            //    le dernier breakpoint dont l'abscisse est <= x
+            //    (sinon, on garde la borne inférieure = 0)
+            for (int i = breakIndexes.Count - 1; i >= 0; i--)
+            {
+                int b = breakIndexes[i];
+                if (pointAt(b).input <= x)
+                {
+                    startIndex = b;
+                    break;
+                }
+            }
+
+            // 4) Construire le sous-domaine [startIndex .. endIndex]
+            int length = endIndex - startIndex + 1;
+            int[] subDomainIndexes = new int[length];
+            for (int i = 0; i < length; i++)
+            {
+                subDomainIndexes[i] = startIndex + i;
+            }
+
+            return subDomainIndexes;
         }
         // Accesseur de test
         public int[] _A_subDomain(double x)
@@ -625,100 +630,32 @@ namespace AeroCalcCore
         ///
         private int[] sortIndexesByDistance(int[] domain, double x)
         {
-
-            if (domain == null)
-            {
-                return null;
-            }
-            if (domain.Length < 2)
+            if (domain == null || domain.Length < 2)
             {
                 return null;
             }
 
-            // Cas général, le sous domaine de la PerfSerie contient au moins deux points de performance
+            // distances[i] = (indexDansDomain, distanceAbsolue)
+            var distances = new (int indexInDomain, double absDistance)[domain.Length];
+
+            for (int i = 0; i < domain.Length; i++)
+            {
+                double d = pointAt(domain[i]).input - x;
+                distances[i] = (domain[i], Math.Abs(d));
+            }
+
+            Array.Sort(distances, (a, b) => a.absDistance.CompareTo(b.absDistance));
+
             int[] sortedIndexesByDist = new int[domain.Length];
-            int minDistIndex = -1;
-            int upIndex = -1;
-            int downIndex = -1;
-            double dist = -1;
-            double minDist = Double.MaxValue;
-            double[] distances = new double[domain.Length];
-            int[] classement = new int[domain.Length];
-
-            // Calcul des distances et détermination du point de plus grande proximité
-            for (int count = 0; count < domain.Length; count++)
+            for (int i = 0; i < domain.Length; i++)
             {
-                distances[count] = pointAt(count).input - x;
-                dist = Math.Abs(distances[count]);
-                classement[count] = -1;
-                if (dist < minDist)
-                {
-                    // La distance associée au point en cours est la plus petite rencontrée jusqu'à présent
-                    minDist = dist;
-                    minDistIndex = count;
-                }
-            }
-            // Enregistrement du point de plus grande proximité
-            sortedIndexesByDist[0] = minDistIndex;
-
-            // Cas des extrémités
-            if (minDistIndex == 0)
-            {
-                // Trivial, le classement est identique à l'index de tableau
-                for (int count = 0; count < sortedIndexesByDist.Length; count++)
-                {
-                    sortedIndexesByDist[count] = count;
-                }
-                return sortedIndexesByDist;
-            }
-            if (minDistIndex == perfPointList.Count - 1)
-            {
-                // Trivial, le classement est inverse de l'index du tableau
-                for (int count = 0; count < sortedIndexesByDist.Length; count++)
-                {
-                    classement[count] = sortedIndexesByDist.Length - 1 - count;
-                }
-                return sortedIndexesByDist;
+                sortedIndexesByDist[i] = distances[i].indexInDomain;
             }
 
-            // Cas général, minDistIndex n'est pas en limite de tableau
-            downIndex = minDistIndex - 1;
-            upIndex = minDistIndex + 1;
-
-            for (int count = 1; count < sortedIndexesByDist.Length; count++)
-            {
-                if (downIndex < 0)
-                {
-                    // upIndex désigne le dernier point disponible vers la limite basse
-                    sortedIndexesByDist[count] = upIndex;
-                    upIndex++;
-                }
-                else if (upIndex > distances.Length - 1)
-                {
-                    // downIndex désigne le seul point disponible
-                    sortedIndexesByDist[count] = downIndex;
-                    downIndex--;
-                }
-                else
-                {
-                    if (Math.Abs(distances[downIndex]) > Math.Abs(distances[upIndex]))
-                    {
-                        // upIndex désigne le point le plus proche
-                        sortedIndexesByDist[count] = upIndex;
-                        upIndex++;
-                    }
-                    else
-                    {
-                        // downIndex désigne le point le plus proche
-                        sortedIndexesByDist[count] = downIndex;
-                        downIndex--;
-                    }
-                }
-            }
             return sortedIndexesByDist;
         }
         // Accesseur de test
-        public int[] _A_sortIndexesByDistance(int[] domain,double x)
+        public int[] _A_sortIndexesByDistance(int[] domain, double x)
         {
             return sortIndexesByDistance(domain, x);
         }

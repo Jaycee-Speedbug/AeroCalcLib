@@ -25,7 +25,8 @@ namespace AeroCalcCore
         /*
          * CONSTRUCTEURS
          */
-        public ScriptFile() : base() {
+        public ScriptFile() : base()
+        {
             cursor = -1;
         }
 
@@ -40,7 +41,8 @@ namespace AeroCalcCore
         /// aussi stocké dans le membre IOStatus
         /// </summary>
         /// <returns>int</returns>
-        public int readFile() {
+        public int readFile()
+        {
             int status = readTextFile(inputFileAbsolutePath, true);
             if (status == FILEOP_SUCCESSFUL) { resetCursor(); }
             return status;
@@ -48,24 +50,30 @@ namespace AeroCalcCore
 
 
 
-        public void resetCursor() {
-            if (FileLines != null) {
+        public void resetCursor()
+        {
+            if (FileLines != null)
+            {
                 cursor = 0;
             }
-            else {
+            else
+            {
                 cursor = -1;
             }
         }
 
 
 
-        public string readNextLine() {
-            if (FileLines != null && cursor > -1 && cursor < FileLines.Count) {
+        public string readNextLine()
+        {
+            if (FileLines != null && cursor > -1 && cursor < FileLines.Count)
+            {
                 string l = FileLines[cursor];
                 cursor++;
                 return l;
             }
-            else {
+            else
+            {
                 return null;
             }
         }

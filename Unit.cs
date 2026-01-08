@@ -2,11 +2,13 @@ using System;
 
 
 
-namespace AeroCalcCore {
+namespace AeroCalcCore
+{
 
 
 
-    public class Unit {
+    public class Unit
+    {
 
         /*
          * PROPRIETES
@@ -43,16 +45,19 @@ namespace AeroCalcCore {
         /// <param name="unitFactor"></param>
         /// <param name="unitIsRef"></param>
         /// 
-        public Unit(String unitDimension, String unitName, String unitAlias, bool unitIsRef, double unitFactor, double unitConstant) {
+        public Unit(String unitDimension, String unitName, String unitAlias, bool unitIsRef, double unitFactor, double unitConstant)
+        {
             dimension = unitDimension;
             name = unitName;
             alias = unitAlias;
             isRef = unitIsRef;
-            if (unitIsRef) {
+            if (unitIsRef)
+            {
                 factor = 1;
                 constant = 0;
             }
-            else {
+            else
+            {
                 factor = unitFactor;
                 constant = unitConstant;
             }
@@ -69,14 +74,17 @@ namespace AeroCalcCore {
         /// </summary>
         /// <returns>String, contenant la dimension, le nom étendu et l'alias de l'unité</returns>
         /// 
-        public override string ToString() {
+        public override string ToString()
+        {
             String msg;
             msg = "Dimension: " + dimension + "   Name: " + name + "   Alias: " + alias;
-            if (isRef) {
+            if (isRef)
+            {
                 msg += "   is reference for that dimension.";
             }
-            else {
-                msg += String.Format("   Conversion Factor: {0:f8}   and Constant: {1:f8}",factor,constant);
+            else
+            {
+                msg += String.Format("   Conversion Factor: {0:f8}   and Constant: {1:f8}", factor, constant);
             }
             return msg;
         }
@@ -86,21 +94,23 @@ namespace AeroCalcCore {
         /*
          * INTERFACE
          */
-        
 
-        
+
+
         /*
          * METHODES
          */
-        
+
         /// <summary>
         /// Test les conditions d'égalité entre l'unité et l'unité fournie en argument
         /// </summary>
         /// <param name="unit"></param>
         /// <returns></returns>
-        private bool equals(Unit unit) {
-            if (unit.dimension== this.dimension &&
-                unit.name == this.name) {
+        private bool equals(Unit unit)
+        {
+            if (unit.dimension == this.dimension &&
+                unit.name == this.name)
+            {
                 return true;
             }
             return false;

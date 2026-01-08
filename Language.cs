@@ -65,7 +65,8 @@ namespace AeroCalcCore
         /// Surcharge la fonction ToString et produit une string permettant l'utilisation dans un message à l'utilisateur
         /// </summary>
         /// <returns></returns>
-        public override string ToString() {
+        public override string ToString()
+        {
             string msg = "";
             msg += isoCode + " ";
             msg += name + " ";
@@ -78,7 +79,7 @@ namespace AeroCalcCore
         /*
          * INTERFACE
          */
-         
+
         // IEquatable
         public bool Equals(Language lang)
         {
@@ -129,7 +130,7 @@ namespace AeroCalcCore
             // throw new System.NotImplementedException();
 
             string fullName = this.isoCode + this.name;
-            int hashCode=0;
+            int hashCode = 0;
 
             foreach (char c in fullName)
             {

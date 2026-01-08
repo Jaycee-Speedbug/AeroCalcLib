@@ -114,7 +114,7 @@ namespace AeroCalcCore
                 // Version du fichier de configuration (non utilisé)
                 // TODO implémenter l'utilisation du numéro de version du fichier de configuration
                 //string[] nodes = { XMLFile.NODE_CONFIG };
-                configFileVersion = configFile.getAttribute(new string[] { XMLFile.NODE_APP, XMLFile.NODE_CONFIG},
+                configFileVersion = configFile.getAttribute(new string[] { XMLFile.NODE_APP, XMLFile.NODE_CONFIG },
                                                             XMLFile.ATTRIB_VERSION);
                 // Packs de langue
                 Langs = configFile.GetLanguagesFromXML(configDirPath);
@@ -176,8 +176,10 @@ namespace AeroCalcCore
 
 
 
-        public void setActiveLanguage(int libIndex) {
-            if (libIndex>=0 && libIndex < Langs.Count) {
+        public void setActiveLanguage(int libIndex)
+        {
+            if (libIndex >= 0 && libIndex < Langs.Count)
+            {
                 activeLangIndex = libIndex;
                 activeLang = Langs.Library[activeLangIndex].isoCode;
             }
@@ -185,7 +187,8 @@ namespace AeroCalcCore
 
 
 
-        public Language getActiveLanguage() {
+        public Language getActiveLanguage()
+        {
             return Langs.Find(activeLang);
         }
 

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace AeroCalcCore
 {
@@ -22,7 +20,8 @@ namespace AeroCalcCore
         /// Construit un registre mémoire par copie d'un registre existant
         /// </summary>
         /// <param name="otherStack"></param>
-        public MemoryStack(List<CommandFactor> otherStack) {
+        public MemoryStack(List<CommandFactor> otherStack)
+        {
 
         }
 
@@ -31,7 +30,8 @@ namespace AeroCalcCore
         /// <summary>
         /// Construit un registre vide
         /// </summary>
-        public MemoryStack() {
+        public MemoryStack()
+        {
             stackTable = new List<CommandFactor>();
         }
 
@@ -46,7 +46,8 @@ namespace AeroCalcCore
         /// </summary>
         /// <param name="factorName"></param>
         /// <returns></returns>
-        public CommandFactor findFactor(string factorName) {
+        public CommandFactor findFactor(string factorName)
+        {
             return stackTable.Find(x => x.name.Equals(factorName));
         }
 
@@ -57,7 +58,8 @@ namespace AeroCalcCore
         /// </summary>
         /// <param name="factorName"></param>
         /// <returns></returns>
-        public double valueOfFactor(string factorName) {
+        public double valueOfFactor(string factorName)
+        {
             return stackTable.Find(x => x.name.Equals(factorName)).value;
         }
 
@@ -68,11 +70,14 @@ namespace AeroCalcCore
         /// </summary>
         /// <param name="factor"></param>
         /// <returns>True en cas de succès</returns>
-        public bool addFactor(CommandFactor factor) {
-            if (stackTable.Exists(x => x.name.Equals(factor.name))) {
+        public bool addFactor(CommandFactor factor)
+        {
+            if (stackTable.Exists(x => x.name.Equals(factor.name)))
+            {
                 return false;
             }
-            else {
+            else
+            {
                 stackTable.Add(factor);
                 return true;
             }
@@ -86,7 +91,8 @@ namespace AeroCalcCore
         /// </summary>
         /// <param name="factorName"></param>
         /// <returns>True en cas de succès</returns>
-        public bool removeFactor(string factorName) {
+        public bool removeFactor(string factorName)
+        {
 
             return stackTable.Remove(stackTable.Find(x => x.name.Equals(factorName)));
         }
@@ -94,21 +100,24 @@ namespace AeroCalcCore
 
 
         // TODO to be reworked
-        public override bool Equals(object obj) {
+        public override bool Equals(object obj)
+        {
             return base.Equals(obj);
         }
 
 
 
         // TODO To be reworked
-        public override int GetHashCode() {
+        public override int GetHashCode()
+        {
             return base.GetHashCode();
         }
 
 
 
         // TODO To be reworked
-        public override string ToString() {
+        public override string ToString()
+        {
             return base.ToString();
         }
 

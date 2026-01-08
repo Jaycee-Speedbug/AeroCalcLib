@@ -1,7 +1,8 @@
 
 
 
-namespace AeroCalcCore {
+namespace AeroCalcCore
+{
 
 
 
@@ -15,7 +16,8 @@ namespace AeroCalcCore {
     /// Renvoie un modèle de performance de vol sur requète d'un nom de fichier de cette liste
     /// </summary>
     /// 
-    public class ModelCSVFile : CSVFile {
+    public class ModelCSVFile : CSVFile
+    {
 
 
         /*
@@ -57,7 +59,8 @@ namespace AeroCalcCore {
         /// Constructeur de la classe, simple appel au constructeur de la classe mère
         /// </summary>
         /// 
-        public ModelCSVFile():base() {
+        public ModelCSVFile() : base()
+        {
 
         }
 
@@ -66,7 +69,7 @@ namespace AeroCalcCore {
         /*
          * SERVICES
          */
-         
+
         /// <summary>
         /// Renvoie un objet PerfPile contenant toutes les données extraites depuis un fichier texte au format csv
         /// contenant un modèle de performances de vol.
@@ -78,7 +81,8 @@ namespace AeroCalcCore {
         {
             PerfPile pp = null;
 
-            if (readTextFile(fileAbsolutePath, true) == FILEOP_SUCCESSFUL) {
+            if (readTextFile(fileAbsolutePath, true) == FILEOP_SUCCESSFUL)
+            {
 
                 // Locals
                 bool hidden;
@@ -157,9 +161,9 @@ namespace AeroCalcCore {
 
                 // Constitution de la Pile
                 pp = new PerfPile(pileFactorValue, discretName, discretValue,
-                                  pointFactorName, pointFactorUnit, 
+                                  pointFactorName, pointFactorUnit,
                                   serieFactorName, serieFactorUnit,
-                                  layerFactorName, layerFactorUnit, independent, 
+                                  layerFactorName, layerFactorUnit, independent,
                                   outputName, outputUnit,
                                   hidden);
 
@@ -179,7 +183,8 @@ namespace AeroCalcCore {
                     pointFactorColumn > -1 &&
                     outColumn > -1 &&
                     breakColumn > -1 &&
-                    startLine > -1 && endLine > startLine) {
+                    startLine > -1 && endLine > startLine)
+                {
                     // Les colonnes sont identifiées, lecture possible
 
                     double layerFactor;
@@ -188,7 +193,8 @@ namespace AeroCalcCore {
                     double outputFactor;
                     bool breakValue;
 
-                    for (int count = startLine; count < endLine; count++) {
+                    for (int count = startLine; count < endLine; count++)
+                    {
 
                         layerFactor = double.NaN;
                         serieFactor = double.NaN;
@@ -200,13 +206,15 @@ namespace AeroCalcCore {
                             parseADouble(ValueAtPosition(count, serieFactorColumn), out serieFactor) &&
                             parseADouble(ValueAtPosition(count, pointFactorColumn), out pointFactor) &&
                             parseADouble(ValueAtPosition(count, outColumn), out outputFactor) &&
-                            parseABoolean(ValueAtPosition(count, breakColumn), out breakValue)) {
+                            parseABoolean(ValueAtPosition(count, breakColumn), out breakValue))
+                        {
                             // Données valides, un Point de performances peut être ajouté à la Pile
                             pp.add(new PerfPoint(pointFactor, outputFactor, breakValue), serieFactor, layerFactor);
                         }
                     }
                 }
-                else {
+                else
+                {
                     // Problème de structure du fichier, les colonnes ne peuvent être correctement identifiées
                     pp = null;
                 }

@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 
 
-namespace AeroCalcCore {
+namespace AeroCalcCore
+{
 
 
     /// <summary>
@@ -22,7 +23,8 @@ namespace AeroCalcCore {
     /// TODO: Attention, les implémentations des interfaces sont minimalistes et ne comprennent pas les surcharges d'opérateurs
     /// </remarks>
     /// 
-    public class PerfPile : IComparable<PerfPile>, IEquatable<PerfPile> {
+    public class PerfPile : IComparable<PerfPile>, IEquatable<PerfPile>
+    {
 
         // FIELDS ////////////////////////////////////////////////////////////////////////////////////
 
@@ -32,7 +34,8 @@ namespace AeroCalcCore {
         /// <summary>
         /// Clé de la pile dans une base de donnée
         /// </summary>
-        public long dataBaseKey {
+        public long dataBaseKey
+        {
             get;
             set;
         }
@@ -40,8 +43,10 @@ namespace AeroCalcCore {
         /// <summary>
         /// Nombre de layers présentes dans la pile
         /// </summary>
-        public int count {
-            get {
+        public int count
+        {
+            get
+            {
                 return perfLayerList.Count;
             }
         }
@@ -50,7 +55,8 @@ namespace AeroCalcCore {
         /// Nom de la pile (nom des résultat des prédictions réalisées avec cette pile)
         /// </summary>
         /// <remarks>Dim z</remarks>
-        public String outputName {
+        public String outputName
+        {
             get;
             set;
         }
@@ -58,7 +64,8 @@ namespace AeroCalcCore {
         /// <summary>
         /// Unité de mesure de la prédiction
         /// </summary>
-        public int outputUnitCode {
+        public int outputUnitCode
+        {
             get;
             set;
         }
@@ -66,7 +73,8 @@ namespace AeroCalcCore {
         /// <summary>
         /// Nom de la première dimension utilisée pour les calculs de prédiction
         /// </summary>
-        public String pointFactorName {
+        public String pointFactorName
+        {
             get;
             set;
         }
@@ -74,7 +82,8 @@ namespace AeroCalcCore {
         /// <summary>
         /// Unité de mesure de la première dimension, utilisée pour les calculs de prédiction
         /// </summary>
-        public int pointFactorUnitCode {
+        public int pointFactorUnitCode
+        {
             get;
             set;
         }
@@ -82,7 +91,8 @@ namespace AeroCalcCore {
         /// <summary>
         /// Nom de la deuxième dimension utilisée pour calculer une prédiction
         /// </summary>
-        public String serieFactorName {
+        public String serieFactorName
+        {
             get;
             set;
         }
@@ -90,7 +100,8 @@ namespace AeroCalcCore {
         /// <summary>
         /// Unité de mesure de la deuxième dimension, utilisée pour les calculs de prédiction
         /// </summary>
-        public int serieFactorUnitCode {
+        public int serieFactorUnitCode
+        {
             get;
             set;
         }
@@ -98,7 +109,8 @@ namespace AeroCalcCore {
         /// <summary>
         /// Nom de la troisième dimension utilisée pour calculer une prédiction
         /// </summary>
-        public String layerFactorName {
+        public String layerFactorName
+        {
             get;
             set;
         }
@@ -106,7 +118,8 @@ namespace AeroCalcCore {
         /// <summary>
         /// Unité de mesure de la troisième dimension, utilisée pour les calculs de prédiction
         /// </summary>
-        public int layerFactorUnitCode {
+        public int layerFactorUnitCode
+        {
             get;
             set;
         }
@@ -115,7 +128,8 @@ namespace AeroCalcCore {
         /// Flag indiquant si les Layers de la Pile sont indépendantes.
         /// Dans ce cas, aucune interpolation n'est possible entre les Layers
         /// </summary>
-        public bool independentLayers {
+        public bool independentLayers
+        {
             get;
             set;
         }
@@ -129,7 +143,8 @@ namespace AeroCalcCore {
         /// Rappelons que les données de performances publiées sont principalement basées sur l'emploi de graphes
         /// bidimensionnels.
         /// </remarks>
-        public double factorValue {
+        public double factorValue
+        {
             get;
             set;
         }
@@ -137,7 +152,8 @@ namespace AeroCalcCore {
         /// <summary>
         /// Nom de la valeur discrète associée à la Pile
         /// </summary>
-        public String discretName {
+        public String discretName
+        {
             get;
             set;
         }
@@ -152,7 +168,8 @@ namespace AeroCalcCore {
         /// <summary>
         /// Indique si le range de la Pile a été défini
         /// </summary>
-        public bool ranged {
+        public bool ranged
+        {
             get;
             private set;
         }
@@ -161,7 +178,8 @@ namespace AeroCalcCore {
         /// Etat de sélection de la Pile. La sélection permet de ne prendre en compte
         /// que certaines Pile pour les calculs multi-dimensionnels
         /// </summary>
-        public bool selected {
+        public bool selected
+        {
             get;
             set;
         }
@@ -169,7 +187,8 @@ namespace AeroCalcCore {
         /// <summary>
         /// Commentaire texte sur la réalisation du calcul
         /// </summary>
-        public String predictComment {
+        public String predictComment
+        {
             get;
             private set;
         }
@@ -177,7 +196,8 @@ namespace AeroCalcCore {
         /// <summary>
         /// Code d'erreur sous forme d'un entier
         /// </summary>
-        public int calcErrorCode {
+        public int calcErrorCode
+        {
             get;
             private set;
         }
@@ -193,7 +213,7 @@ namespace AeroCalcCore {
         /*
          *  MEMBRES
          */
-        
+
         /// <summary>
         /// Borne inférieure du domaine de calcul
         /// </summary>
@@ -229,7 +249,8 @@ namespace AeroCalcCore {
         /// <summary>
         /// Construction d'une pile vide de toute Layer, et non paramétrée
         /// </summary>
-        public PerfPile() {
+        public PerfPile()
+        {
         }
 
 
@@ -238,7 +259,8 @@ namespace AeroCalcCore {
         /// Construction par clonage d'une Pile de performances
         /// </summary>
         /// <param name="ps">Pile de performance à cloner</param>
-        public PerfPile(PerfPile pp) {
+        public PerfPile(PerfPile pp)
+        {
             this.dataBaseKey = pp.dataBaseKey;
             this.endRange = pp.endRange;
             this.endRangeType = pp.endRangeType;
@@ -258,7 +280,8 @@ namespace AeroCalcCore {
             this.discretValue = pp.discretValue;
             this.independentLayers = pp.independentLayers;
             this.hidden = pp.hidden;
-            for (int count = 0; count < pp.count; count++) {
+            for (int count = 0; count < pp.count; count++)
+            {
                 this.add(new PerfLayer(pp.perfLayerList.ElementAt(count)));
             }
         }
@@ -289,7 +312,8 @@ namespace AeroCalcCore {
                         String layerFactorName, int layerFactorUnitCode,
                         bool independentLayers,
                         String outName, int outUnitCode,
-                        bool hidden) {
+                        bool hidden)
+        {
             this.factorValue = ownFactorValue;
             this.pointFactorName = pointFactorName;
             this.pointFactorUnitCode = pointFactorUnitCode;
@@ -318,25 +342,31 @@ namespace AeroCalcCore {
         /// </summary>
         /// <param name="newPerfLayer">Nouvelle layer à ajouter à la pile</param>
         /// <returns>True si l'ajout est réussi, False dans le cas contaire</returns>
-        public bool add(PerfLayer newPerfLayer) {
+        public bool add(PerfLayer newPerfLayer)
+        {
 
             // Deux PerfLayer ne peuvent pas avoir le même input
-            foreach (PerfLayer pl in perfLayerList) {
-                if (pl.Compare(pl, newPerfLayer) == 0) {
+            foreach (PerfLayer pl in perfLayerList)
+            {
+                if (pl.Compare(pl, newPerfLayer) == 0)
+                {
                     return false;
                 }
             }
 
             // Insertion dans la liste classée, en réponse à une difficulté avec la fonction Sort()
             bool inserted = false;
-            for (int count = 0; count < perfLayerList.Count; count++) {
-                if (newPerfLayer.factorValue < layerAt(count).factorValue) {
+            for (int count = 0; count < perfLayerList.Count; count++)
+            {
+                if (newPerfLayer.factorValue < layerAt(count).factorValue)
+                {
                     perfLayerList.Insert(count, newPerfLayer);
                     inserted = true;
                 }
             }
             // Si la layer n'a pas été insérée, c'est qu'il faut l'insérer à la fin de la liste
-            if (!inserted) {
+            if (!inserted)
+            {
                 perfLayerList.Add(newPerfLayer);
             }
             // Récupération des informations des dimensions
@@ -359,28 +389,33 @@ namespace AeroCalcCore {
         /// <param name="layerFactorValue">Facteur de la layer dans laquelle inscrire le point</param>
         /// <param name="serieFactorValue">Facteur de la série dans laquelle inscrire le point</param>
         /// <returns>True si l'ajout est réussi, False dans le cas contaire</returns>
-        public bool add(PerfPoint newPerfPoint, double serieFactorValue, double layerFactorValue) {
+        public bool add(PerfPoint newPerfPoint, double serieFactorValue, double layerFactorValue)
+        {
 
             bool foundIt = false;
             bool success = false;
 
             // Recherche de la layer de même input
-            for (int count = 0; count < perfLayerList.Count; count++) {
-                if (layerFactorValue == layerAt(count).factorValue) {
+            for (int count = 0; count < perfLayerList.Count; count++)
+            {
+                if (layerFactorValue == layerAt(count).factorValue)
+                {
                     foundIt = true;
                     success = layerAt(count).add(newPerfPoint, serieFactorValue);
                     break;
                 }
             }
             // Pas de Layer ayant un facteur de même valeur, on cré une nouvelle layer
-            if (!foundIt) {
+            if (!foundIt)
+            {
                 // Création d'une nouvelle layer
                 PerfLayer newLayer = new PerfLayer(layerFactorValue,
                                                    pointFactorName, pointFactorUnitCode,
                                                    serieFactorName, serieFactorUnitCode,
                                                    outputName, outputUnitCode);
                 success = newLayer.add(newPerfPoint, serieFactorValue);
-                if (success) {
+                if (success)
+                {
                     success = add(newLayer);
                 }
             }
@@ -394,7 +429,8 @@ namespace AeroCalcCore {
         /// </summary>
         /// <param name="index">index de base 0 de la position de la Layer souhaitée</param>
         /// <returns></returns>
-        public PerfLayer layerAt(int index) {
+        public PerfLayer layerAt(int index)
+        {
             return perfLayerList.ElementAt<PerfLayer>(index);
         }
 
@@ -403,8 +439,10 @@ namespace AeroCalcCore {
         /// <summary>
         /// Sélectionne toutes les Layer de la Pile
         /// </summary>
-        public void selectAll() {
-            foreach (PerfLayer pl in perfLayerList) {
+        public void selectAll()
+        {
+            foreach (PerfLayer pl in perfLayerList)
+            {
                 pl.selected = true;
             }
         }
@@ -413,8 +451,10 @@ namespace AeroCalcCore {
         /// <summary>
         /// Désélectionne toutes les Layer
         /// </summary>
-        public void selectNone() {
-            foreach (PerfLayer pl in perfLayerList) {
+        public void selectNone()
+        {
+            foreach (PerfLayer pl in perfLayerList)
+            {
                 pl.selected = false;
             }
         }
@@ -425,11 +465,13 @@ namespace AeroCalcCore {
         /// Renvoie le nombre de Layer de performances sélectionnées dans la Pile
         /// </summary>
         /// <returns>Un entier représentant le nombre de layers sélectionnés dans la série</returns>
-        public int selectedCount() {
+        public int selectedCount()
+        {
 
             int selected = 0;
 
-            foreach (PerfLayer pl in this.perfLayerList) {
+            foreach (PerfLayer pl in this.perfLayerList)
+            {
                 if (pl.selected == true)
                     selected++;
             }
@@ -452,71 +494,89 @@ namespace AeroCalcCore {
         /// Il reste à revoir la structure des blocs try, une imbrication n'est pas judicieuse
         /// Le bloc try primaire est visiblement trop étendu
         /// </remarks>
-        public double predict(double pointFactorValue, double serieFactorValue, double layerFactorValue) {
+        public double predict(double pointFactorValue, double serieFactorValue, double layerFactorValue)
+        {
 
             // Serie locale permettant une interpolation polynomiale sur 3 Layer en proximité avec layerFactorValue
             PerfSerie ps = new PerfSerie();
             double output = double.NaN;
             double layerOutput = double.NaN;
 
-            try {
-                if (this.count == 1) {
+            try
+            {
+                if (this.count == 1)
+                {
                     // Une seule layer, donc layerFactorValue est inutile
                     output = layerAt(0).predict(pointFactorValue, serieFactorValue);
                 }
-                else {
+                else
+                {
                     // Plusieurs Layer à traiter
                     // Définition du domaine de calcul, si non défini au préalable
                     if (!ranged) { setRange(); }
                     // Test du domaine de calcul
-                    if (!isInRange(layerFactorValue)) {
+                    if (!isInRange(layerFactorValue))
+                    {
                         throw new ModelException(AeroCalc.E_LAYER_VALUE_OUT_OF_RANGE,
                                                    this.outputName, this.layerFactorName, layerFactorValue);
                     }
                     // Sélection des layers
                     selectLayers(layerFactorValue, 3);
                     // Calcul de la prédiction pour chaque layer sélectionnée
-                    for (int count = 0; count < this.count; count++) {
-                        if (layerAt(count).selected) {
+                    for (int count = 0; count < this.count; count++)
+                    {
+                        if (layerAt(count).selected)
+                        {
                             layerOutput = layerAt(count).predict(pointFactorValue, serieFactorValue);
                             // Abonde la Serie locale
                             ps.add(new PerfPoint(layerAt(count).factorValue, layerOutput, false));
                         }
                     }
-                    if (ps.count >= 1) {
+                    if (ps.count >= 1)
+                    {
                         //
                         // TODO, Attention, la fonction predict va travailler sur une création de données
                         // nécessaires à une interpolation sur plusieurs Layer. En cas d'exception, ce ne sont pas
                         // des données originales des modèles de performances.
                         // REVOIR l'imbrication des blocs try pour simplifier la structure du code
                         //
-                        try {
+                        try
+                        {
                             output = ps.predict(layerFactorValue);
-                        } catch (ModelException ee) {
+                        }
+                        catch (ModelException ee)
+                        {
                             ee.setFactor(layerFactorName, layerFactorValue);
                         }
                     }
-                    else {
+                    else
+                    {
                         throw new ModelException(AeroCalc.E_VOID_SYSTEM,
                                                    this.outputName, this.layerFactorName, layerFactorValue);
                     }
                 }
-            } 
-            catch (ModelException e) {
+            }
+            catch (ModelException e)
+            {
                 output = double.NaN;
-                if (e.modelName.Equals("")) {
+                if (e.modelName.Equals(""))
+                {
                     e.setModelName(this.outputName);
                 }
-                switch (e.nature) {
+                switch (e.nature)
+                {
 
-                    case AeroCalc.E_POINT_VALUE_OUT_OF_RANGE: e.setFactor(pointFactorName, pointFactorValue);
-                    break;
+                    case AeroCalc.E_POINT_VALUE_OUT_OF_RANGE:
+                        e.setFactor(pointFactorName, pointFactorValue);
+                        break;
 
-                    case AeroCalc.E_SERIE_VALUE_OUT_OF_RANGE: e.setFactor(serieFactorName, serieFactorValue);
-                    break;
+                    case AeroCalc.E_SERIE_VALUE_OUT_OF_RANGE:
+                        e.setFactor(serieFactorName, serieFactorValue);
+                        break;
 
-                    case AeroCalc.E_LAYER_VALUE_OUT_OF_RANGE: e.setFactor(layerFactorName, layerFactorValue);
-                    break;
+                    case AeroCalc.E_LAYER_VALUE_OUT_OF_RANGE:
+                        e.setFactor(layerFactorName, layerFactorValue);
+                        break;
 
                 }
                 throw;
@@ -534,22 +594,28 @@ namespace AeroCalcCore {
         /// <param name="end">Borne supérieure</param>
         /// <param name="endType">Type de borne</param>
         /// <returns>True, en cas de succès</returns>
-        public bool setRange(double start, int startType, double end, int endType) {
-            if (end < start) {
+        public bool setRange(double start, int startType, double end, int endType)
+        {
+            if (end < start)
+            {
                 return false;
             }
             this.startRange = start;
             this.endRange = end;
-            if (startType == AeroCalc.MODEL_RANGE_EXCLUDE_LIMIT) {
+            if (startType == AeroCalc.MODEL_RANGE_EXCLUDE_LIMIT)
+            {
                 this.startRangeType = AeroCalc.MODEL_RANGE_EXCLUDE_LIMIT;
             }
-            else {
+            else
+            {
                 this.startRangeType = AeroCalc.MODEL_RANGE_INCLUDE_LIMIT;
             }
-            if (endType == AeroCalc.MODEL_RANGE_EXCLUDE_LIMIT) {
+            if (endType == AeroCalc.MODEL_RANGE_EXCLUDE_LIMIT)
+            {
                 this.endRangeType = AeroCalc.MODEL_RANGE_EXCLUDE_LIMIT;
             }
-            else {
+            else
+            {
                 this.endRangeType = AeroCalc.MODEL_RANGE_INCLUDE_LIMIT;
             }
             this.ranged = true;
@@ -562,12 +628,15 @@ namespace AeroCalcCore {
         /// Défini, par défaut, le domaine de calcul de la Pile
         /// </summary>
         /// <returns>True, en cas de succès</returns>
-        public bool setRange() {
-            if (this.count > 0) {
+        public bool setRange()
+        {
+            if (this.count > 0)
+            {
                 return setRange(layerAt(0).factorValue, AeroCalc.MODEL_RANGE_INCLUDE_LIMIT,
                                 layerAt(this.count - 1).factorValue, AeroCalc.MODEL_RANGE_INCLUDE_LIMIT);
             }
-            else {
+            else
+            {
                 return false;
             }
         }
@@ -580,11 +649,14 @@ namespace AeroCalcCore {
         /// <param name="x">Valeur à tester</param>
         /// <returns>True si la valeur est située dans le range de la Pile, False dans le cas contraire
         /// </returns>
-        public bool isInRange(double x) {
-            if (x < startRange || (x == startRange && startRangeType == AeroCalc.MODEL_RANGE_EXCLUDE_LIMIT)) {
+        public bool isInRange(double x)
+        {
+            if (x < startRange || (x == startRange && startRangeType == AeroCalc.MODEL_RANGE_EXCLUDE_LIMIT))
+            {
                 return false;
             }
-            if (x > endRange || (x == endRange && endRangeType == AeroCalc.MODEL_RANGE_EXCLUDE_LIMIT)) {
+            if (x > endRange || (x == endRange && endRangeType == AeroCalc.MODEL_RANGE_EXCLUDE_LIMIT))
+            {
                 return false;
             }
             return true;
@@ -596,7 +668,8 @@ namespace AeroCalcCore {
         /// Retourne une chaine ce caractères décrivant tous les champs de l'objet Pile
         /// </summary>
         /// <returns>Une chaine de caractères contenant la description de la Pile de points de performance</returns>
-        public override string ToString() {
+        public override string ToString()
+        {
 
             String msg = "";
             msg = "DB Key            : " + this.dataBaseKey + "\n";
@@ -611,28 +684,35 @@ namespace AeroCalcCore {
             msg += "Layer Factor Unit : " + this.layerFactorUnitCode + "\n";
             msg += "Own Factor  value : " + this.factorValue;
             msg += "Range             : ";
-            if (this.startRangeType == AeroCalc.MODEL_RANGE_EXCLUDE_LIMIT) {
+            if (this.startRangeType == AeroCalc.MODEL_RANGE_EXCLUDE_LIMIT)
+            {
                 msg += "]";
             }
-            else {
+            else
+            {
                 msg += "[";
             }
             msg += this.startRange + ";" + this.endRange;
-            if (this.endRangeType == AeroCalc.MODEL_RANGE_EXCLUDE_LIMIT) {
+            if (this.endRangeType == AeroCalc.MODEL_RANGE_EXCLUDE_LIMIT)
+            {
                 msg += "[";
             }
-            else {
+            else
+            {
                 msg += "]";
             }
             msg += "\nSelected : ";
-            if (selected) {
+            if (selected)
+            {
                 msg += "YES";
             }
-            else {
+            else
+            {
                 msg += "NO";
             }
             msg += "\nLayers :\n";
-            foreach (PerfLayer pl in perfLayerList) {
+            foreach (PerfLayer pl in perfLayerList)
+            {
                 msg += "Index = " + perfLayerList.IndexOf(pl) + "\n";
                 msg += pl.ToString() + "\n";
             }
@@ -662,11 +742,14 @@ namespace AeroCalcCore {
         /// n'est pas envisagé aujourd'hui.
         /// </remarks>
         /// 
-        public int Compare(PerfPile pp1, PerfPile pp2) {
-            if (pp1.factorValue < pp2.factorValue) {
+        public int Compare(PerfPile pp1, PerfPile pp2)
+        {
+            if (pp1.factorValue < pp2.factorValue)
+            {
                 return -1;
             }
-            if (pp1.factorValue > pp2.factorValue) {
+            if (pp1.factorValue > pp2.factorValue)
+            {
                 return 1;
             }
             return 0;
@@ -692,7 +775,8 @@ namespace AeroCalcCore {
         /// </summary>
         /// <param name="pp"></param>
         /// <returns></returns>
-        public int CompareTo(PerfPile pp) {
+        public int CompareTo(PerfPile pp)
+        {
             if (pp == null) return 1;
             return factorValue.CompareTo(pp.factorValue);
         }
@@ -706,8 +790,10 @@ namespace AeroCalcCore {
         /// </summary>
         /// <param name="pp">PerfPile à laquelle se comparer</param>
         /// <returns>True si les deux PerfPile ont le même nom</returns>
-        public bool Equals(PerfPile pp) {
-            if (pp == null) {
+        public bool Equals(PerfPile pp)
+        {
+            if (pp == null)
+            {
                 return false;
             }
             return (this.outputName.Equals(pp.outputName) &&
@@ -727,11 +813,13 @@ namespace AeroCalcCore {
         /// </summary>
         /// <param name="x">Valeur</param>
         /// <returns>Tableau de Int, null si aucune Layer n'est présente dans la Pile</returns>
-        private int[] sortedClosestLayers(double x) {
+        private int[] sortedClosestLayers(double x)
+        {
 
             int[] sortedIndexes;
 
-            if (this.count < 1) {
+            if (this.count < 1)
+            {
                 return null;
             }
             // Cas général, la Pile contient des Layer
@@ -746,11 +834,13 @@ namespace AeroCalcCore {
             int[] classement = new int[this.count];
 
             // Calcul des distances et détermination du point de plus grande proximité
-            for (int count = 0; count < this.count; count++) {
+            for (int count = 0; count < this.count; count++)
+            {
                 distances[count] = layerAt(count).factorValue;
                 dist = Math.Abs(distances[count]);
                 classement[count] = -1;
-                if (dist < minDist) {
+                if (dist < minDist)
+                {
                     // La distance associée au point en cours est la plus petite rencontrée jusqu'à présent
                     minDist = dist;
                     minDistIndex = count;
@@ -760,16 +850,20 @@ namespace AeroCalcCore {
             sortedIndexes[0] = minDistIndex;
 
             // Cas des extrémités
-            if (minDistIndex == 0) {
+            if (minDistIndex == 0)
+            {
                 // Trivial, le classement est identique à l'index de tableau
-                for (int count = 0; count < sortedIndexes.Length; count++) {
+                for (int count = 0; count < sortedIndexes.Length; count++)
+                {
                     sortedIndexes[count] = count;
                 }
                 return sortedIndexes;
             }
-            if (minDistIndex == this.count - 1) {
+            if (minDistIndex == this.count - 1)
+            {
                 // Trivial, le classement est inverse de l'index du tableau
-                for (int count = 0; count < sortedIndexes.Length; count++) {
+                for (int count = 0; count < sortedIndexes.Length; count++)
+                {
                     classement[count] = sortedIndexes.Length - 1 - count;
                 }
                 return sortedIndexes;
@@ -779,24 +873,30 @@ namespace AeroCalcCore {
             downIndex = minDistIndex - 1;
             upIndex = minDistIndex + 1;
 
-            for (int count = 1; count < sortedIndexes.Length; count++) {
-                if (downIndex < 0) {
+            for (int count = 1; count < sortedIndexes.Length; count++)
+            {
+                if (downIndex < 0)
+                {
                     // upIndex désigne le dernier point disponible vers la limite basse
                     sortedIndexes[count] = upIndex;
                     upIndex++;
                 }
-                else if (upIndex > distances.Length - 1) {
+                else if (upIndex > distances.Length - 1)
+                {
                     // downIndex désigne le seul point disponible
                     sortedIndexes[count] = downIndex;
                     downIndex--;
                 }
-                else {
-                    if (Math.Abs(distances[downIndex]) > Math.Abs(distances[upIndex])) {
+                else
+                {
+                    if (Math.Abs(distances[downIndex]) > Math.Abs(distances[upIndex]))
+                    {
                         // upIndex désigne le point le plus proche
                         sortedIndexes[count] = upIndex;
                         upIndex++;
                     }
-                    else {
+                    else
+                    {
                         // downIndex désigne le point le plus proche
                         sortedIndexes[count] = downIndex;
                         downIndex--;
@@ -806,7 +906,8 @@ namespace AeroCalcCore {
             return sortedIndexes;
         }
         // Accesseur de test
-        public int[] __testSortedClosestLayers(double x) {
+        public int[] __testSortedClosestLayers(double x)
+        {
             return sortedClosestLayers(x);
         }
 
@@ -824,7 +925,8 @@ namespace AeroCalcCore {
         /// <remarks>
         /// TODO: L'information, en cas d'échec de la sélection, n'est pas transmise
         /// </remarks>
-        private bool selectLayers(double x, int nb) {
+        private bool selectLayers(double x, int nb)
+        {
 
             // Tri des Layer, dans l'ordre de proximité avec la valeur x
             int[] layers = sortedClosestLayers(x);
@@ -834,10 +936,13 @@ namespace AeroCalcCore {
             if (layers == null || nb == 0) return false;
 
             // Cas des Layer indépendantes
-            if (independentLayers) {
+            if (independentLayers)
+            {
                 // On ne peut sélectionner qu'une seule Layer, celle ayant pour valeur x
-                for (int count = 0; count < layers.Length; count++) {
-                    if (layerAt(layers[count]).factorValue == x) {
+                for (int count = 0; count < layers.Length; count++)
+                {
+                    if (layerAt(layers[count]).factorValue == x)
+                    {
                         layerAt(layers[count]).selected = true;
                         return true;
                     }
@@ -872,20 +977,26 @@ namespace AeroCalcCore {
                 int upBreakpoint = layers.Length;
                 int dnBreakPoint = -1;
 
-                while (selectCounter < nb && count < layers.Length) {
-                    if (layers[count] < dnBreakPoint || layers[count] > upBreakpoint) {
+                while (selectCounter < nb && count < layers.Length)
+                {
+                    if (layers[count] < dnBreakPoint || layers[count] > upBreakpoint)
+                    {
                         // La Layer ne peut pas être sélectionnée, on passe à la suivante
 
                     }
-                    else {
+                    else
+                    {
                         // Sélection de la Layer
                         layerAt(layers[count]).selected = true;
                         selectCounter++;
-                        if (layerAt(layers[count]).isBreak) {
-                            if (layerAt(layers[count]).factorValue < x) {
+                        if (layerAt(layers[count]).isBreak)
+                        {
+                            if (layerAt(layers[count]).factorValue < x)
+                            {
                                 dnBreakPoint = layers[count];
                             }
-                            else {
+                            else
+                            {
                                 upBreakpoint = layers[count];
                             }
                         }
@@ -896,10 +1007,11 @@ namespace AeroCalcCore {
             }
         }
         // Accesseur pour la classe de test unitaire
-        public bool __testSelectSubPile(double x, int nb) {
+        public bool __testSelectSubPile(double x, int nb)
+        {
             return selectLayers(x, nb);
         }
 
     }
 
-} 
+}

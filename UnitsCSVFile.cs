@@ -18,7 +18,8 @@ namespace AeroCalcCore
     /// Renvoie les données des unités de mesures trouvées dans ces fichiers
     /// </summary>
     /// 
-    public class UnitsCSVFile : CSVFile {
+    public class UnitsCSVFile : CSVFile
+    {
 
 
         /*
@@ -42,7 +43,8 @@ namespace AeroCalcCore
         /// Constructeur de la classe, simple appel au constructeur de la classe mère
         /// </summary>
         /// 
-        public UnitsCSVFile() : base() {
+        public UnitsCSVFile() : base()
+        {
 
         }
 
@@ -60,7 +62,8 @@ namespace AeroCalcCore
         /// <returns>Objet UnitDictionary</returns>
         /// <remarks>Masque la méthode héritée readFile</remarks>
         /// 
-        public Units getUnitsFromCSV(string fileAbsolutePath) {
+        public Units getUnitsFromCSV(string fileAbsolutePath)
+        {
 
             String unitDimension, unitName, unitAlias;
             bool unitIsRef;
@@ -71,7 +74,8 @@ namespace AeroCalcCore
             unitFactor = 1;
             unitConstant = 0;
 
-            if (readTextFile(fileAbsolutePath, true) == FILEOP_SUCCESSFUL) {
+            if (readTextFile(fileAbsolutePath, true) == FILEOP_SUCCESSFUL)
+            {
                 // Analyse de la structure de la table TABLE_1
                 unitDimensionColumn = GetColumnIndex(KWD_UNIT_DIMENSION);
                 unitNameColumn = GetColumnIndex(KWD_UNIT_NAME);
@@ -84,23 +88,28 @@ namespace AeroCalcCore
                 cursor = GetLineIndex(KWD_START_TABLE_1) + 1;
 
                 // Lecture de la table et insertions des items au dictionnaire
-                while (!FileLines[cursor].Contains(KWD_END_TABLE_1)) {
+                while (!FileLines[cursor].Contains(KWD_END_TABLE_1))
+                {
                     string[] subs = FileLines[cursor].Split(cellSeparator);
-                    if (subs.Length >= 2) {
+                    if (subs.Length >= 2)
+                    {
 
-                        if (parseABoolean(subs[unitIsRefColumn], out unitIsRef)) {
+                        if (parseABoolean(subs[unitIsRefColumn], out unitIsRef))
+                        {
                             unitDimension = subs[unitDimensionColumn];
                             unitName = subs[unitNameColumn];
                             unitAlias = subs[unitAliasColumn];
-                            if (!parseADouble(subs[unitFactorColumn], out unitFactor)) {
+                            if (!parseADouble(subs[unitFactorColumn], out unitFactor))
+                            {
                                 unitFactor = 1;
                             }
-                            if (!parseADouble(subs[unitConstantColumn], out unitConstant)) {
+                            if (!parseADouble(subs[unitConstantColumn], out unitConstant))
+                            {
                                 unitConstant = 0;
                             }
                             dico.add(unitDimension, unitName, unitAlias, unitIsRef, unitFactor, unitConstant);
                         }
-                        
+
                     }
                     cursor++;
                 }

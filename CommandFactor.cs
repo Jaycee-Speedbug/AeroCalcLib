@@ -2,11 +2,13 @@ using System;
 
 
 
-namespace AeroCalcCore {
+namespace AeroCalcCore
+{
 
 
 
-    public class CommandFactor : IEquatable<CommandFactor> {
+    public class CommandFactor : IEquatable<CommandFactor>
+    {
 
         // Properties
         public string name { get; private set; }
@@ -19,13 +21,15 @@ namespace AeroCalcCore {
         /*
          * CONSTRUCTEUR
          */
-        public CommandFactor(string factorName, double factorValue, int factorUnitCode) {
+        public CommandFactor(string factorName, double factorValue, int factorUnitCode)
+        {
             name = factorName.ToUpper();
             value = factorValue;
             unitCode = factorUnitCode;
         }
 
-        public CommandFactor(string factor) {
+        public CommandFactor(string factor)
+        {
 
             double val;
             name = "";
@@ -33,21 +37,26 @@ namespace AeroCalcCore {
             char[] separators = { AeroCalcCommand.CMD_OPERATOR_AFFECT, AeroCalcCommand.CMD_OPERATOR_UNIT };
             string[] subStrings = factor.Split(separators);
 
-            if (subStrings.Length == 2) {
+            if (subStrings.Length == 2)
+            {
                 // Facteur sans unité
-                if (double.TryParse(subStrings[1], out val)) {
+                if (double.TryParse(subStrings[1], out val))
+                {
                     name = subStrings[0];
                     value = val;
                     unitCode = AeroCalc.UNIT_UNDETERMINED;
                 }
-                else {
+                else
+                {
                     value = double.NaN;
                     unitCode = AeroCalc.UNIT_UNDETERMINED;
                 }
             }
-            else if (subStrings.Length == 3) {
+            else if (subStrings.Length == 3)
+            {
                 // Facteur avec unité
-                if (double.TryParse(subStrings[1], out val)) {
+                if (double.TryParse(subStrings[1], out val))
+                {
                     name = subStrings[0];
                     value = val;
                     /// <remarks>
@@ -60,12 +69,14 @@ namespace AeroCalcCore {
                     }
                     */
                 }
-                else {
+                else
+                {
                     value = double.NaN;
                     unitCode = AeroCalc.UNIT_UNDETERMINED;
                 }
             }
-            else {
+            else
+            {
                 // Le facteur ne répond pas à un format connu, on 
                 value = double.NaN;
                 unitCode = AeroCalc.UNIT_UNDETERMINED;
@@ -81,8 +92,10 @@ namespace AeroCalcCore {
         /// </summary>
         /// <param name="cmdFactor">Autre commandFactor à comparer</param>
         /// <returns>True si les deux commandFactor ont le même nom</returns>
-        public bool Equals(CommandFactor cmdFactor) {
-            if (cmdFactor == null) {
+        public bool Equals(CommandFactor cmdFactor)
+        {
+            if (cmdFactor == null)
+            {
                 return false;
             }
             return name.Equals(cmdFactor.name);

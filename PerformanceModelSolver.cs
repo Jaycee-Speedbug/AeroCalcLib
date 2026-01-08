@@ -1,5 +1,4 @@
 using System;
-using System.Numerics;
 
 
 namespace AeroCalcCore
@@ -177,7 +176,7 @@ namespace AeroCalcCore
             int[] pts = new int[ppX.Length];
             double[] dist = distances(x);
             bool[] taken = new bool[ppX.Length];
-            
+
             // Triage
             int shortestIndex = 0;
             double shortestDistance = dist[shortestIndex];
@@ -202,7 +201,7 @@ namespace AeroCalcCore
             return pts;
         }
         public int[] _A_orderedIndexesByDistance(double x)
-            {
+        {
             return orderedIndexesByDistance(x);
         }
 

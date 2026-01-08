@@ -44,7 +44,8 @@ namespace AeroCalcCore
             EventMessages EMLib = new EventMessages();
             string[] splitters = { "\r\n", "\n" };
 
-            if (xDoc != null) {
+            if (xDoc != null)
+            {
                 // Language Package ISO code
                 string isoCode = getAttribute(new string[] { NODE_APP, NODE_LANG_PACK }, ATTRIB_NAME);
                 EMLib.setLangShortName(isoCode);
@@ -54,15 +55,18 @@ namespace AeroCalcCore
                 version = (version == int.MinValue) ? 0 : version;
                 EMLib.setVersion(version);
                 // This is the requested Language package
-                foreach (XElement item in xDoc.Descendants(NODE_MESSAGE)) {
+                foreach (XElement item in xDoc.Descendants(NODE_MESSAGE))
+                {
                     // This is a Message node, let's get the data
                     string msg = item.Value;
                     int codeNb = getIntOrMinValue(item.Attribute(ATTRIB_ID).Value);
-                    if (codeNb != int.MinValue) {
+                    if (codeNb != int.MinValue)
+                    {
                         // Triming the leading white spaces
                         string msgTrimmed = "";
                         string[] table = msg.Split(splitters, StringSplitOptions.RemoveEmptyEntries);
-                        for (int i = 0; i < table.Length; i++) {
+                        for (int i = 0; i < table.Length; i++)
+                        {
                             msgTrimmed += table[i].TrimStart(' ') + Environment.NewLine;
                         }
                         // Addition to library

@@ -1,7 +1,5 @@
-using System;
-using System.Xml.Linq;
-using System.Collections.Generic;
 using System.IO;
+using System.Xml.Linq;
 
 namespace AeroCalcCore
 {
@@ -42,8 +40,8 @@ namespace AeroCalcCore
                 string shortName = xe.Attribute(ATTRIB_SHORT_NAME).Value;
                 string name = xe.Attribute(ATTRIB_NAME).Value;
                 string filePath = absoluteLangDir + Path.DirectorySeparatorChar + xe.Value;
-                if (string.IsNullOrEmpty(shortName) || 
-                    string.IsNullOrEmpty(name) || 
+                if (string.IsNullOrEmpty(shortName) ||
+                    string.IsNullOrEmpty(name) ||
                     string.IsNullOrEmpty(filePath))
                 {
                     // Not a valid Language block

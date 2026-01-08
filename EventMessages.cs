@@ -57,7 +57,7 @@ namespace AeroCalcCore
         /// Ajoute un EventMessage à la Library
         /// </summary>
         /// <param name="em"></param>
-        public void Add(EventMessage em) => addItem(em.msgID,em.msgStr);
+        public void Add(EventMessage em) => addItem(em.msgID, em.msgStr);
 
 
 
@@ -65,7 +65,8 @@ namespace AeroCalcCore
         /// Enregistrement du code de deux lettres correspondant au package de langue utilisé pour la Library
         /// </summary>
         /// <param name="languageShortName"></param>
-        public void setLangShortName(string languageShortName) {
+        public void setLangShortName(string languageShortName)
+        {
             langIsoCode = languageShortName;
         }
 
@@ -75,7 +76,8 @@ namespace AeroCalcCore
         /// Enregistre le numéro de version du package de langue utilisé pour la Library
         /// </summary>
         /// <param name="languagePackVersion"></param>
-        public void setVersion(int languagePackVersion) {
+        public void setVersion(int languagePackVersion)
+        {
             langPackVersion = languagePackVersion;
         }
 

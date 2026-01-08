@@ -113,7 +113,7 @@ namespace AeroCalcCore
             }
 
         }
-        
+
         public void add(Unit newUnit)
         {
             add(newUnit.dimension, newUnit.name, newUnit.alias, newUnit.isRef, newUnit.factor, newUnit.constant);

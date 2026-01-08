@@ -53,7 +53,8 @@ namespace AeroCalcCore
         /// Construit un objet de traitement des commandes
         /// </summary>
         /// 
-        public AeroCalcCommandProcessor() {
+        public AeroCalcCommandProcessor()
+        {
             // Construction du container de données de performances
             ModelsLib = new DataModelContainer();
             // Construction de l'objet d'environnement
@@ -80,10 +81,12 @@ namespace AeroCalcCore
         /// <remarks>
         /// Seules quelques commandes sont traitées ici, l'essentiel est fait via le constructeur AeroCalcCommand
         /// </remarks>
-        public AeroCalcCommand process(string txtCommand) {
+        public AeroCalcCommand process(string txtCommand)
+        {
             AeroCalcCommand Cmd = new AeroCalcCommand(txtCommand, ModelsLib, EnvContext, MemStack);
             // Certaines commandes sont traitées ici, dans le processeur et non à la construction de la commande
-            switch (Cmd.action) {
+            switch (Cmd.action)
+            {
                 case AeroCalcCommand.ACTION_INIT_INTERPRETER:
                     // Initialisation
                     initProcessor(Cmd);
@@ -129,21 +132,26 @@ namespace AeroCalcCore
         /// <returns>
         /// True, si la commande a été traitée sans erreur
         /// </returns>
-        private bool readScriptFile(AeroCalcCommand Cmd) {
-            if (Cmd.subs.Length >= 2) {
+        private bool readScriptFile(AeroCalcCommand Cmd)
+        {
+            if (Cmd.subs.Length >= 2)
+            {
 
                 ScriptFile SF = new ScriptFile();
 
                 // Constitution du path
                 SF.setWorkDirectory(EnvContext.scriptsDirPath);
                 SF.setInputFileWithRelPath(Cmd.subs[1]);
-                switch (SF.readFile()) {
+                switch (SF.readFile())
+                {
 
                     case FileIO.FILEOP_SUCCESSFUL:
                         // Le fichier de script a été lu avec succès
-                        if (SF.Count > 0) {
+                        if (SF.Count > 0)
+                        {
                             string outputLn = "";
-                            for (int index = 0; index < SF.Count; index++) {
+                            for (int index = 0; index < SF.Count; index++)
+                            {
                                 string ln = SF.readNextLine();
                                 outputLn += ln + Environment.NewLine;
                                 AeroCalcCommand ScriptCmd = process(ln);
@@ -152,7 +160,8 @@ namespace AeroCalcCore
                             Cmd.setResultText(outputLn);
                             Cmd.setEventCode(AeroCalcCommand.ECODE_SCRIPTFILE_SUCCESSFULL);
                         }
-                        else {
+                        else
+                        {
                             Cmd.setEventCode(AeroCalcCommand.ECODE_ERR_SCRIPTFILE_VOID);
                         }
                         break;
@@ -193,16 +202,20 @@ namespace AeroCalcCore
         /// </summary>
         /// <param name="Cmd">Commande active</param>
         /// <returns>Etat de réussite de la commande</returns>
-        private bool initProcessor(AeroCalcCommand Cmd) {
+        private bool initProcessor(AeroCalcCommand Cmd)
+        {
             int loadStatus;
             UnitsXMLFile unitsFile = new UnitsXMLFile("");
 
-            if (!initialized) {
+            if (!initialized)
+            {
                 loadStatus = EnvContext.loadConfigFile(Cmd.subs[1]);
-                switch (loadStatus) {
+                switch (loadStatus)
+                {
                     case FileIO.FILEOP_SUCCESSFUL:
                         // Chargement du dictionnaire des unités
-                        if (EnvContext.unitsEnabled) {
+                        if (EnvContext.unitsEnabled)
+                        {
                             UnitsLib = unitsFile.getUnitsFromXML(EnvContext.unitsFileName);
                             ModelsLib.setUnitsLibrary(UnitsLib);
                         }
@@ -241,7 +254,8 @@ namespace AeroCalcCore
                 initialized = true;
                 return true;
             }
-            else {
+            else
+            {
                 // Already initialized
                 Cmd.setEventCode(AeroCalcCommand.ECODE_ERR_REINIT_NOT_ALLOWED);
             }
@@ -255,9 +269,11 @@ namespace AeroCalcCore
         /// </summary>
         /// <param name="Cmd">AeroCalcCommand qui a demandé le traitement</param>
         /// <returns></returns>
-        private bool setLanguage(AeroCalcCommand Cmd) {
+        private bool setLanguage(AeroCalcCommand Cmd)
+        {
             Cmd.setEventCode(PostProc.changeLanguage(EnvContext.Langs.Library[Cmd.index]));
-            if (Cmd.eventCode == AeroCalcCommand.ECODE_LANG_CHANGED_SUCCESSFULL) {
+            if (Cmd.eventCode == AeroCalcCommand.ECODE_LANG_CHANGED_SUCCESSFULL)
+            {
                 EnvContext.setActiveLanguage(Cmd.index);
             }
             return true;

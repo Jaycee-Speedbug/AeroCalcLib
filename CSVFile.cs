@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 
 
@@ -12,10 +11,11 @@ namespace AeroCalcCore
     /// Structure de données désignant les coordonnées d'une cellule dans un fichier CSV
     /// </summary>
     public struct CSVCoordinates
-        {
+    {
         public int line;
         public int column;
-        public CSVCoordinates(int l, int c) {
+        public CSVCoordinates(int l, int c)
+        {
             line = l;
             column = c;
         }
@@ -84,7 +84,8 @@ namespace AeroCalcCore
         /// 
         /// </summary>
         /// 
-        public CSVFile() {
+        public CSVFile()
+        {
             // Défini le tableau de char contenant les séparateurs acceptés
             cellSeparator = new char[] { CELL_SEPARATOR_SEMICOLON, CELL_SEPARATOR_TAB };
             // Défini un tableau de String destiné à contenir les lignes du fichier CSV
@@ -148,18 +149,22 @@ namespace AeroCalcCore
         /// <param name="line"></param>
         /// <param name="column"></param>
         /// <returns>String, à la position définie en arguments, Null si la colonne ou la ligne n'existe pas</returns>
-        protected string ValueAtPosition(int line, int column) {
-            if (line < FileLines.Count) {
+        protected string ValueAtPosition(int line, int column)
+        {
+            if (line < FileLines.Count)
+            {
                 string[] subs;
                 subs = FileLines[line].Split(cellSeparator, StringSplitOptions.None);
-                if (column < subs.Length) {
+                if (column < subs.Length)
+                {
                     return subs[column];
                 }
             }
             return null;
         }
         // Accesseur de test
-        public string _A_ValueAtPosition(int line, int column) {
+        public string _A_ValueAtPosition(int line, int column)
+        {
             return ValueAtPosition(line, column);
         }
 
@@ -228,7 +233,7 @@ namespace AeroCalcCore
         /// TODO : Tests
         protected int GetLineIndex(string keyword)
         {
-            if (keyword==null || FileLines==null) return -1;
+            if (keyword == null || FileLines == null) return -1;
             try
             {
                 int theLine = FileLines.FindIndex(line => line.Contains(keyword));
