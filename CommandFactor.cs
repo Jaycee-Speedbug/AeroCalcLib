@@ -1,3 +1,4 @@
+using AeroCalcCore.FlightPerformanceEngine;
 using System;
 
 

@@ -1,9 +1,10 @@
+using AeroCalcCore.FileServices;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 
-namespace AeroCalcCore
+namespace AeroCalcCore.FlightPerformanceEngine
 {
 
 
@@ -15,8 +16,6 @@ namespace AeroCalcCore
     /// <remarks>
     /// Améliorations possibles:
     /// - Utiliser une classe encapsulant les objets de type PerfPile
-    /// - Ajouter l'interface IEquatable aux objets PerfPile (ou leur capsule) pour assurer
-    /// de meilleures performances de recherche
     /// </remarks>
     public class DataModelContainer
     {
@@ -444,8 +443,8 @@ namespace AeroCalcCore
                     {
                         // Le filtre comporte moins de mots que le nom de la fonction, mais au moins une WHITE_CARD
                         // Modification des mots du filtre grâce à la WHITE_CARD
-                        filterSubs = expendFilter(originalFilterSubs, functionNameSubs.Length);
-                        // TODO Et si expendFilter renvoyait un null ??
+                        filterSubs = expandFilter(originalFilterSubs, functionNameSubs.Length);
+                        // TODO Et si expandFilter renvoyait un null ??
                     }
                     else
                     {
@@ -711,7 +710,7 @@ namespace AeroCalcCore
         /// TODO Refactoring:
         /// Utiliser les List<string> 
         /// </remarks>
-        private string[] expendFilter(string[] filterSubs, int wordCount)
+        private string[] expandFilter(string[] filterSubs, int wordCount)
         {
 
             int index = -1;
@@ -768,7 +767,7 @@ namespace AeroCalcCore
         // Accesseurs de tests unitaires
         public string[] _A_expendFilter(string[] filterSubs, int wordCount)
         {
-            return expendFilter(filterSubs, wordCount);
+            return expandFilter(filterSubs, wordCount);
         }
 
     }

@@ -2,7 +2,7 @@
 
 
 
-namespace AeroCalcCore
+namespace AeroCalcCore.FlightPerformanceEngine
 {
 
     /// <summary>

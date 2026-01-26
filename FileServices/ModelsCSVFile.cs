@@ -1,6 +1,9 @@
 
 
 
+using AeroCalcCore.FileServices;
+using AeroCalcCore.FlightPerformanceEngine;
+
 namespace AeroCalcCore
 {
 

@@ -1,9 +1,10 @@
 using System;
+using System.Transactions;
 using System.Xml.Linq;
 
 
 
-namespace AeroCalcCore
+namespace AeroCalcCore.FileServices
 {
 
 
@@ -64,9 +65,10 @@ namespace AeroCalcCore
 
 
         /// <summary>
-        /// Récupère les unités utilisées dans les calculs dans le fichier XML des unités.
+        /// Load units from a new XML file
         /// </summary>
-        /// TODO Doit on renvoyer un null en cas d'échec ???
+        /// <param name="xmlFileAbsolutePath">Units XML file absolut path</param>
+        /// TODO: File loading errors handling
         public Units getUnitsFromXML(string xmlFileAbsolutePath)
         {
             // Introducing a new file
@@ -79,7 +81,7 @@ namespace AeroCalcCore
         }
 
         /// <summary>
-        /// Récupère les unités utilisées dans les calculs dans le fichier XML des unités.
+        /// Load units from the current XML file
         /// </summary>
         public Units getUnitsFromXML()
         {
@@ -91,7 +93,7 @@ namespace AeroCalcCore
                 {
                     // This is a DIMENSION node
                     string dimension = xe.Attribute(ATTRIB_NAME).Value;
-                    if (dimension != null && dimension != "")
+                    if (!String.IsNullOrEmpty(dimension))
                     {
                         foreach (XElement item in xe.Descendants(NODE_UNIT))
                         {
@@ -101,10 +103,15 @@ namespace AeroCalcCore
                             string alias = item.Attribute(ATTRIB_ALIAS).Value;
                             double factor = getDoubleOrNaN(item.Attribute(ATTRIB_FACTOR).Value);
                             double constant = getDoubleOrNaN(item.Attribute(ATTRIB_CONST).Value);
-                            if (!isRef && factor == Double.NaN || constant == Double.NaN)
+                            if (!isRef)
                             {
-                                // Not a valid unit
-                                break;
+                                // Current Unit is not a dimension reference, factor and constant must be valid numbers
+                                if (Double.IsNaN(factor) || Double.IsNaN(constant))
+                                {
+                                    // Not a valid unit, skipping it
+                                    break;
+                                }
+
                             }
                             units.add(new Unit(dimension, unitName, alias, isRef, factor, constant));
                         }

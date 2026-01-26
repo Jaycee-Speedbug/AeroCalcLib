@@ -69,7 +69,7 @@ namespace AeroCalcCore
 
             units = new List<Unit>();
 
-            // Insertion de la première unité (qui ne répond pas aux critères que doivent satisfaire le autres unités)
+            // Insertion de la première unité (qui ne répond pas aux critères que doivent satisfaire les autres unités)
             units.Add(new Unit("", "NUMBER", "", true, 1, 0));
 
         }
@@ -92,27 +92,32 @@ namespace AeroCalcCore
         /// <param name="unitFactor">Facteur à utiliser pour convertir vers la référence de la dimension</param>
         /// <param name="unitConstant">Constante à utiliser pour convertir vers la référence de la dimension</param>
         /// 
-        public void add(String unitDimension, String unitName, String unitAlias,
-                        bool unitIsRef, double unitFactor, double unitConstant)
+        public void add(String unitDimension, 
+                        String unitName, 
+                        String unitAlias,
+                        bool unitIsRef, 
+                        double unitFactor, 
+                        double unitConstant)
         {
-            Unit newUnit;
-            // Vérifications et inscription de l'unité au dictionnaire
++-            // Validity checks before addition to the dictionary
             if (unitDimension.Length > 0 && unitName.Length > 0)
             {
+                // If unit is reference, unitFactor and unitConstant are forced to 1 and 0 resp.
                 if (unitIsRef)
                 {
                     unitFactor = 1;
                     unitConstant = 0;
                 }
-                newUnit = new Unit(unitDimension, unitName, unitAlias, unitIsRef, unitFactor, unitConstant);
-                if (!unitExists(unitName) && isDimensionAccepted(unitDimension))
+                // The new unit should be unically identified by its name, and its alias
+                // The new unit should belongs to a known dimension
+                if (!unitExists(unitName, unitAlias) && isDimensionAccepted(unitDimension))
                 {
-                    // Le nom complet de l'unité doit être unique et la dimension reconnue
-                    units.Add(newUnit);
+                    units.Add(new Unit(unitDimension, unitName, unitAlias, unitIsRef, unitFactor, unitConstant));
                 }
             }
-
         }
+
+
 
         public void add(Unit newUnit)
         {
@@ -197,9 +202,20 @@ namespace AeroCalcCore
         /// <param name="alias">String, alias de l'unité à chercher dans la liste</param>
         /// <returns>int, valeur de l'index désigant l'unité recherchée</returns>
         /// 
-        public int getIndexByAlias(String alias)
-        {
 
+
+
+        /*
+         * METHODES
+         */
+
+        /// <summary>Returns the index of the unit in the list matching the alias provided as argument</summary>
+        /// <returns>int index in the unit list, -1 if unit alias not found</returns>
+        /// <param name="alias">Alias of the unit to search in the list</param>
+        private int getIndexByAlias(String alias)
+        {
+            return units.FindIndex(Unit => Unit.alias == alias);
+            /* Old implementation
             for (int index = 0; index < units.Count; index++)
             {
                 if (units.ElementAt<Unit>(index).alias.Equals(alias))
@@ -208,23 +224,22 @@ namespace AeroCalcCore
                 }
             }
             return -1;
+            */
         }
 
 
 
-        /*
-         * METHODES
-         */
-
         /// <summary>
-        /// Retourne l'index de la liste des unités correspondant à l'item ayant le nom transmis en argument
+        /// Returns the Unit dictionary index of the unit corresponding to the name
         /// </summary>
-        /// <param name="name">Nom complet de l'unité</param>
-        /// <returns>int index dans la liste des unités</returns>
+        /// <param name="name">Unit full name</param>
+        /// <returns>index of the unit in the dictionary</returns>
         /// 
         private int getIndexByName(String name)
         {
+            return units.FindIndex(Unit => Unit.name == name);
 
+            /* Old implementation
             for (int index = 0; index < units.Count; index++)
             {
                 if (units.ElementAt<Unit>(index).name.Equals(name))
@@ -233,20 +248,21 @@ namespace AeroCalcCore
                 }
             }
             return -1;
+            */
         }
 
 
 
         /// <summary>
-        /// Renvoie True lorsqu'une unité du dictionnaire disposant du même nom existe déjà
+        /// Check if a unit is already in the dictionary, by its name or its alias
         /// </summary>
-        /// <param name="code">int Code d'identification de l'unité</param>
-        /// <returns>True si une unité ayant le code fourni en argument, False dans le cas contraire</returns>
+        /// <param name="name">Full name of unit</param>
+        /// <param name="alias">Alias of unit</param>
+        /// <returns>True if a unit holding the same name or alias is already available in the dictionary, False otherwise</returns>
         /// 
-        private bool unitExists(String name)
+        private bool unitExists(String name, String alias)
         {
-
-            if (getIndexByName(name) >= 0)
+            if (getIndexByName(name) >= 0 || getIndexByAlias(alias) >= 0)
             {
                 return true;
             }

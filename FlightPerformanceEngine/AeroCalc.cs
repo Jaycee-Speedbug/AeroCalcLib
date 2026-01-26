@@ -1,23 +1,17 @@
-namespace AeroCalcCore
-{
+using System;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
+using System.Linq;
+using AeroCalcCore.FlightPerformanceEngine;
 
+
+
+namespace AeroCalcCore.FlightPerformanceEngine
+{
 
 
     public static class AeroCalc
     {
-
-
-
-        public const int E_DISCRET_VALUE_OUT_OF_RANGE = 1;
-        public const int E_PILE_VALUE_OUT_OF_RANGE = 2;
-        public const int E_LAYER_VALUE_OUT_OF_RANGE = 3;
-        public const int E_SERIE_VALUE_OUT_OF_RANGE = 4;
-        public const int E_POINT_VALUE_OUT_OF_RANGE = 5;
-        public const int E_VOID_SYSTEM = 100;
-        public const int E_TOO_SHORT_SERIE = 101;
-        //public const string E_UNKNOWN_FACTOR_VALUE_MSG = " : Valeur inconnue.";
-
-
 
         // Constantes utilisées dans la manipulation des modèles de performances
         public const int MODEL_RANGE_INCLUDE_LIMIT = 1;
@@ -53,5 +47,7 @@ namespace AeroCalcCore
 
 
     }
+
+
 
 }

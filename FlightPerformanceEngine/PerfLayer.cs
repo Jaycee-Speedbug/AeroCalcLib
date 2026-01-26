@@ -4,7 +4,7 @@ using System.Linq;
 
 
 
-namespace AeroCalcCore
+namespace AeroCalcCore.FlightPerformanceEngine
 {
 
 
@@ -13,11 +13,8 @@ namespace AeroCalcCore
     /// Enregistre les caractéristiques d'un ensemble cohérent de série de performances de vol
     /// Par contraction, une layer de séries de points de performances de vol s'appelle 'layer de performance'
     /// </summary>
-    public class PerfLayer : IComparer<PerfLayer>
+    public class PerfLayer : IComparable<PerfLayer>
     {
-
-        // FIELDS ////////////////////////////////////////////////////////////////////////////////////
-
 
         // PROPERTIES ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -58,22 +55,6 @@ namespace AeroCalcCore
             get;
             private set;
         }
-
-        /// <summary>
-        /// ABANDON AU PROFIT D'UN TABLEAU DE DISCRETS AU NIVEAU DE LA PILE
-        /// Facteur discret associé à la Layer
-        /// </summary>
-        /// <remarks>
-        /// Permet d'ajouter une valeur discrète, par exemple un braquage des volets, l'état de surface de la piste...
-        /// Cette valeur entière conduit à construire des familles de Layer dans une même Pile.
-        /// Les calculs ne doivent être réalisé que dans une même famille, c'est à dire avec des Layer de même discret
-        /// </remarks>
-        /*
-        public long discretValue {
-            get;
-            private set;
-        }
-        */
 
         /// <summary>
         /// Valeur du facteur associé à la Layer
@@ -132,6 +113,7 @@ namespace AeroCalcCore
             private set;
         }
 
+        /*
         /// <summary>
         /// Etat de sélection de la Layer. La sélection permet de ne prendre en compte
         /// que certaines Layer pour les calculs de prédiction
@@ -141,6 +123,7 @@ namespace AeroCalcCore
             get;
             set;
         }
+        */
 
         /// <summary>
         /// Etat 'breakpoint' de la layer de points de performance (rupture de linéarité)
@@ -152,7 +135,8 @@ namespace AeroCalcCore
         }
 
 
-        // Private fields ///////////////////////////////////////////////////////////////////////////////////
+
+        // FIELDS ///////////////////////////////////////////////////////////////////////////////////////
 
         /// <summary>
         /// Borne inférieure du domaine de calcul
@@ -219,8 +203,9 @@ namespace AeroCalcCore
         }
 
 
+
         /// <summary>
-        /// Construit une Layer vide de toute Serie de performances
+        /// Construit une Layer vide de toute Serie de points de performances
         /// </summary>
         /// <param name="ownFactorValue">Valeur du facteur associé à la Layer (dimension 2)</param>
         /// <param name="pointFactorName">Nom de la dimension des Point de la Pile (dimension 1)</param>
@@ -245,7 +230,7 @@ namespace AeroCalcCore
         }
 
 
-        // Services /////////////////////////////////////////////////////////////////////////////////////////
+        // SERVICES /////////////////////////////////////////////////////////////////////////////////////////
 
 
         /// <summary>
@@ -464,49 +449,64 @@ namespace AeroCalcCore
         /// <remarks>TODO: Suppression de l'utilisation du flag selected</remarks>
         public double predict(double pointFactorValue, double serieFactorValue)
         {
-
             PerfSerie ps = new PerfSerie();
             double output = double.NaN;
             double serieOutput = double.NaN;
 
-            try
+            if (this.count == 1)
             {
-                if (this.count == 1)
+                if (serieFactorValue.Equals(double.NaN) || serieFactorValue == SerieAt(0).factorValue)
                 {
-                    // Il n'y a qu'une série dans la layer, donc serieFactorValue n'est pas utile
+                    // Cas 1: serieFactorValue est NaN, il n'y a pas de factorValue transmis pour ce calcul
+                    // Cas 2: serieFactorValue est égal au factorValue de l'unique série
+                    // Le calcul est réalisable
                     output = SerieAt(0).predict(pointFactorValue);
                 }
                 else
                 {
-                    // Si le domaine de calcul n'a pas été défini au préalable, il est réduit à l'étendue
-                    // de la layer
-                    if (!ranged)
-                    {
-                        setRange();
-                    }
-                    // Test du domaine de calcul
-                    if (!isInRange(serieFactorValue))
-                    {
-                        throw new ModelException(AeroCalc.E_SERIE_VALUE_OUT_OF_RANGE,
-                                                   this.outputName, "", serieFactorValue);
-                    }
-                    // Sélection des séries
-                    selectSubLayer(serieFactorValue, 3);
-                    // Calcul de la prédiction pour chaque série sélectionnée
-                    for (int count = 0; count < this.count; count++)
-                    {
-                        /*
-                        if (SerieAt(count).selected) {
-                            serieOutput = SerieAt(count).predict(pointFactorValue);
-                            ps.add(new PerfPoint(SerieAt(count).factorValue, serieOutput, false));
-                        }
-                        */
-                    }
-                    if (ps.count >= 1)
-                    {
-                        output = ps.predict(serieFactorValue);
-                    }
+                    throw new ModelException(AeroCalc.E_SERIE_VALUE_OUT_OF_RANGE, this.outputName, "", serieFactorValue);
                 }
+            }
+
+            // Si le domaine de calcul n'a pas été défini au préalable, il est réduit à l'étendue
+            // de la Layer
+            if (!ranged)
+            {
+                setRange();
+            }
+            // Test du domaine de calcul
+            if (!isInRange(serieFactorValue))
+            {
+                throw new ModelException(AeroCalc.E_SERIE_VALUE_OUT_OF_RANGE,
+                                           this.outputName, "", serieFactorValue);
+            }
+
+
+            // Sélection des séries
+            //selectSubLayer(serieFactorValue, 3);
+            // Calcul de la prédiction pour chaque série sélectionnée
+            for (int count = 0; count < this.count; count++)
+            {
+                /*
+                if (SerieAt(count).selected) {
+                    serieOutput = SerieAt(count).predict(pointFactorValue);
+                    ps.add(new PerfPoint(SerieAt(count).factorValue, serieOutput, false));
+                }
+                */
+            }
+            if (ps.count >= 1)
+            {
+                output = ps.predict(serieFactorValue);
+            }
+
+
+
+
+
+
+
+            try
+            {
             }
             catch (ModelException e)
             {
@@ -571,20 +571,20 @@ namespace AeroCalcCore
 
         // Interface(s) /////////////////////////////////////////////////////////////////////////////////////
 
-
         /// <summary>
-        /// Comparaison entre elles des Layer sur la base de la valeur de leur facteur associé (dimension 3)
+        /// Compares the current PerfLayer instance with another PerfLayer and returns an integer that indicates their
+        /// relative order based on the factor value.
         /// </summary>
-        /// <param name="pl1">Première Layer de performance</param>
-        /// <param name="pl2">Deuxième Layer de performance</param>
-        /// <returns>-1 si ps1 est avant ps2, O si ps1 = ps2, 1 si ps1 est plus grand que ps2</returns>
-        public int Compare(PerfLayer pl1, PerfLayer pl2)
+        /// <param name="other">The PerfLayer instance to compare with the current instance.</param>
+        /// <returns>A value less than zero if the current instance is less than <paramref name="other"/>; zero if they are
+        /// equal; or a value greater than zero if the current instance is greater than <paramref name="other"/>.</returns>
+        public int CompareTo(PerfLayer other)
         {
-            if (pl1.factorValue < pl2.factorValue)
+            if (this.factorValue < other.factorValue)
             {
                 return -1;
             }
-            if (pl1.factorValue > pl2.factorValue)
+            if (this.factorValue > other.factorValue)
             {
                 return 1;
             }
@@ -596,10 +596,10 @@ namespace AeroCalcCore
 
 
         /// <summary>
-        /// Renvoie un tableau des indexes des séries de layers de performance, classé par proximité 
+        /// Renvoie un tableau des indexes des Series de performance, classé par proximité 
         /// de leur facteur avec une abscisse de référence
         /// </summary>
-        /// <param name="pp1">Abscisse de référence</param>
+        /// <param name="x">Abscisse de référence</param>
         /// <returns>Tableau de Int, null si aucun point n'est présent dans la série</returns>
         private int[] sortedClosestSeries(double x)
         {
@@ -701,6 +701,8 @@ namespace AeroCalcCore
         }
 
 
+
+        /*
         /// <summary>
         /// Sélectionne un nombre nb de séries liées de façon continue autour d'une valeur de facteur x
         /// </summary>
@@ -711,7 +713,7 @@ namespace AeroCalcCore
         {
 
             int[] series = sortedClosestSeries(x);
-            selectNone();
+            //selectNone();
 
             if (series == null)
             {
@@ -774,6 +776,7 @@ namespace AeroCalcCore
         {
             return selectSubLayer(x, nb);
         }
+        */
 
     }
 

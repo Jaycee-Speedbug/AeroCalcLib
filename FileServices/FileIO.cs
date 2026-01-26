@@ -7,7 +7,7 @@ using System.Text;
 
 
 
-namespace AeroCalcCore
+namespace AeroCalcCore.FileServices
 {
 
 

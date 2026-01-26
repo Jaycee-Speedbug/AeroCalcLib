@@ -1,7 +1,4 @@
-
-
-
-namespace AeroCalcCore
+namespace AeroCalcCore.FileServices
 {
 
 

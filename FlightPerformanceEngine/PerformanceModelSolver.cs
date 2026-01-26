@@ -1,10 +1,8 @@
 using System;
 
 
-namespace AeroCalcCore
+namespace AeroCalcCore.FlightPerformanceEngine
 {
-
-
 
     /// <summary>
     /// Classe chargée de réaliser une interpolation polynomiale de degré n
@@ -75,7 +73,7 @@ namespace AeroCalcCore
         {
 
             // Recherche des points de plus grande proximité
-            int[] orderedPointsIndexes = orderedIndexesByDistance(x);
+            //int[] orderedPointsIndexes = orderedIndexesByDistance(x);
 
             // Calcul des polynomes
             double[] p = new double[ppX.Length];
@@ -126,40 +124,6 @@ namespace AeroCalcCore
         /*
          * METHODES
          */
-
-        /*
-        /// <summary>
-        /// Renvoie un tableau contenant les indexes des points de performances sélectionnés dans la série
-        /// </summary>
-        /// <returns>Tableau d'indexes des layers sélectionnés
-        /// </returns>
-        /// <remarks>
-        /// REBUILD: Suppression de cette méthode et utilisation directe de la PerfSerie
-        /// </remarks>
-        private int[] selectedPointsTable()
-        {
-            if (perfSerie.selectedCount() > 0)
-            {
-                int[] spt = new int[perfSerie.selectedCount()];
-                PerfPoint pp;
-                int index = 0;
-                for (int count = 0; count < perfSerie.count; count++)
-                {
-                    pp = perfSerie.pointAt(count);
-                    if (pp.selected)
-                    {
-                        spt[index] = count;
-                        index++;
-                    }
-                }
-                return spt;
-            }
-            else
-            {
-                return null;
-            }
-        }
-        */
 
 
 

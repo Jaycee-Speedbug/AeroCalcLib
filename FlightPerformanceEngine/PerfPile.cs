@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 
-namespace AeroCalcCore
+namespace AeroCalcCore.FlightPerformanceEngine
 {
 
 
@@ -178,11 +178,14 @@ namespace AeroCalcCore
         /// Etat de sélection de la Pile. La sélection permet de ne prendre en compte
         /// que certaines Pile pour les calculs multi-dimensionnels
         /// </summary>
+        /// <remarks>DEACTIVATED, unnecessary feature</remarks>
+        /*
         public bool selected
         {
             get;
             set;
         }
+        */
 
         /// <summary>
         /// Commentaire texte sur la réalisation du calcul
@@ -348,7 +351,7 @@ namespace AeroCalcCore
             // Deux PerfLayer ne peuvent pas avoir le même input
             foreach (PerfLayer pl in perfLayerList)
             {
-                if (pl.Compare(pl, newPerfLayer) == 0)
+                if (pl.CompareTo(newPerfLayer) == 0)
                 {
                     return false;
                 }
@@ -439,6 +442,7 @@ namespace AeroCalcCore
         /// <summary>
         /// Sélectionne toutes les Layer de la Pile
         /// </summary>
+        /*
         public void selectAll()
         {
             foreach (PerfLayer pl in perfLayerList)
@@ -446,11 +450,14 @@ namespace AeroCalcCore
                 pl.selected = true;
             }
         }
+        */
+
 
 
         /// <summary>
         /// Désélectionne toutes les Layer
         /// </summary>
+        /*
         public void selectNone()
         {
             foreach (PerfLayer pl in perfLayerList)
@@ -458,6 +465,7 @@ namespace AeroCalcCore
                 pl.selected = false;
             }
         }
+        */
 
 
 
@@ -465,6 +473,7 @@ namespace AeroCalcCore
         /// Renvoie le nombre de Layer de performances sélectionnées dans la Pile
         /// </summary>
         /// <returns>Un entier représentant le nombre de layers sélectionnés dans la série</returns>
+        /*
         public int selectedCount()
         {
 
@@ -477,6 +486,7 @@ namespace AeroCalcCore
             }
             return selected;
         }
+        */
 
 
 
@@ -525,12 +535,14 @@ namespace AeroCalcCore
                     // Calcul de la prédiction pour chaque layer sélectionnée
                     for (int count = 0; count < this.count; count++)
                     {
+                        /*
                         if (layerAt(count).selected)
                         {
                             layerOutput = layerAt(count).predict(pointFactorValue, serieFactorValue);
                             // Abonde la Serie locale
                             ps.add(new PerfPoint(layerAt(count).factorValue, layerOutput, false));
                         }
+                        */
                     }
                     if (ps.count >= 1)
                     {
@@ -701,6 +713,7 @@ namespace AeroCalcCore
             {
                 msg += "]";
             }
+            /*
             msg += "\nSelected : ";
             if (selected)
             {
@@ -710,6 +723,7 @@ namespace AeroCalcCore
             {
                 msg += "NO";
             }
+            */
             msg += "\nLayers :\n";
             foreach (PerfLayer pl in perfLayerList)
             {
@@ -931,7 +945,7 @@ namespace AeroCalcCore
             // Tri des Layer, dans l'ordre de proximité avec la valeur x
             int[] layers = sortedClosestLayers(x);
             // Déselection de toutes les Layer de la Pile
-            selectNone();
+            //selectNone();
 
             if (layers == null || nb == 0) return false;
 
@@ -943,7 +957,7 @@ namespace AeroCalcCore
                 {
                     if (layerAt(layers[count]).factorValue == x)
                     {
-                        layerAt(layers[count]).selected = true;
+                        //layerAt(layers[count]).selected = true;
                         return true;
                     }
                 }
@@ -953,20 +967,20 @@ namespace AeroCalcCore
 
             if (layers.Length == 1 && nb == 1 || layerAt(layers[0]).factorValue == x)
             {
-                layerAt(layers[0]).selected = true;
+                //layerAt(layers[0]).selected = true;
                 return true;
             }
             if (layers.Length == 2 && nb == 2)
             {
-                layerAt(layers[0]).selected = true;
-                layerAt(layers[1]).selected = true;
+                //layerAt(layers[0]).selected = true;
+                //layerAt(layers[1]).selected = true;
                 return true;
             }
             if (layers.Length == 3 && nb == 3)
             {
-                layerAt(layers[0]).selected = true;
-                layerAt(layers[1]).selected = true;
-                layerAt(layers[2]).selected = true;
+                //layerAt(layers[0]).selected = true;
+                //layerAt(layers[1]).selected = true;
+                //layerAt(layers[2]).selected = true;
                 return true;
             }
             else
@@ -987,7 +1001,7 @@ namespace AeroCalcCore
                     else
                     {
                         // Sélection de la Layer
-                        layerAt(layers[count]).selected = true;
+                        //layerAt(layers[count]).selected = true;
                         selectCounter++;
                         if (layerAt(layers[count]).isBreak)
                         {
@@ -1007,7 +1021,7 @@ namespace AeroCalcCore
             }
         }
         // Accesseur pour la classe de test unitaire
-        public bool __testSelectSubPile(double x, int nb)
+        public bool A_selectLayers(double x, int nb)
         {
             return selectLayers(x, nb);
         }

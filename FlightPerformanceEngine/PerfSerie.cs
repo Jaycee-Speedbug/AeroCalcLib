@@ -4,7 +4,7 @@ using System.Linq;
 
 
 
-namespace AeroCalcCore
+namespace AeroCalcCore.FlightPerformanceEngine
 {
 
     /// <summary>
@@ -204,6 +204,7 @@ namespace AeroCalcCore
         }
 
 
+
         /// <summary>
         /// Renvoie l'index d'un point de la série
         /// </summary>
@@ -248,7 +249,6 @@ namespace AeroCalcCore
         ///
         public double predict(double inputValue)
         {
-
             //Si le domaine de calcul n'a pas été défini au préalable, il est réduit à l'étendue de la série
             if (!ranged)
             {
@@ -395,7 +395,7 @@ namespace AeroCalcCore
         // METHODS //////////////////////////////////////////////////////////////////////////////////////////
 
 
-
+        /*
         private double[] unsignedDistances(double x)
         {
             // Au minimum, il faut un point de performance dans la série
@@ -414,9 +414,10 @@ namespace AeroCalcCore
         {
             return unsignedDistances(x);
         }
+        */
 
 
-
+        /*
         private double[] signedDistances(double x)
         {
             // Au minimum, il faut un point de performance dans la série
@@ -435,6 +436,7 @@ namespace AeroCalcCore
         {
             return signedDistances(x);
         }
+        */
 
 
 
@@ -614,6 +616,7 @@ namespace AeroCalcCore
             }
             return closestPts.ToArray();
         }
+        // Accesseur de test
         public int[] _A_closestPointsAround(double x, int nb)
         {
             return closestPointsAround(x, nb);

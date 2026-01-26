@@ -47,14 +47,14 @@ namespace AeroCalcCore
          * SERVICES
          */
         /// <summary>
-        /// Vide la library
+        /// Empty the message List
         /// </summary>
         public void Clear() => eMsgList.Clear();
 
 
 
         /// <summary>
-        /// Ajoute un EventMessage à la Library
+        /// Add an EventMessage to the message List
         /// </summary>
         /// <param name="em"></param>
         public void Add(EventMessage em) => addItem(em.msgID, em.msgStr);

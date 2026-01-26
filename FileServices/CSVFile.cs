@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 
 
-namespace AeroCalcCore
+namespace AeroCalcCore.FileServices
 {
 
 
