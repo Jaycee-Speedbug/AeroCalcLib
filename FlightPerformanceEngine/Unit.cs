@@ -2,7 +2,7 @@ using System;
 
 
 
-namespace AeroCalcCore
+namespace AeroCalcCore.FlightPerformanceEngine
 {
 
 

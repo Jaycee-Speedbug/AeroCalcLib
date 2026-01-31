@@ -96,6 +96,7 @@ namespace AeroCalcCore.FlightPerformanceEngine
         /// Liste générique utilisée pour ordonner les points de performance PerfPoint de la série
         /// </summary>
         List<PerfPoint> perfPointList;
+        IReadOnlyList<PerfPoint> perfPointList2;
 
 
         // CONSTRUCTOR(S) ///////////////////////////////////////////////////////////////////////////////////
@@ -169,7 +170,18 @@ namespace AeroCalcCore.FlightPerformanceEngine
         /// <returns>True si l'opération a réussi, False en cas d'échec, typiquement quand on essaye d'ajouter 
         /// un point de performance ayant la même abscisse qu'un point déjà présent dans la série.
         /// </returns>
-        ///
+        /// <remarks>
+        /// Refactoring required:
+        /// - Do NOT rely on CompareTo() to detect duplicate or "equal" factorValue.
+        ///   CompareTo() must remain exact and deterministic.
+        /// - Enforce axis uniqueness using an epsilon-based comparison
+        ///   (AxisUniquenessEpsilon) against already inserted PerfLayer.factorValue.
+        /// - Maintain the layer list strictly sorted by factorValue at insertion time
+        ///   using ordered insertion (binary search + neighbor checks),
+        ///   NOT by calling List.Sort().
+        /// This guarantees strict monotonicity of the layer axis and numerical
+        /// stability of subsequent interpolation and axis selection.
+        /// </remarks>
         public bool add(PerfPoint pp)
         {
             foreach (PerfPoint p in perfPointList)
@@ -247,37 +259,38 @@ namespace AeroCalcCore.FlightPerformanceEngine
         /// Valeur prédite, null si le calcul est impossible
         /// </returns>
         ///
-        public double predict(double inputValue)
+        public double predict(
+            double x,
+            AxisMetadata? axisMeta = null,
+            EngineNumerics? num = null,
+            SelectionPolicy? policy = null)
         {
-            //Si le domaine de calcul n'a pas été défini au préalable, il est réduit à l'étendue de la série
-            if (!ranged)
-            {
-                setRange();
-            }
+            axisMeta ??= new AxisMetadata(AxisNature.Continuous, BreakpointsPolicy.HardStop);
+            num ??= EngineNumerics.Default;
+            policy ??= SelectionPolicy.Lagrange3Clamp;
 
-            // Test du domaine de calcul, devra évoluer pour permettre des extrapolations contrôlées
-            if (!isInRange(inputValue))
-            {
-                throw new ModelException(AeroCalc.E_POINT_VALUE_OUT_OF_RANGE, "", "", double.NaN);
-            }
+            if (!ranged) setRange();
+            if (!isInRange(x))
+                throw new ModelException(EngineErrorCodes.E_POINT_VALUE_OUT_OF_RANGE, "", "", double.NaN);
 
-            // Sélection des points de performance d'intérêt
-            int[] selectedPoints = closestPointsAround(inputValue, 3);
-            PerfSerie tempoSerie = new PerfSerie();
-            foreach (int idx in selectedPoints)
+            var sel = AxisSelector.SelectAround(
+                items: perfPointList,
+                x: x,
+                getValue: pp => pp.input,
+                isBreak: pp => pp.isBreak,
+                meta: axisMeta,
+                num: num,
+                policy: policy);
+
+            return sel switch
             {
-                tempoSerie.add(pointAt(idx));
-            }
-            try
-            {
-                PerformanceModelSolver solver = new PerformanceModelSolver(tempoSerie);
-                return solver.interpolateLagrange(inputValue);
-            }
-            catch (ModelException)
-            {
-                throw;
-            }
+                SelectionResult.Discrete d => perfPointList[d.Index].output,
+                SelectionResult.Continuous c => InterpolateFromIndices(x, c.Indices),
+                SelectionResult.None n => throw new ModelException(EngineErrorCodes.E_VOID_SYSTEM, "", n.Reason, x),
+                _ => throw new InvalidOperationException()
+            };
         }
+
 
 
         /// <summary>
@@ -329,7 +342,7 @@ namespace AeroCalcCore.FlightPerformanceEngine
         /// <param name="ps">PerfSerie à laquelle se comparer</param>
         /// <returns>-1 si le facteur de ps est inférieur, O si la valeur du facteur est identique, 1 si le facteur de ps est supérieur</returns>
         ///
-        public int CompareTo(PerfSerie ps) => factorValue.CompareTo(ps.factorValue);
+        public int CompareTo(PerfSerie? ps) => factorValue.CompareTo(ps?.factorValue ?? 0);
 
 
         // SETTERS //////////////////////////////////////////////////////////////////////////////////////////
@@ -440,6 +453,29 @@ namespace AeroCalcCore.FlightPerformanceEngine
 
 
 
+        /// <summary>
+        /// Interpolates a value at the specified input using the performance points at the given indices.
+        /// </summary>
+        /// <remarks>The interpolation method used depends on the number of indices provided. For example,
+        /// two indices result in linear interpolation, while three use a Lagrange polynomial. Ensure that the indices
+        /// array contains valid and unique indices to avoid unexpected results.</remarks>
+        /// <param name="x">The input value at which to perform the interpolation.</param>
+        /// <param name="indices">An array of indices specifying which performance points to use for interpolation. Each index should refer to
+        /// a valid performance point.</param>
+        /// <returns>The interpolated value at the specified input, calculated using the selected performance points.</returns>
+        private double InterpolateFromIndices(double x, int[] indices)
+        {
+            var tmp = new PerfSerie();
+            foreach (var i in indices)
+                tmp.add(pointAt(i));
+
+            var solver = new PerformanceModelSolver(tmp);
+            return solver.interpolateLagrange(x); // k=2 => linéaire, k=3 => Lagrange3
+        }
+
+
+
+        /*
         /// <summary>
         /// Identifies the contiguous subdomain of points surrounding the specified input value, respecting breakpoints
         /// in the series.
@@ -621,6 +657,7 @@ namespace AeroCalcCore.FlightPerformanceEngine
         {
             return closestPointsAround(x, nb);
         }
+        */
 
 
 

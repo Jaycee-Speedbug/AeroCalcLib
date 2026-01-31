@@ -38,11 +38,11 @@ namespace AeroCalcCore.FlightPerformanceEngine
             this.perfSerie = ps;
             if (ps == null)
             {
-                throw new ModelException(AeroCalc.E_VOID_SYSTEM, "", "", Double.NaN);
+                throw new ModelException(EngineErrorCodes.E_VOID_SYSTEM, "", "", Double.NaN);
             }
             if (ps.count < 2)
             {
-                throw new ModelException(AeroCalc.E_TOO_SHORT_SERIE, "", "", Double.NaN);
+                throw new ModelException(EngineErrorCodes.E_TOO_SHORT_SERIE, "", "", Double.NaN);
             }
 
             ppX = new double[ps.count];

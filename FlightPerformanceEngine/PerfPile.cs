@@ -345,6 +345,18 @@ namespace AeroCalcCore.FlightPerformanceEngine
         /// </summary>
         /// <param name="newPerfLayer">Nouvelle layer à ajouter à la pile</param>
         /// <returns>True si l'ajout est réussi, False dans le cas contaire</returns>
+        /// <remarks>
+        /// Refactoring required:
+        /// - Do NOT rely on CompareTo() to detect duplicate or "equal" factorValue.
+        ///   CompareTo() must remain exact and deterministic.
+        /// - Enforce axis uniqueness using an epsilon-based comparison
+        ///   (AxisUniquenessEpsilon) against already inserted PerfLayer.factorValue.
+        /// - Maintain the layer list strictly sorted by factorValue at insertion time
+        ///   using ordered insertion (binary search + neighbor checks),
+        ///   NOT by calling List.Sort().
+        /// This guarantees strict monotonicity of the layer axis and numerical
+        /// stability of subsequent interpolation and axis selection.
+        /// </remarks>
         public bool add(PerfLayer newPerfLayer)
         {
 
@@ -392,6 +404,18 @@ namespace AeroCalcCore.FlightPerformanceEngine
         /// <param name="layerFactorValue">Facteur de la layer dans laquelle inscrire le point</param>
         /// <param name="serieFactorValue">Facteur de la série dans laquelle inscrire le point</param>
         /// <returns>True si l'ajout est réussi, False dans le cas contaire</returns>
+        /// <remarks>
+        /// Refactoring required:
+        /// - Do NOT rely on CompareTo() to detect duplicate or "equal" factorValue.
+        ///   CompareTo() must remain exact and deterministic.
+        /// - Enforce axis uniqueness using an epsilon-based comparison
+        ///   (AxisUniquenessEpsilon) against already inserted PerfLayer.factorValue.
+        /// - Maintain the layer list strictly sorted by factorValue at insertion time
+        ///   using ordered insertion (binary search + neighbor checks),
+        ///   NOT by calling List.Sort().
+        /// This guarantees strict monotonicity of the layer axis and numerical
+        /// stability of subsequent interpolation and axis selection.
+        /// </remarks>
         public bool add(PerfPoint newPerfPoint, double serieFactorValue, double layerFactorValue)
         {
 
@@ -527,7 +551,7 @@ namespace AeroCalcCore.FlightPerformanceEngine
                     // Test du domaine de calcul
                     if (!isInRange(layerFactorValue))
                     {
-                        throw new ModelException(AeroCalc.E_LAYER_VALUE_OUT_OF_RANGE,
+                        throw new ModelException(EngineErrorCodes.E_LAYER_VALUE_OUT_OF_RANGE,
                                                    this.outputName, this.layerFactorName, layerFactorValue);
                     }
                     // Sélection des layers
@@ -563,7 +587,7 @@ namespace AeroCalcCore.FlightPerformanceEngine
                     }
                     else
                     {
-                        throw new ModelException(AeroCalc.E_VOID_SYSTEM,
+                        throw new ModelException(EngineErrorCodes.E_VOID_SYSTEM,
                                                    this.outputName, this.layerFactorName, layerFactorValue);
                     }
                 }
@@ -578,15 +602,15 @@ namespace AeroCalcCore.FlightPerformanceEngine
                 switch (e.nature)
                 {
 
-                    case AeroCalc.E_POINT_VALUE_OUT_OF_RANGE:
+                    case EngineErrorCodes.E_POINT_VALUE_OUT_OF_RANGE:
                         e.setFactor(pointFactorName, pointFactorValue);
                         break;
 
-                    case AeroCalc.E_SERIE_VALUE_OUT_OF_RANGE:
+                    case EngineErrorCodes.E_SERIE_VALUE_OUT_OF_RANGE:
                         e.setFactor(serieFactorName, serieFactorValue);
                         break;
 
-                    case AeroCalc.E_LAYER_VALUE_OUT_OF_RANGE:
+                    case EngineErrorCodes.E_LAYER_VALUE_OUT_OF_RANGE:
                         e.setFactor(layerFactorName, layerFactorValue);
                         break;
 

@@ -71,7 +71,7 @@ namespace AeroCalcCore.FlightPerformanceEngine
         // ---------------------------
         // Subdomain (breakpoints)
         // ---------------------------
-
+        
         private static (int iMin, int iMax) GetSubDomain<T>(
             IReadOnlyList<T> items,
             double x,

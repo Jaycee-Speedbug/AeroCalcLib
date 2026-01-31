@@ -1,3 +1,4 @@
+using AeroCalcCore.FlightPerformanceEngine;
 using System;
 using System.Transactions;
 using System.Xml.Linq;

@@ -4,7 +4,7 @@ using System.Linq;
 
 
 
-namespace AeroCalcCore
+namespace AeroCalcCore.FlightPerformanceEngine
 {
 
 
@@ -99,7 +99,7 @@ namespace AeroCalcCore
                         double unitFactor, 
                         double unitConstant)
         {
-+-            // Validity checks before addition to the dictionary
+            // Validity checks before addition to the dictionary
             if (unitDimension.Length > 0 && unitName.Length > 0)
             {
                 // If unit is reference, unitFactor and unitConstant are forced to 1 and 0 resp.

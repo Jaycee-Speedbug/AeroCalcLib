@@ -226,7 +226,7 @@ namespace AeroCalcCore.FlightPerformanceEngine
             this.serieFactorUnitCode = serieFactorUnitCode;
             this.outputName = outName;
             this.outputUnitCode = outUnitCode;
-            this.perfSerieList = new List<PerfSerie>();
+            this.perfSerieList = new ();
         }
 
 
@@ -238,6 +238,18 @@ namespace AeroCalcCore.FlightPerformanceEngine
         /// </summary>
         /// <param name="newPerfSerie">Nouvelle Serie à ajouter dans la Layer</param>
         /// <returns>True si l'ajout est réussi, False dans le cas contaire</returns>
+        /// <remarks>
+        /// Refactoring required:
+        /// - Do NOT rely on CompareTo() to detect duplicate or "equal" factorValue.
+        ///   CompareTo() must remain exact and deterministic.
+        /// - Enforce axis uniqueness using an epsilon-based comparison
+        ///   (AxisUniquenessEpsilon) against already inserted PerfLayer.factorValue.
+        /// - Maintain the layer list strictly sorted by factorValue at insertion time
+        ///   using ordered insertion (binary search + neighbor checks),
+        ///   NOT by calling List.Sort().
+        /// This guarantees strict monotonicity of the layer axis and numerical
+        /// stability of subsequent interpolation and axis selection.
+        /// </remarks>
         public bool add(PerfSerie newPerfSerie)
         {
             foreach (PerfSerie p in perfSerieList)
@@ -267,6 +279,18 @@ namespace AeroCalcCore.FlightPerformanceEngine
         /// <param name="newPerfPoint">Nouveau Point de performances de vol</param>
         /// <param name="serieFactorValue">Facteur de la Serie dans laquelle inscrire le Point</param>
         /// <returns>True si l'ajout est réussi, False dans le cas contaire</returns>
+        /// <remarks>
+        /// Refactoring required:
+        /// - Do NOT rely on CompareTo() to detect duplicate or "equal" factorValue.
+        ///   CompareTo() must remain exact and deterministic.
+        /// - Enforce axis uniqueness using an epsilon-based comparison
+        ///   (AxisUniquenessEpsilon) against already inserted PerfLayer.factorValue.
+        /// - Maintain the layer list strictly sorted by factorValue at insertion time
+        ///   using ordered insertion (binary search + neighbor checks),
+        ///   NOT by calling List.Sort().
+        /// This guarantees strict monotonicity of the layer axis and numerical
+        /// stability of subsequent interpolation and axis selection.
+        /// </remarks>
         public bool add(PerfPoint newPerfPoint, double serieFactorValue)
         {
 
@@ -440,6 +464,7 @@ namespace AeroCalcCore.FlightPerformanceEngine
         }
 
 
+
         /// <summary>
         /// Calcule une prédiction pour deux facteurs
         /// </summary>
@@ -447,73 +472,50 @@ namespace AeroCalcCore.FlightPerformanceEngine
         /// <param name="serieFactorValue">Facteur lié aux séries de layers de performance</param>
         /// <returns></returns>
         /// <remarks>TODO: Suppression de l'utilisation du flag selected</remarks>
-        public double predict(double pointFactorValue, double serieFactorValue)
+        public double predict(
+            double pointX,
+            double serieX,
+            AxisMetadata? serieAxisMeta = null,
+            AxisMetadata? pointAxisMeta = null,
+            EngineNumerics? num = null,
+            SelectionPolicy? seriePolicy = null,
+            SelectionPolicy? pointPolicy = null)
         {
-            PerfSerie ps = new PerfSerie();
-            double output = double.NaN;
-            double serieOutput = double.NaN;
+            // defaults
+            serieAxisMeta ??= new AxisMetadata(AxisNature.Continuous, BreakpointsPolicy.HardStop);
+            pointAxisMeta ??= new AxisMetadata(AxisNature.Continuous, BreakpointsPolicy.HardStop);
+            num ??= EngineNumerics.Default;
+            seriePolicy ??= SelectionPolicy.Lagrange3Clamp;
+            pointPolicy ??= SelectionPolicy.Lagrange3Clamp;
 
-            if (this.count == 1)
+            if (!ranged) setRange();
+            if (!isInRange(serieX))
+                throw new ModelException(EngineErrorCodes.E_SERIE_VALUE_OUT_OF_RANGE, this.outputName, "", serieX);
+
+            var sel = AxisSelector.SelectAround(
+                items: perfSerieList,
+                x: serieX,
+                getValue: s => s.factorValue,
+                isBreak: s => s.isBreak,
+                meta: serieAxisMeta,
+                num: num,
+                policy: seriePolicy);
+
+            return sel switch
             {
-                if (serieFactorValue.Equals(double.NaN) || serieFactorValue == SerieAt(0).factorValue)
-                {
-                    // Cas 1: serieFactorValue est NaN, il n'y a pas de factorValue transmis pour ce calcul
-                    // Cas 2: serieFactorValue est égal au factorValue de l'unique série
-                    // Le calcul est réalisable
-                    output = SerieAt(0).predict(pointFactorValue);
-                }
-                else
-                {
-                    throw new ModelException(AeroCalc.E_SERIE_VALUE_OUT_OF_RANGE, this.outputName, "", serieFactorValue);
-                }
-            }
+                SelectionResult.Discrete d =>
+                    SerieAt(d.Index).predict(pointX, pointAxisMeta, num, pointPolicy),
 
-            // Si le domaine de calcul n'a pas été défini au préalable, il est réduit à l'étendue
-            // de la Layer
-            if (!ranged)
-            {
-                setRange();
-            }
-            // Test du domaine de calcul
-            if (!isInRange(serieFactorValue))
-            {
-                throw new ModelException(AeroCalc.E_SERIE_VALUE_OUT_OF_RANGE,
-                                           this.outputName, "", serieFactorValue);
-            }
+                SelectionResult.Continuous c =>
+                    InterpolateAcrossSeries(pointX, serieX, c.Indices, pointAxisMeta, num, pointPolicy),
 
+                SelectionResult.None n =>
+                    throw new ModelException(EngineErrorCodes.E_VOID_SYSTEM, this.outputName, n.Reason, serieX),
 
-            // Sélection des séries
-            //selectSubLayer(serieFactorValue, 3);
-            // Calcul de la prédiction pour chaque série sélectionnée
-            for (int count = 0; count < this.count; count++)
-            {
-                /*
-                if (SerieAt(count).selected) {
-                    serieOutput = SerieAt(count).predict(pointFactorValue);
-                    ps.add(new PerfPoint(SerieAt(count).factorValue, serieOutput, false));
-                }
-                */
-            }
-            if (ps.count >= 1)
-            {
-                output = ps.predict(serieFactorValue);
-            }
-
-
-
-
-
-
-
-            try
-            {
-            }
-            catch (ModelException e)
-            {
-                throw e;
-            }
-            return output;
+                _ => throw new InvalidOperationException()
+            };
         }
+
 
 
         /// <summary>
@@ -569,7 +571,8 @@ namespace AeroCalcCore.FlightPerformanceEngine
         }
 
 
-        // Interface(s) /////////////////////////////////////////////////////////////////////////////////////
+
+        // INTERFACE(S) /////////////////////////////////////////////////////////////////////////////////////
 
         /// <summary>
         /// Compares the current PerfLayer instance with another PerfLayer and returns an integer that indicates their
@@ -592,7 +595,84 @@ namespace AeroCalcCore.FlightPerformanceEngine
         }
 
 
-        // Methods //////////////////////////////////////////////////////////////////////////////////////////
+
+        // METHODS //////////////////////////////////////////////////////////////////////////////////////////
+
+        /// <summary>
+        /// Interpole la valeur de sortie d'une couche (layer) pour une abscisse de série donnée en
+        /// évaluant d'abord chaque série sélectionnée au point <paramref name="pointX"/>, puis en
+        /// interpolant ces valeurs le long de l'axe des séries par une interpolation de Lagrange.
+        /// </summary>
+        /// <param name="pointX">
+        /// Valeur sur l'axe des points (dimension primaire) pour laquelle on souhaite connaître la
+        /// sortie de chaque série.
+        /// </param>
+        /// <param name="serieX">
+        /// Valeur sur l'axe des séries (dimension secondaire) où l'on souhaite interpoler la
+        /// valeur finale à partir des séries voisines.
+        /// </param>
+        /// <param name="serieIndices">
+        /// Tableau d'indices des séries (dans <see cref="perfSerieList"/>) à utiliser pour l'interpolation
+        /// le long de l'axe des séries. Les indices doivent référencer des séries valides.
+        /// </param>
+        /// <param name="pointAxisMeta">
+        /// Métadonnées de l'axe des points (comportement des breakpoints, nature de l'axe).
+        /// Ces métadonnées sont transmises à l'appel de <see cref="PerfSerie.predict(double,AxisMetadata?,EngineNumerics?,SelectionPolicy?)"/>
+        /// </param>
+        /// <param name="num">
+        /// Paramètres numériques (tolérances, etc.) à utiliser pour les prédictions.
+        /// </param>
+        /// <param name="pointPolicy">
+        /// Politique de sélection / interpolation à appliquer sur l'axe des points lors du calcul
+        /// de la valeur de chaque série.
+        /// </param>
+        /// <returns>
+        /// Valeur interpolée au point <paramref name="serieX"/> le long de l'axe des séries,
+        /// obtenue via une interpolation de Lagrange appliquée aux paires (facteur de série, valeur prédite).
+        /// </returns>
+        /// <remarks>
+        /// Le processus :
+        /// 1) Pour chaque indice de <paramref name="serieIndices"/>, on récupère la série correspondante,
+        ///    on calcule sa valeur prédite en <paramref name="pointX"/> et on crée un point temporaire
+        ///    (abscisse = facteur de la série, ordonnée = valeur prédite).
+        /// 2) Ces points sont ajoutés dans une instance locale de <see cref="PerfSerie"/> (nommée <c>local</c>).
+        /// 3) On construit un <see cref="PerformanceModelSolver"/> à partir de cette série locale et on
+        ///    appelle <c>interpolateLagrange(serieX)</c> pour obtenir la valeur finale.
+        /// </remarks>
+        private double InterpolateAcrossSeries(double pointX, double serieX, int[] serieIndices,
+                                               AxisMetadata pointAxisMeta, EngineNumerics num, SelectionPolicy pointPolicy)
+        {
+            var local = new PerfSerie();
+            foreach (var i in serieIndices)
+            {
+                var s = SerieAt(i);
+                var y = s.predict(pointX, pointAxisMeta, num, pointPolicy);
+                local.add(new PerfPoint(s.factorValue, y, isBreakPoint: false));
+            }
+            return new PerformanceModelSolver(local).interpolateLagrange(serieX);
+        }
+
+
+
+        /// <summary>
+        /// Returns the index of the performance series in the layer that matches the specified factor value.
+        /// Equality is determined within a small epsilon tolerance defined in <see cref="EngineNumerics.Default.ValueEqualityEpsilon"/>.
+        /// </summary>
+        /// <param name="factor"></param>
+        /// <returns>Index value of the identified Serie, -1 if no series matches.</returns>
+        private int FindSeriesIndexByFactor(double factor)
+        {
+            for (int i = 0; i < perfSerieList.Count; i++)
+            {
+                if (perfSerieList[i].factorValue >= factor - EngineNumerics.Default.ValueEqualityEpsilon ||
+                    perfSerieList[i].factorValue <= factor + EngineNumerics.Default.ValueEqualityEpsilon)
+                {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
 
 
         /// <summary>
