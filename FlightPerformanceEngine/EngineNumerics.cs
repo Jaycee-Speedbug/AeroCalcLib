@@ -9,8 +9,8 @@
 /// <summary>
 /// EngineNumerics defines the numeric tolerances used by the flight performance engine when comparing Double values.
 /// </summary>
-public sealed record EngineNumerics(double ValueEqualityEpsilon, double BracketEpsilon)
+public sealed record EngineNumerics(double ValueEqualityEpsilon, double BracketEpsilon, double AxisUniquenessEpsilon)
 {
     public static EngineNumerics Default =>
-        new EngineNumerics(ValueEqualityEpsilon: 1e-9, BracketEpsilon: 1e-9);
+        new EngineNumerics(ValueEqualityEpsilon: 1e-9, BracketEpsilon: 1e-9, AxisUniquenessEpsilon: 1e-12);
 }

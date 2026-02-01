@@ -46,6 +46,39 @@ namespace AeroCalcCore.FlightPerformanceEngine
         public const int UNIT_ALTITUDE_FT = 3002;
 
 
+
+
+        /// <summary>
+        /// Compares two double-precision floating-point values for equality within a specified tolerance.
+        /// </summary>
+        /// <remarks>This method is useful for comparing floating-point values where exact equality is
+        /// unreliable due to precision limitations. If the absolute difference between the values is less than or equal
+        /// to the specified tolerance, they are considered equal.</remarks>
+        /// <param name="a">The first double value to compare.</param>
+        /// <param name="b">The second double value to compare.</param>
+        /// <param name="tolerance">The maximum allowed difference between the two values for them to be considered equal. Must be non-negative.</param>
+        /// <returns>0 if the values are equal within the specified tolerance; -1 if the first value is less than the second; 1
+        /// if the first value is greater than the second.</returns>
+        /// <exception cref="ArgumentException">Throws exception if one the parameters is NaN.</exception>
+        public static int CompareAxisValues(double a, double b, double tolerance)
+        {
+            // Check for NaN values
+            if (double.IsNaN(a) || double.IsNaN(b))
+                throw new ArgumentException("CompareAxisValues does not support NaN values.");
+
+            if (Math.Abs(a - b) <= tolerance)
+            {
+                return 0;
+            }
+            else if (a < b)
+            {
+                return -1;
+            }
+            else
+            {
+                return 1;
+            }
+        }
     }
 
 

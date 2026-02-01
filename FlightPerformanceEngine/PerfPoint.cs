@@ -55,8 +55,8 @@ namespace AeroCalcCore.FlightPerformanceEngine
         /// <summary>
         /// Construit un point de performance
         /// </summary>
-        /// <param name="pp1">Abscisse du point</param>
-        /// <param name="pp2">Ordonnée du point</param>
+        /// <param name="input">Abscisse du point</param>
+        /// <param name="output">Ordonnée du point</param>
         /// <param name="isBreakPoint">Breakpoint</param>
         ///
         public PerfPoint(double input, double output, bool isBreakPoint)

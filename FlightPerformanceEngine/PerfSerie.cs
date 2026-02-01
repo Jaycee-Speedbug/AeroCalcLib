@@ -184,21 +184,67 @@ namespace AeroCalcCore.FlightPerformanceEngine
         /// </remarks>
         public bool add(PerfPoint pp)
         {
-            foreach (PerfPoint p in perfPointList)
+            // Checks inconsistency
+            if (double.IsNaN(pp.input) || double.IsNaN(pp.output))
             {
-                if (p.CompareTo(pp) == 0)
+                throw new ArgumentOutOfRangeException("PerfPoint contains NaN values", nameof(pp));
+            }
+            if (double.IsInfinity(pp.input) || double.IsInfinity(pp.output))
+            {
+                throw new ArgumentOutOfRangeException("PerfPoint should contain finite values", nameof(pp));
+            }
+
+            // First PerfPoint to be added
+            if (perfPointList.Count == 0)
+            {
+                perfPointList.Add(pp);
+                ranged = false;
+                return true;
+            }
+
+            // At least one PerfPoint in the PerfList
+
+            int previousCompareResult = 0;
+            for (int i = 0; i < perfPointList.Count; i++)
+            {
+                // Comparaison des abscisses, en prenant en compte l'épsilon de comparaison sur l'axe d'input
+                // compareResult < 0  => perfPointList[i].input < pp.input
+                // compareResult == 0 => perfPointList[i].input == pp.input
+                // compareResult > 0  => perfPointList[i].input > pp.input
+                int compareResult = AeroCalc.CompareAxisValues(perfPointList[i].input,
+                                                                    pp.input, 
+                                                                    EngineNumerics.Default.AxisUniquenessEpsilon);
+
+                if (compareResult == 0)
                 {
+                    // An existing PerfPoint has the same input value as pp
                     return false;
                 }
-            }
-            // pp est bien un nouveau point de performance de vol
-            perfPointList.Add(pp);
-            // Tri de la série après ajout
-            perfPointList.Sort();
-            // Mise à jour du domaine de la série : tout point ajouté modifie potentiellement le domaine, et entraine donc
-            // un reset sur les borne de la série, incluses.
-            setRange();
 
+                // Comparison to the first PerfPoint
+                if (i==0 && compareResult > 0)
+                {
+                    // The candidate PerfPoint is less than the first PerfPoint
+                    // it must be inserted at the beginning of the list
+                    perfPointList.Insert(0, pp);
+                    ranged = false;
+                    return true;
+                }
+
+                // Comparison to a middle PerfPoint
+                if (compareResult > 0 && previousCompareResult < 0)
+                {
+                    // the candidate point is less than the current PerfPoint, but greater than the previous PerfPoint
+                    // It should be inserted before PerfPoint[i-1] and PerfPoint[i]
+                    perfPointList.Insert(i, pp);
+                    ranged= false;
+                    return true;
+                }
+                previousCompareResult = compareResult;
+            }
+            // List exhausted, the candidate PerfPoint is greater than all existing PerfPoints
+            perfPointList.Add(pp);
+            ranged = false;
             return true;
         }
 
@@ -427,7 +473,7 @@ namespace AeroCalcCore.FlightPerformanceEngine
         {
             return unsignedDistances(x);
         }
-        */
+        */ 
 
 
         /*
