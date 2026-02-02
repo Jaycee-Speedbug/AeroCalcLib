@@ -10,7 +10,7 @@ namespace AeroCalcCore.FileServices
          * CONSTANTES
          */
 
-        //public static string SCRIPT_FILENAME_EXTENSION = ".acscpt";
+
 
         /*
          * PROPRIETES

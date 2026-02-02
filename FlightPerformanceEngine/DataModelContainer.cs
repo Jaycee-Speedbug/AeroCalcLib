@@ -9,19 +9,19 @@ namespace AeroCalcCore.FlightPerformanceEngine
 
 
     /// <summary>
-    /// Classe définissant le container des modèles de performances
-    /// Fourni l'accès à ces modèles et les outils permettant de charger en mémoire ces modèles depuis
-    /// des fichiers ou des connexions à des bases de données
+    /// Classe dÃ©finissant le container des modÃ¨les de performances
+    /// Fourni l'accÃ¨s Ã  ces modÃ¨les et les outils permettant de charger en mÃ©moire ces modÃ¨les depuis
+    /// des fichiers ou des connexions Ã  des bases de donnÃ©es
     /// </summary>
     /// <remarks>
-    /// Améliorations possibles:
+    /// AmÃ©liorations possibles:
     /// - Utiliser une classe encapsulant les objets de type PerfPile
     /// </remarks>
     public class DataModelContainer
     {
 
         /*
-         * Propriétés
+         * PropriÃ©tÃ©s
          */
 
         public Units UnitsLib { get; private set; }
@@ -43,7 +43,7 @@ namespace AeroCalcCore.FlightPerformanceEngine
          */
 
         /// <summary>
-        /// Construit un objet DataModelContainer, Container des modèles de performances de vol
+        /// Construit un objet DataModelContainer, Container des modÃ¨les de performances de vol
         /// </summary>
         /// 
         public DataModelContainer()
@@ -60,10 +60,10 @@ namespace AeroCalcCore.FlightPerformanceEngine
          */
 
         /// <summary>
-        /// Fixe le répertoire contenant les modèles de performances à charger.
-        /// Retourne True en cas de succès, False dans le cas contraire.
+        /// Fixe le rÃ©pertoire contenant les modÃ¨les de performances Ã  charger.
+        /// Retourne True en cas de succÃ¨s, False dans le cas contraire.
         /// </summary>
-        /// <param name="directoryPath">Chemin du répertoire</param>
+        /// <param name="directoryPath">Chemin du rÃ©pertoire</param>
         /// <returns>
         /// 
         /// </returns>
@@ -75,7 +75,7 @@ namespace AeroCalcCore.FlightPerformanceEngine
 
 
         /// <summary>
-        /// Retourne un tableau de string contenant les répertoires des différents Connectors du Container
+        /// Retourne un tableau de string contenant les rÃ©pertoires des diffÃ©rents Connectors du Container
         /// </summary>
         /// <returns></returns>
         public string[] getDataModelsDirectory()
@@ -96,10 +96,10 @@ namespace AeroCalcCore.FlightPerformanceEngine
 
 
         /// <summary>
-        /// Retourne un modèle de performances de vol à la position index dans le container
+        /// Retourne un modÃ¨le de performances de vol Ã  la position index dans le container
         /// </summary>
-        /// <param name="index">Index de position de ce modèle de performances dans le container</param>
-        /// <returns>PerfPile contenant le modèle de performances</returns>
+        /// <param name="index">Index de position de ce modÃ¨le de performances dans le container</param>
+        /// <returns>PerfPile contenant le modÃ¨le de performances</returns>
         /// 
         public PerfPile dataModelByIndex(int index)
         {
@@ -110,9 +110,9 @@ namespace AeroCalcCore.FlightPerformanceEngine
 
         /*
         /// <summary>
-        /// Retourne le dictionnaire des unités
+        /// Retourne le dictionnaire des unitÃ©s
         /// </summary>
-        /// <returns>UnitDictionnary, le dictionnaire des unités</returns>
+        /// <returns>UnitDictionnary, le dictionnaire des unitÃ©s</returns>
         /// 
         public UnitDictionary unitDictionary() {
             return dataUnits;
@@ -122,37 +122,37 @@ namespace AeroCalcCore.FlightPerformanceEngine
 
 
         /// <summary>
-        /// Retourne le résultat d'un calcul multi-dimensionnel
+        /// Retourne le rÃ©sultat d'un calcul multi-dimensionnel
         /// </summary>
-        /// <param name="dataModelName">Nom du modèle à utiliser</param>
-        /// <param name="factors">Liste des facteurs passés en argument</param>
+        /// <param name="dataModelName">Nom du modÃ¨le Ã  utiliser</param>
+        /// <param name="factors">Liste des facteurs passÃ©s en argument</param>
         /// <returns>
-        /// double, résultat du calcul
+        /// double, rÃ©sultat du calcul
         /// </returns>
         /// <remarks>
-        /// Fontion récursive
+        /// Fontion rÃ©cursive
         /// </remarks>
         public double compute(string dataModelName, List<CommandFactor> factors)
         {
 
-            // Recherche du modèle de performances permettant le traitement (nom + discret)
+            // Recherche du modÃ¨le de performances permettant le traitement (nom + discret)
             PerfPile Pile = dataModels.Find(x => x.outputName == dataModelName);
             double result = double.NaN;
 
             //int commandIndex = container.dataModelIndex(Cmd.subs[0], Cmd.Factors);
             if (Pile == null)
             {
-                // Aucun modèle ne répond aux critères de sélection
+                // Aucun modÃ¨le ne rÃ©pond aux critÃ¨res de sÃ©lection
                 return double.NaN;
             }
 
 
-            // Recherche de la valeur des différents facteurs nécessaires aux calculs
+            // Recherche de la valeur des diffÃ©rents facteurs nÃ©cessaires aux calculs
             if (Pile != null)
             {
-                // Le modèle est identifié
+                // Le modÃ¨le est identifiÃ©
                 //pp = container.dataModelByIndex(commandIndex);
-                // Analyse des facteurs, paramètres et options de la commande
+                // Analyse des facteurs, paramÃ¨tres et options de la commande
 
                 //double pointFactorValue = factors.Find(x => x.name.Equals(Pile.pointFactorName)).value;
                 double pointFactorValue = valueFromFactor(factors, Pile.pointFactorName);
@@ -200,8 +200,9 @@ namespace AeroCalcCore.FlightPerformanceEngine
                 }
                 catch (ModelException e)
                 {
-                    // On récupère d'une exception ou un paramètre est hors du range ou il peut être utilisé
-                    // TODO les infos de l'exception sont générées directement dans predict()
+                    // On rÃ©cupÃ¨re d'une exception ou un paramÃ¨tre est hors du range ou il peut Ãªtre utilisÃ©
+                    // TODO les infos de l'exception sont gÃ©nÃ©rÃ©es directement dans predict()
+
                     throw e;
                 }
             }
@@ -211,11 +212,11 @@ namespace AeroCalcCore.FlightPerformanceEngine
 
 
         /// <summary>
-        /// Renvoie l'index (clef) du modèle de performances de vol, identifié par le nom
+        /// Renvoie l'index (clef) du modÃ¨le de performances de vol, identifiÃ© par le nom
         /// fournis en argument.
-        /// Renvoie -1 si aucune correspondance, une valeur inférieure à -1 si plusieurs correspondances trouvées
+        /// Renvoie -1 si aucune correspondance, une valeur infÃ©rieure Ã  -1 si plusieurs correspondances trouvÃ©es
         /// </summary>
-        /// <param name="dataModelName">Nom du modèle de performances</param>
+        /// <param name="dataModelName">Nom du modÃ¨le de performances</param>
         /// <returns>L'index de la fonction de calcul de performances</returns>
         /// 
         public int dataModelIndex(string dataModelName)
@@ -227,17 +228,17 @@ namespace AeroCalcCore.FlightPerformanceEngine
                 {
                     if (foundIndex > -1)
                     {
-                        // Une autre occurence a déjà été découverte !
+                        // Une autre occurence a dÃ©jÃ  Ã©tÃ© dÃ©couverte !
                         foundIndex = -2;
                     }
                     else if (foundIndex == -1)
                     {
-                        // Première occurence !
+                        // PremiÃ¨re occurence !
                         foundIndex = count;
                     }
                     else
                     {
-                        // Déjà plusieurs occurences
+                        // DÃ©jÃ  plusieurs occurences
                     }
                     foundIndex--;
                 }
@@ -248,13 +249,13 @@ namespace AeroCalcCore.FlightPerformanceEngine
 
 
         /// <summary>
-        /// Renvoie l'index (clef) du premier modèle de performances de vol, identifié par son nom et le nom
+        /// Renvoie l'index (clef) du premier modÃ¨le de performances de vol, identifiÃ© par son nom et le nom
         /// du discret fournis en argument.
-        /// Retourne -1 si aucune correspondance n'est trouvée, un entier inférieur à -1 si plusieurs occurences
-        /// sont trouvées.
+        /// Retourne -1 si aucune correspondance n'est trouvÃ©e, un entier infÃ©rieur Ã  -1 si plusieurs occurences
+        /// sont trouvÃ©es.
         /// </summary>
-        /// <param name="dataModelName">Nom du modèle de performances</param>
-        /// <param name="discretName">Nom du paramètre discret associé au modèle</param>
+        /// <param name="dataModelName">Nom du modÃ¨le de performances</param>
+        /// <param name="discretName">Nom du paramÃ¨tre discret associÃ© au modÃ¨le</param>
         /// <returns>L'index de la fonction de calcul de performance</returns>
         /// 
         public int dataModelIndex(string dataModelName, string discretName)
@@ -262,12 +263,12 @@ namespace AeroCalcCore.FlightPerformanceEngine
             int foundIndex = -1;
             if (discretName.Equals(""))
             {
-                // Pas de nom de paramètre discret, on ne considère que le nom du modèle
+                // Pas de nom de paramÃ¨tre discret, on ne considÃ¨re que le nom du modÃ¨le
                 return dataModelIndex(dataModelName);
             }
             else
             {
-                // Un nom de paramètre discret est fourni, on en tient compte dans la recherche
+                // Un nom de paramÃ¨tre discret est fourni, on en tient compte dans la recherche
             }
             for (int count = 0; count < this.dataModels.Count; count++)
             {
@@ -276,17 +277,17 @@ namespace AeroCalcCore.FlightPerformanceEngine
                 {
                     if (foundIndex > -1)
                     {
-                        // Une autre occurence a déjà été découverte !
+                        // Une autre occurence a dÃ©jÃ  Ã©tÃ© dÃ©couverte !
                         foundIndex = -2;
                     }
                     else if (foundIndex == -1)
                     {
-                        // Première occurence !
+                        // PremiÃ¨re occurence !
                         foundIndex = count;
                     }
                     else
                     {
-                        // Déjà plusieurs occurence
+                        // DÃ©jÃ  plusieurs occurence
                     }
                     foundIndex--;
                 }
@@ -297,14 +298,14 @@ namespace AeroCalcCore.FlightPerformanceEngine
 
 
         /// <summary>
-        /// Renvoie l'index (clef) du premier modèle de performances de vol, identifié par le nom, le discret
+        /// Renvoie l'index (clef) du premier modÃ¨le de performances de vol, identifiÃ© par le nom, le discret
         /// et sa valeur fournis en argument.
-        /// Retourne -1 si aucune correspondance n'est trouvée, un entier inférieur à -1 si plusieurs occurences
-        /// sont trouvées.
+        /// Retourne -1 si aucune correspondance n'est trouvÃ©e, un entier infÃ©rieur Ã  -1 si plusieurs occurences
+        /// sont trouvÃ©es.
         /// </summary>
-        /// <param name="dataModelName">Nom du modèle de performances</param>
-        /// <param name="discretName">Nom du paramètre discret associé au modèle</param>
-        /// <param name="discretValue">Valeur discrète associée au modèle</param>
+        /// <param name="dataModelName">Nom du modÃ¨le de performances</param>
+        /// <param name="discretName">Nom du paramÃ¨tre discret associÃ© au modÃ¨le</param>
+        /// <param name="discretValue">Valeur discrÃ¨te associÃ©e au modÃ¨le</param>
         /// <returns>L'index de la fonction de calcul de performance</returns>
         /// 
         public int dataModelIndex(string dataModelName, string discretName, long discretValue)
@@ -312,12 +313,12 @@ namespace AeroCalcCore.FlightPerformanceEngine
             int foundIndex = -1;
             if (discretName.Equals(""))
             {
-                // Pas de nom de paramètre discret, on ne considère que le nom du modèle
+                // Pas de nom de paramÃ¨tre discret, on ne considÃ¨re que le nom du modÃ¨le
                 return dataModelIndex(dataModelName);
             }
             else
             {
-                // Un nom de paramètre discret est fourni, on en tient compte dans la recherche
+                // Un nom de paramÃ¨tre discret est fourni, on en tient compte dans la recherche
             }
             for (int count = 0; count < this.dataModels.Count; count++)
             {
@@ -327,17 +328,17 @@ namespace AeroCalcCore.FlightPerformanceEngine
                 {
                     if (foundIndex > -1)
                     {
-                        // Une autre occurence a déjà été découverte !
+                        // Une autre occurence a dÃ©jÃ  Ã©tÃ© dÃ©couverte !
                         foundIndex = -2;
                     }
                     else if (foundIndex == -1)
                     {
-                        // Première occurence !
+                        // PremiÃ¨re occurence !
                         foundIndex = count;
                     }
                     else
                     {
-                        // Déjà plusieurs occurence
+                        // DÃ©jÃ  plusieurs occurence
                     }
                     foundIndex--;
                 }
@@ -348,45 +349,45 @@ namespace AeroCalcCore.FlightPerformanceEngine
 
 
         /// <summary>
-        /// Renvoie l'index (clef) du premier modèle de performances de vol, identifié par le nom, le discret 
+        /// Renvoie l'index (clef) du premier modÃ¨le de performances de vol, identifiÃ© par le nom, le discret 
         /// et sa valeur fournis en argument, dans tableau de facteurs.
-        /// Retourne -1 si aucune correspondance n'est trouvée, un entier inférieur à -1 si plusieurs occurences
-        /// sont trouvées.
+        /// Retourne -1 si aucune correspondance n'est trouvÃ©e, un entier infÃ©rieur Ã  -1 si plusieurs occurences
+        /// sont trouvÃ©es.
         /// </summary>
-        /// <param name="dataModelName">Nom du modèle de performances</param>
-        /// <param name="Factors">Tableau des facteurs passés en argument, dont un peut être le discret</param>
+        /// <param name="dataModelName">Nom du modÃ¨le de performances</param>
+        /// <param name="Factors">Tableau des facteurs passÃ©s en argument, dont un peut Ãªtre le discret</param>
         /// <returns>L'index de la fonction de calcul de performances</returns>
         /// 
         public int dataModelIndex(string dataModelName, List<CommandFactor> Factors)
         {
             int foundIndex = -1;
 
-            // Examen de tous les modèles de données contenus dans le container
+            // Examen de tous les modÃ¨les de donnÃ©es contenus dans le container
             for (int count = 0; count < this.dataModels.Count; count++)
             {
                 if (dataModelName.Equals(dataModels.ElementAt(count).outputName))
                 {
-                    // Le nom du modèle a été trouvé
+                    // Le nom du modÃ¨le a Ã©tÃ© trouvÃ©
                     foreach (CommandFactor factor in Factors)
                     {
-                        // Recherche, pour chaque facteur, le nom du discret et sa valeur dans les caractéristiques
+                        // Recherche, pour chaque facteur, le nom du discret et sa valeur dans les caractÃ©ristiques
                         if (factor.name.Equals(dataModels.ElementAt(count).discretName) &&
                             factor.value == (double)dataModels.ElementAt(count).discretValue)
                         {
-                            // Le nom du modèle, le nom du discret et la valeur du discret matchent !
+                            // Le nom du modÃ¨le, le nom du discret et la valeur du discret matchent !
                             if (foundIndex > -1)
                             {
-                                // Une autre occurence a déjà été découverte !
+                                // Une autre occurence a dÃ©jÃ  Ã©tÃ© dÃ©couverte !
                                 foundIndex = -2;
                             }
                             else if (foundIndex == -1)
                             {
-                                // Première occurence !
+                                // PremiÃ¨re occurence !
                                 foundIndex = count;
                             }
                             else
                             {
-                                // Déjà plusieurs occurence
+                                // DÃ©jÃ  plusieurs occurence
                                 foundIndex--;
                             }
                         }
@@ -399,14 +400,14 @@ namespace AeroCalcCore.FlightPerformanceEngine
 
 
         /// <summary>
-        /// Renvoie un tableau des index des modèles de performances de vol contenus dans le container,
-        /// dont le nom match le filtre passé en argument
+        /// Renvoie un tableau des index des modÃ¨les de performances de vol contenus dans le container,
+        /// dont le nom match le filtre passÃ© en argument
         /// </summary>
-        /// <param name="fileNameFilter">Chaine de caractère utilisée comme filtre</param>
+        /// <param name="fileNameFilter">Chaine de caractÃ¨re utilisÃ©e comme filtre</param>
         /// <returns>Tableau contenant les indexes des fonctions</returns>
         /// <remarks>
-        /// Le délimiteur standard des noms de fonction est le point
-        /// Le caractère * peut être utilisé comme carte blanche
+        /// Le dÃ©limiteur standard des noms de fonction est le point
+        /// Le caractÃ¨re * peut Ãªtre utilisÃ© comme carte blanche
         /// </remarks>
         /// 
         public List<int> dataModelIndexes(string fileNameFilter)
@@ -419,21 +420,21 @@ namespace AeroCalcCore.FlightPerformanceEngine
             List<int> perfFunctionIndexes = new List<int>();
 
             char[] splitters = { AeroCalcCommand.CMD_OPERATOR_SPLITTER };
-            // Découpe du nom du filtre
+            // DÃ©coupe du nom du filtre
             originalFilterSubs = fileNameFilter.Split(splitters, StringSplitOptions.None);
 
             // Analyse de chaque outputName
             foreach (PerfPile pp in dataModels)
             {
 
-                // Découpe du nom de fonction et du filtre
+                // DÃ©coupe du nom de fonction et du filtre
                 functionNameSubs = pp.outputName.Split(splitters, StringSplitOptions.None);
                 // Reset des mots du filtre
                 filterSubs = originalFilterSubs;
 
                 if (originalFilterSubs.Length > functionNameSubs.Length)
                 {
-                    // Plus de mots dans le filtre que dans le nom de la fonction, ça ne peut pas matcher
+                    // Plus de mots dans le filtre que dans le nom de la fonction, Ã§a ne peut pas matcher
                     continue;
                 }
 
@@ -442,17 +443,17 @@ namespace AeroCalcCore.FlightPerformanceEngine
                     if (fileNameFilter.Contains(AeroCalcCommand.CMD_WORD_WHITE_CARD))
                     {
                         // Le filtre comporte moins de mots que le nom de la fonction, mais au moins une WHITE_CARD
-                        // Modification des mots du filtre grâce à la WHITE_CARD
+                        // Modification des mots du filtre grÃ¢ce Ã  la WHITE_CARD
                         filterSubs = expandFilter(originalFilterSubs, functionNameSubs.Length);
                         // TODO Et si expandFilter renvoyait un null ??
                     }
                     else
                     {
-                        // Ca ne peut pas matcher, on passe à la suite
+                        // Ca ne peut pas matcher, on passe Ã  la suite
                         continue;
                     }
                 }
-                // filterSubs comporte maintenant le même nombre de mots que le nom de la fonction
+                // filterSubs comporte maintenant le mÃªme nombre de mots que le nom de la fonction
                 match = false;
                 for (int index = 0; index < functionNameSubs.Length; index++)
                 {
@@ -481,11 +482,11 @@ namespace AeroCalcCore.FlightPerformanceEngine
 
 
         /// <summary>
-        /// Renvoie un tableau des index des modèles de performances de vol contenus dans le container,
-        /// dont le nom match le filtre passé en argument
+        /// Renvoie un tableau des index des modÃ¨les de performances de vol contenus dans le container,
+        /// dont le nom match le filtre passÃ© en argument
         /// </summary>
-        /// <param name="fileNameFilter">Chaine de caractère utilisée comme filtre</param>
-        /// <param name="Factors">Tableau des facteurs passés en argument, dont un peut être le discret</param>
+        /// <param name="fileNameFilter">Chaine de caractÃ¨re utilisÃ©e comme filtre</param>
+        /// <param name="Factors">Tableau des facteurs passÃ©s en argument, dont un peut Ãªtre le discret</param>
         /// <returns>Tableau contenant les indexes des fonctions</returns>
         /// <remarks>
         /// Surcharge sur la base de List<int> dataModelIndexes(string fileNameFilter)
@@ -499,7 +500,7 @@ namespace AeroCalcCore.FlightPerformanceEngine
             {
                 foreach (CommandFactor factor in Factors)
                 {
-                    // Recherche, pour chaque facteur, le nom du discret et sa valeur dans les caractéristiques
+                    // Recherche, pour chaque facteur, le nom du discret et sa valeur dans les caractÃ©ristiques
                     if (factor.name.Equals(dataModels.ElementAt(index).discretName) &&
                         factor.value == (double)dataModels.ElementAt(index).discretValue)
                     {
@@ -515,12 +516,12 @@ namespace AeroCalcCore.FlightPerformanceEngine
 
 
         /// <summary>
-        /// Charge les modèles de performances de vol en appliquant le filtre passé en argument et retourne
-        /// le nombre de modèles chargés.
+        /// Charge les modÃ¨les de performances de vol en appliquant le filtre passÃ© en argument et retourne
+        /// le nombre de modÃ¨les chargÃ©s.
         /// </summary>
         /// <param name="directoryPath"></param>
-        /// <param name="dataModelNameFilter">Filtre des noms de modèles de performances à sélectionner</param>
-        /// <returns>int, nombre de modèles chargés</returns>
+        /// <param name="dataModelNameFilter">Filtre des noms de modÃ¨les de performances Ã  sÃ©lectionner</param>
+        /// <returns>int, nombre de modÃ¨les chargÃ©s</returns>
         /// TODO Utiliser EnvironmentContext pourr le path du directory
         public int loadDataModels(string directoryPath, string dataModelNameFilter)
         {
@@ -528,7 +529,7 @@ namespace AeroCalcCore.FlightPerformanceEngine
             PerfPile pp;
             int counter = 0;
 
-            // Recherche des fichiers à analyser dans le dossier des modèles (par défaut {App}/data )
+            // Recherche des fichiers Ã  analyser dans le dossier des modÃ¨les (par dÃ©faut {App}/data )
             foreach (string fileName in csvConnector.filesInDirectory(directoryPath, string.Concat(dataModelNameFilter, ".csv")))
             {
                 pp = csvConnector.readFile(fileName);
@@ -536,7 +537,7 @@ namespace AeroCalcCore.FlightPerformanceEngine
                 {
                     if (dataModelIndex(pp.outputName) < 0)
                     {
-                        // Ce modèle n'est pas déjà enregistré, on peut l'ajouter à la liste
+                        // Ce modÃ¨le n'est pas dÃ©jÃ  enregistrÃ©, on peut l'ajouter Ã  la liste
                         dataModels.Add(pp);
                         if (!pp.hidden)
                         {
@@ -551,14 +552,14 @@ namespace AeroCalcCore.FlightPerformanceEngine
 
 
         /// <summary>
-        /// Renvoie, pour affichage, les signatures de tous les modèles de performances
-        /// enregistré dans le container
+        /// Renvoie, pour affichage, les signatures de tous les modÃ¨les de performances
+        /// enregistrÃ© dans le container
         /// </summary>
         /// <returns>
-        /// signatures au format texte du modèle FUNCTION_NAME PARAM1 PARAM2 ...
+        /// signatures au format texte du modÃ¨le FUNCTION_NAME PARAM1 PARAM2 ...
         /// </returns>
         /// <remarks>
-        /// TODO counter est un int, attention au dépassement de capacité en production
+        /// TODO counter est un int, attention au dÃ©passement de capacitÃ© en production
         /// </remarks>
         /// 
         public string dataModelSignatures()
@@ -580,7 +581,7 @@ namespace AeroCalcCore.FlightPerformanceEngine
 
 
         /// <summary>
-        /// Retourne une string contenant toutes les Pile en mémoire
+        /// Retourne une string contenant toutes les Pile en mÃ©moire
         /// </summary>
         /// <returns>
         /// </returns>
@@ -603,14 +604,14 @@ namespace AeroCalcCore.FlightPerformanceEngine
          */
 
         /// <summary>
-        /// Retourne une string contenant la signature du modèle de calcul
+        /// Retourne une string contenant la signature du modÃ¨le de calcul
         /// </summary>
         /// <param name="outputName"></param>
         /// <returns>
         /// </returns>
         private string modelSignature(string outputName)
         {
-            // Recherche du nom du modèle dans la liste dataModels
+            // Recherche du nom du modÃ¨le dans la liste dataModels
             PerfPile p = this.dataModels.Find(x => x.outputName.Equals(outputName));
             if (p != null)
             {
@@ -620,7 +621,7 @@ namespace AeroCalcCore.FlightPerformanceEngine
                 {
                     if (!string.IsNullOrEmpty(word) && factorList.Find(x => x.Equals(word)) == null)
                     {
-                        // On ajoute que les noms distincts des différents facteurs 
+                        // On ajoute que les noms distincts des diffÃ©rents facteurs 
                         factorList.Add(word);
                     }
                 }
@@ -632,7 +633,7 @@ namespace AeroCalcCore.FlightPerformanceEngine
             }
             else
             {
-                // Aucun modèle de donnée ne correspond à ce nom
+                // Aucun modÃ¨le de donnÃ©e ne correspond Ã  ce nom
                 return "";
             }
             // Suppression des doublons dans les facteurs
@@ -641,9 +642,9 @@ namespace AeroCalcCore.FlightPerformanceEngine
 
 
         /// <summary>
-        /// Retourne une string contenant les noms des facteurs d'un modèle de calcul
+        /// Retourne une string contenant les noms des facteurs d'un modÃ¨le de calcul
         /// </summary>
-        /// <param name="outputName">Nom du modèle de calcul</param>
+        /// <param name="outputName">Nom du modÃ¨le de calcul</param>
         /// <returns>
         /// </returns>
         private string factorsSignature(string outputName)
@@ -653,7 +654,7 @@ namespace AeroCalcCore.FlightPerformanceEngine
 
             if (p != null)
             {
-                // Le modèle existe
+                // Le modÃ¨le existe
                 signature = factorsSignature(p.discretName) + " ";
                 signature += factorsSignature(p.layerFactorName) + " ";
                 signature += factorsSignature(p.serieFactorName) + " ";
@@ -668,14 +669,14 @@ namespace AeroCalcCore.FlightPerformanceEngine
 
 
         /// <summary>
-        /// Retourne la valeur numérique contenue dans un facteur dont le nom est donné en argument.
+        /// Retourne la valeur numÃ©rique contenue dans un facteur dont le nom est donnÃ© en argument.
         /// Renvoie NaN si aucun facteur n'est reconnu dans la liste fournie
         /// Renvoie 1 si le nom est une chaine vide (absence de facteur veut dire facteur = 1)
         /// </summary>
         /// <param name="list">Liste des commandFactor</param>
         /// <param name="name">Nom du facteur</param>
         /// <returns></returns>
-        /// <remarks>TODO: Améliorer le traitement du cas name=""</remarks>
+        /// <remarks>TODO: AmÃ©liorer le traitement du cas name=""</remarks>
         private double valueFromFactor(List<CommandFactor> list, string name)
         {
             if (name.Equals("")) { return 1; }
@@ -691,9 +692,9 @@ namespace AeroCalcCore.FlightPerformanceEngine
 
 
         /// <summary>
-        /// Transforme un filtre de nom de fonction pour comporter le nombre de mots passé en argument
-        /// Permet l'utilisation des caractères WHITE_CARD dans les filtres
-        /// Plusieures WHITE_CARD autorisées
+        /// Transforme un filtre de nom de fonction pour comporter le nombre de mots passÃ© en argument
+        /// Permet l'utilisation des caractÃ¨res WHITE_CARD dans les filtres
+        /// Plusieures WHITE_CARD autorisÃ©es
         /// 
         /// </summary>
         /// <param name="filterSubs">Table de mots composant le filtre</param>
@@ -702,7 +703,7 @@ namespace AeroCalcCore.FlightPerformanceEngine
         /// Une nouvelle table de mots composant le nouveau filtre
         /// </returns>
         /// <remarks>
-        /// Format supporté:
+        /// Format supportÃ©:
         /// *.WORD
         /// WORD.*
         /// WORD.*.WORD
@@ -722,7 +723,7 @@ namespace AeroCalcCore.FlightPerformanceEngine
             {
                 if (filterSubs[count].Contains(AeroCalcCommand.CMD_WORD_WHITE_CARD) && index == -1)
                 {
-                    // Première occurence de la WHITE_CARD
+                    // PremiÃ¨re occurence de la WHITE_CARD
                     index = count;
                     break;
                 }
@@ -730,12 +731,12 @@ namespace AeroCalcCore.FlightPerformanceEngine
             // Expension du filtre
             if (index >= 0 && index <= wordCount - 1)
             {
-                // La position de la première WHITE_CARD est repérée
+                // La position de la premiÃ¨re WHITE_CARD est repÃ©rÃ©e
                 int filterSubsCount = 0;
                 int count = 0;
                 while (count < wordCount)
                 {
-                    // Recopie en commençant par le début, et complément des mots manquants par une/des WHITE_CARD
+                    // Recopie en commenÃ§ant par le dÃ©but, et complÃ©ment des mots manquants par une/des WHITE_CARD
                     if (filterSubs[filterSubsCount].Contains(AeroCalcCommand.CMD_WORD_WHITE_CARD))
                     {
                         // Insertion(s) de WHITE_CARD
@@ -743,8 +744,8 @@ namespace AeroCalcCore.FlightPerformanceEngine
                         {
                             expendedFilterSubs[count] = string.Concat(AeroCalcCommand.CMD_WORD_WHITE_CARD);
                             count++;
-                            // L'expension a été réalisée, elle n'est autorisée qu'une seule fois
-                            // à la première occurence de white card
+                            // L'expension a Ã©tÃ© rÃ©alisÃ©e, elle n'est autorisÃ©e qu'une seule fois
+                            // Ã  la premiÃ¨re occurence de white card
                             if (expended) { break; }
                         }
                         expended = true;
@@ -759,7 +760,7 @@ namespace AeroCalcCore.FlightPerformanceEngine
             }
             else
             {
-                // La position de la WHITE_CARD n'a pas été trouvée
+                // La position de la WHITE_CARD n'a pas Ã©tÃ© trouvÃ©e
                 return null;
             }
             return expendedFilterSubs;

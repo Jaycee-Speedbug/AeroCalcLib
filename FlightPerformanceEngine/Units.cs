@@ -145,22 +145,46 @@ namespace AeroCalcCore.FlightPerformanceEngine
 
 
 
+        /// <summary>Returns the index of the unit in the list matching the alias provided as argument</summary>
+        /// <returns>int index in the unit list, -1 if unit alias not found</returns>
+        /// <param name="alias">Alias of the unit to search in the list</param>
+        public int getIndexByAlias(String alias)
+        {
+            return units.FindIndex(Unit => Unit.alias == alias);
+        }
+
+
+
+        /// <summary>
+        /// Returns the Unit dictionary index of the unit corresponding to the name
+        /// </summary>
+        /// <param name="name">Unit full name</param>
+        /// <returns>index of the unit in the dictionary</returns>
+        /// 
+        public int getIndexByName(String name)
+        {
+            return units.FindIndex(Unit => Unit.name == name);
+        }
+
+
+
         /// <summary>
         /// Retourne un objet UnitItem portant le nom transmis en argument
         /// </summary>
         /// <param name="name">Nom complet de l'unité</param>
         /// <returns>Objet UnitItem</returns>
+        /// <remarks>Refactor:
+        /// - name nullity check
+        /// - no Unit found case (default return)
+        /// </remarks>
         /// 
         public Unit getUnitByName(String name)
         {
-
-            int index = getIndexByName(name);
-
-            if (index >= 0)
+            if (name == null)
             {
-                return units.ElementAt(index);
+                throw new ArgumentNullException("name");
             }
-            return null;
+            return units.Find(Unit => Unit.name == name);
         }
 
 
@@ -170,17 +194,18 @@ namespace AeroCalcCore.FlightPerformanceEngine
         /// </summary>
         /// <param name="alias">Alias de l'unité</param>
         /// <returns>Objet UnitItem</returns>
+        /// <remarks>Refactor:
+        /// - name nullity check
+        /// - no Unit found case (default return)
+        /// </remarks>
         /// 
         public Unit getUnitByAlias(String alias)
         {
-
-            int index = getIndexByAlias(alias);
-
-            if (index >= 0)
+            if (alias == null)
             {
-                return units.ElementAt(index);
+                throw new ArgumentNullException("alias");
             }
-            return null;
+            return units.Find(Unit => Unit.alias == alias);
         }
 
 
@@ -208,50 +233,6 @@ namespace AeroCalcCore.FlightPerformanceEngine
         /*
          * METHODES
          */
-
-        /// <summary>Returns the index of the unit in the list matching the alias provided as argument</summary>
-        /// <returns>int index in the unit list, -1 if unit alias not found</returns>
-        /// <param name="alias">Alias of the unit to search in the list</param>
-        private int getIndexByAlias(String alias)
-        {
-            return units.FindIndex(Unit => Unit.alias == alias);
-            /* Old implementation
-            for (int index = 0; index < units.Count; index++)
-            {
-                if (units.ElementAt<Unit>(index).alias.Equals(alias))
-                {
-                    return index;
-                }
-            }
-            return -1;
-            */
-        }
-
-
-
-        /// <summary>
-        /// Returns the Unit dictionary index of the unit corresponding to the name
-        /// </summary>
-        /// <param name="name">Unit full name</param>
-        /// <returns>index of the unit in the dictionary</returns>
-        /// 
-        private int getIndexByName(String name)
-        {
-            return units.FindIndex(Unit => Unit.name == name);
-
-            /* Old implementation
-            for (int index = 0; index < units.Count; index++)
-            {
-                if (units.ElementAt<Unit>(index).name.Equals(name))
-                {
-                    return index;
-                }
-            }
-            return -1;
-            */
-        }
-
-
 
         /// <summary>
         /// Check if a unit is already in the dictionary, by its name or its alias
