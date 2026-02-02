@@ -587,7 +587,7 @@ namespace AeroCalcCore.FlightPerformanceEngine
                     }
                     else
                     {
-                        throw new ModelException(EngineErrorCodes.E_VOID_SYSTEM,
+                        throw new ModelException(EngineErrorCodes.VOID_SYSTEM,
                                                    this.outputName, this.layerFactorName, layerFactorValue);
                     }
                 }
@@ -602,11 +602,11 @@ namespace AeroCalcCore.FlightPerformanceEngine
                 switch (e.nature)
                 {
 
-                    case EngineErrorCodes.E_POINT_VALUE_OUT_OF_RANGE:
+                    case EngineErrorCodes.E_POINT_INPUT_OUT_OF_RANGE:
                         e.setFactor(pointFactorName, pointFactorValue);
                         break;
 
-                    case EngineErrorCodes.E_SERIE_VALUE_OUT_OF_RANGE:
+                    case EngineErrorCodes.E_SERIES_VALUE_OUT_OF_RANGE:
                         e.setFactor(serieFactorName, serieFactorValue);
                         break;
 

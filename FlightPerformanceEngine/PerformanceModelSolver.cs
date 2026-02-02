@@ -15,10 +15,10 @@ namespace AeroCalcCore.FlightPerformanceEngine
 
         // Private fields
 
-        PerfSerie perfSerie;
+        private readonly PerfSerie perfSerie;
 
-        double[] ppX;
-        double[] ppY;
+        private readonly double[] ppX;
+        private readonly double[] ppY;
 
 
         // CONSTRUCTEUR(S)
@@ -38,11 +38,11 @@ namespace AeroCalcCore.FlightPerformanceEngine
             this.perfSerie = ps;
             if (ps == null)
             {
-                throw new ModelException(EngineErrorCodes.E_VOID_SYSTEM, "", "", Double.NaN);
+                throw new ModelException(EngineErrorCodes.VOID_SYSTEM, "", "", Double.NaN);
             }
             if (ps.count < 2)
             {
-                throw new ModelException(EngineErrorCodes.E_TOO_SHORT_SERIE, "", "", Double.NaN);
+                throw new ModelException(EngineErrorCodes.SYSTEM_BELOW_MIN_SIZE, "", "", Double.NaN);
             }
 
             ppX = new double[ps.count];
@@ -69,11 +69,8 @@ namespace AeroCalcCore.FlightPerformanceEngine
         /// <returns>
         /// Renvoie la valeur prédite par interpolation, NaN en cas d'échec
         /// </returns>
-        public double interpolateLagrange(double x)
+        public double InterpolateLagrange(double x)
         {
-
-            // Recherche des points de plus grande proximité
-            //int[] orderedPointsIndexes = orderedIndexesByDistance(x);
 
             // Calcul des polynomes
             double[] p = new double[ppX.Length];
@@ -168,6 +165,7 @@ namespace AeroCalcCore.FlightPerformanceEngine
         {
             return orderedIndexesByDistance(x);
         }
+
 
 
         /// <summary>

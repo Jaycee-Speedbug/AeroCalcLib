@@ -490,7 +490,7 @@ namespace AeroCalcCore.FlightPerformanceEngine
 
             if (!ranged) setRange();
             if (!isInRange(serieX))
-                throw new ModelException(EngineErrorCodes.E_SERIE_VALUE_OUT_OF_RANGE, this.outputName, "", serieX);
+                throw new ModelException(EngineErrorCodes.E_SERIES_VALUE_OUT_OF_RANGE, this.outputName, "", serieX);
 
             var sel = AxisSelector.SelectAround(
                 items: perfSerieList,
@@ -510,7 +510,7 @@ namespace AeroCalcCore.FlightPerformanceEngine
                     InterpolateAcrossSeries(pointX, serieX, c.Indices, pointAxisMeta, num, pointPolicy),
 
                 SelectionResult.None n =>
-                    throw new ModelException(EngineErrorCodes.E_VOID_SYSTEM, this.outputName, n.Reason, serieX),
+                    throw new ModelException(EngineErrorCodes.VOID_SYSTEM, this.outputName, n.Reason, serieX),
 
                 _ => throw new InvalidOperationException()
             };
@@ -637,7 +637,7 @@ namespace AeroCalcCore.FlightPerformanceEngine
         ///    (abscisse = facteur de la série, ordonnée = valeur prédite).
         /// 2) Ces points sont ajoutés dans une instance locale de <see cref="PerfSerie"/> (nommée <c>local</c>).
         /// 3) On construit un <see cref="PerformanceModelSolver"/> à partir de cette série locale et on
-        ///    appelle <c>interpolateLagrange(serieX)</c> pour obtenir la valeur finale.
+        ///    appelle <c>InterpolateLagrange(serieX)</c> pour obtenir la valeur finale.
         /// </remarks>
         private double InterpolateAcrossSeries(double pointX, double serieX, int[] serieIndices,
                                                AxisMetadata pointAxisMeta, EngineNumerics num, SelectionPolicy pointPolicy)
@@ -649,7 +649,7 @@ namespace AeroCalcCore.FlightPerformanceEngine
                 var y = s.predict(pointX, pointAxisMeta, num, pointPolicy);
                 local.add(new PerfPoint(s.factorValue, y, isBreakPoint: false));
             }
-            return new PerformanceModelSolver(local).interpolateLagrange(serieX);
+            return new PerformanceModelSolver(local).InterpolateLagrange(serieX);
         }
 
 

@@ -212,8 +212,8 @@ namespace AeroCalcCore.FlightPerformanceEngine
                 // compareResult == 0 => perfPointList[i].input == pp.input
                 // compareResult > 0  => perfPointList[i].input > pp.input
                 int compareResult = AeroCalc.CompareAxisValues(perfPointList[i].input,
-                                                                    pp.input, 
-                                                                    EngineNumerics.Default.AxisUniquenessEpsilon);
+                                                               pp.input, 
+                                                               EngineNumerics.Default.AxisUniquenessEpsilon);
 
                 if (compareResult == 0)
                 {
@@ -277,13 +277,18 @@ namespace AeroCalcCore.FlightPerformanceEngine
 
 
         /// <summary>
-        /// Vérifie si x est dans le range défini pour la série
+        /// Check if a value is within the range of PerfPoints.
+        /// If the rage is not defined, it is set to the min and max input values of the PerfPoints.
         /// </summary>
-        /// <param name="x">Abscisse de référence</param>
-        /// <returns>True si l'abscisse de référence est située dans le range de la série</returns>
+        /// <param name="x">Value to be evaluated</param>
+        /// <returns>True if the value is within the range of the PerfSeries</returns>
         ///
         public bool isInRange(double x)
         {
+            if (!ranged)
+            {
+                setRange();
+            }
             if (x < this.startRange || (x == this.startRange && this.startRangeType == AeroCalc.MODEL_RANGE_EXCLUDE_LIMIT))
             {
                 return false;
@@ -317,7 +322,7 @@ namespace AeroCalcCore.FlightPerformanceEngine
 
             if (!ranged) setRange();
             if (!isInRange(x))
-                throw new ModelException(EngineErrorCodes.E_POINT_VALUE_OUT_OF_RANGE, "", "", double.NaN);
+                throw new ModelException(EngineErrorCodes.E_POINT_INPUT_OUT_OF_RANGE, "", "", double.NaN);
 
             var sel = AxisSelector.SelectAround(
                 items: perfPointList,
@@ -332,7 +337,7 @@ namespace AeroCalcCore.FlightPerformanceEngine
             {
                 SelectionResult.Discrete d => perfPointList[d.Index].output,
                 SelectionResult.Continuous c => InterpolateFromIndices(x, c.Indices),
-                SelectionResult.None n => throw new ModelException(EngineErrorCodes.E_VOID_SYSTEM, "", n.Reason, x),
+                SelectionResult.None n => throw new ModelException(EngineErrorCodes.VOID_SYSTEM, "", n.Reason, x),
                 _ => throw new InvalidOperationException()
             };
         }
@@ -516,7 +521,7 @@ namespace AeroCalcCore.FlightPerformanceEngine
                 tmp.add(pointAt(i));
 
             var solver = new PerformanceModelSolver(tmp);
-            return solver.interpolateLagrange(x); // k=2 => linéaire, k=3 => Lagrange3
+            return solver.InterpolateLagrange(x); // k=2 => linéaire, k=3 => Lagrange3
         }
 
 
