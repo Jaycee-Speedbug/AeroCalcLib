@@ -102,6 +102,7 @@ namespace AeroCalcCore
                 string layerFactorName;
                 string outputName;
 
+                PerfPoint[] perfPoints;
 
                 // Lecture des paramètres numériques de la Pile
                 // Une 

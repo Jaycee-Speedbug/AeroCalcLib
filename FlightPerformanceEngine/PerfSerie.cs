@@ -89,6 +89,9 @@ namespace AeroCalcCore.FlightPerformanceEngine
             }
         }
 
+        public IReadOnlyList<PerfPoint> PerfPoints => perfPointList.AsReadOnly();
+
+
 
         // PRIVATE FIELDS ///////////////////////////////////////////////////////////////////////////////////
 
@@ -96,7 +99,6 @@ namespace AeroCalcCore.FlightPerformanceEngine
         /// Liste générique utilisée pour ordonner les points de performance PerfPoint de la série
         /// </summary>
         List<PerfPoint> perfPointList;
-        IReadOnlyList<PerfPoint> perfPointList2;
 
 
         // CONSTRUCTOR(S) ///////////////////////////////////////////////////////////////////////////////////
